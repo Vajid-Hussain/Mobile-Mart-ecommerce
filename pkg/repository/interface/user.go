@@ -6,3 +6,4 @@ type IUserRepo interface {
 	CreateUser(*requestmodel.UserDetails)
 	IsUserExist(*requestmodel.UserDetails) int 
 }
+   
