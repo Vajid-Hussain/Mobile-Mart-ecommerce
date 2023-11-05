@@ -7,7 +7,12 @@ type Config struct {
 	DBName		string	`mapstructure:"DBNAME"`
 	DBPassword 	string	`mapstructure:"DBPASSWORD"`
 	DBHost		string	`mapstructure:"DBHOST"`
-	DBPort		string	`mapstructure:"DBPORT"`		
+	DBPort		string	`mapstructure:"DBPORT"`	
+	
+	// token
+	AdminSecurityKey 	string	`mapstructure:"ADMIN"`	
+	VenderSecurityKey	string	`mapstructure:"VENDER"`	
+	UserSecurityKey		string	`mapstructure:"USER"`	
 }
 
 func LoadConfig() (*Config, error){

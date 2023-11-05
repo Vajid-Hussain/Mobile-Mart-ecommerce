@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	"gorm.io/gorm"
@@ -14,7 +16,21 @@ func NewUserRepository(DB *gorm.DB) interfaces.IUserRepo {
 	return &userRepository{DB: DB}
 }
 
-func (d *userRepository) CreateUser(userDetails requestmodel.UserDetails) {
+//user Repository
+
+func (d *userRepository) CreateUser(userDetails *requestmodel.UserDetails) {
 	query := "INSERT INTO user_details (name, email, phone, password) VALUES($1, $2, $3, $4)"
 	d.DB.Exec(query, userDetails.Name, userDetails.Email, userDetails.Phone, userDetails.Password)
+}
+
+func (d *userRepository) IsUserExist(userDetails *requestmodel.UserDetails) int {
+	var userCount int
+
+	query := "SELECT COUNT(*) FROM user_details WHERE email=?"
+	err := d.DB.Raw(query, userDetails.Email).Row().Scan(&userCount)
+	if err != nil {
+		fmt.Println("Error for user exist using email in signup")
+	}
+
+	return userCount
 }
