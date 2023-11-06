@@ -1,37 +1,63 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"github.com/spf13/viper"
+)
 
-type Config struct {
-	DBUser 		string	`mapstructure:"DBUSER"`
-	DBName		string	`mapstructure:"DBNAME"`
-	DBPassword 	string	`mapstructure:"DBPASSWORD"`
-	DBHost		string	`mapstructure:"DBHOST"`
-	DBPort		string	`mapstructure:"DBPORT"`	
-	
-	// token
-	AdminSecurityKey 	string	`mapstructure:"ADMIN"`	
-	VenderSecurityKey	string	`mapstructure:"VENDER"`	
-	UserSecurityKey		string	`mapstructure:"USER"`	
+type DataBase struct {
+	DBUser     string `mapstructure:"DBUSER"`
+	DBName     string `mapstructure:"DBNAME"`
+	DBPassword string `mapstructure:"DBPASSWORD"`
+	DBHost     string `mapstructure:"DBHOST"`
+	DBPort     string `mapstructure:"DBPORT"`
 }
 
-func LoadConfig() (*Config, error){
-	var config Config
+type Token struct {
+	AdminSecurityKey  string `mapstructure:"ADMIN_TOKENKEY"`
+	VenderSecurityKey string `mapstructure:"VENDER_TOKENKEY"`
+	UserSecurityKey   string `mapstructure:"USER_TOKENKEY"`
+}
+
+type OTP struct{
+	AccountSid	string	`mapstructure:"Account_SID"`
+	AuthToken	string	`mapstructure:"Auth_Token"`
+	ServiceSid	string	`mapstructure:"Service_SID"`
+}
+
+type Config struct {
+	DB    DataBase
+	Token Token
+	Otp   OTP
+}
+
+func LoadConfig() (*Config, error) {
+
+	var db 	  DataBase
+	var token Token
+	var otp   OTP
 
 	viper.AddConfigPath("./")
 	viper.SetConfigFile(".env")
 	viper.AutomaticEnv()
 
-	err:= viper.ReadInConfig()
-	if err!=nil{
+	err := viper.ReadInConfig()
+	if err != nil {
 		return nil, err
 	}
 
-	err =viper.Unmarshal(&config)
-	if err!=nil{
+	err = viper.Unmarshal(&db)
+	if err != nil {
+		return nil, err
+	}
+	err = viper.Unmarshal(&token)
+	if err != nil {
+		return nil, err
+	}
+	err = viper.Unmarshal(&otp)
+	if err != nil {
 		return nil, err
 	}
 
+	config := Config{DB: db, Token: token, Otp: otp}
 	return &config, nil
-
 }

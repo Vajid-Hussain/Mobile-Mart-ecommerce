@@ -9,5 +9,6 @@ func UserRoutes(engin *gin.RouterGroup,
 	user *handler.UserHandler){
 
 	engin.POST("/signup",user.UserSignup)
+	engin.POST("/verifyOTP",user.VerifyOTP)
 
 }

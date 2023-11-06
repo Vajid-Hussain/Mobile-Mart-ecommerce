@@ -26,5 +26,8 @@ func (u *UserHandler) UserSignup(c *gin.Context) {
 		resSignup:=u.userUseCase.UserSignup(&userSignupData)
 		c.JSON(http.StatusOK,resSignup)
 	}
+}
 
+func (u *UserHandler) VerifyOTP(c *gin.Context){
+	
 }

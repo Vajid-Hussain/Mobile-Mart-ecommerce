@@ -1,4 +1,5 @@
-package token
+package service
+
 
 import (
 	"fmt"
@@ -18,7 +19,8 @@ import (
 // 	}
 // }
 
-func GenerateToken(securityKey string, id string) string{
+func GenerateToken(securityKey []byte, id string) string{
+
 	claims := jwt.MapClaims{
 		"id": id,
 	}
@@ -33,3 +35,4 @@ func GenerateToken(securityKey string, id string) string{
 func VerifyToken(token string) {
 
 }
+	

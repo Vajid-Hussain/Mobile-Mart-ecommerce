@@ -19,8 +19,8 @@ func NewUserRepository(DB *gorm.DB) interfaces.IUserRepo {
 //user Repository
 
 func (d *userRepository) CreateUser(userDetails *requestmodel.UserDetails) {
-	query := "INSERT INTO user_details (name, email, phone, password) VALUES($1, $2, $3, $4)"
-	d.DB.Exec(query, userDetails.Name, userDetails.Email, userDetails.Phone, userDetails.Password)
+	query := "INSERT INTO user_details (id, name, email, phone, password) VALUES($1, $2, $3, $4, $5)"
+	d.DB.Exec(query,userDetails.Id, userDetails.Name, userDetails.Email, userDetails.Phone, userDetails.Password)
 }
 
 func (d *userRepository) IsUserExist(userDetails *requestmodel.UserDetails) int {

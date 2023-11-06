@@ -8,16 +8,19 @@ import (
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
+	serviceInterface "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service/interface"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
 	"gopkg.in/validator.v2"
 )
 
 type userUseCase struct {
 	repo interfaces.IUserRepo
+	otp  serviceInterface.Ijwt
 }
 
-func NewUserUseCase(userRepository interfaces.IUserRepo) interfaceUseCase.IuserUseCase {
-	return &userUseCase{repo: userRepository}
+func NewUserUseCase(userRepository interfaces.IUserRepo, otp serviceInterface.Ijwt) interfaceUseCase.IuserUseCase {
+	return &userUseCase{repo: userRepository, otp: otp}
 }
 
 //useCases
@@ -39,7 +42,6 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) responsemod
 		}
 	}
 
-
 	if err := validator.Validate(userData); err != nil {
 		fmt.Println(err)
 
@@ -56,23 +58,35 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) responsemod
 
 		isValid := ValidateEmailStructure(userData.Email)
 		resSignUpFailed.Email = isValid
+		if userData.ConfirmPassword != userData.Password {
+			resSignUpFailed.ConfirmPassword = "ConfirmPassword is not correct , cross check"
+		}
 		return resSignUpFailed
 	}
 
-	if isValid := ValidateEmailStructure(userData.Email); isValid!=""{
+	isValid := ValidateEmailStructure(userData.Email)
+	if isValid != "" || userData.ConfirmPassword != userData.Password {
 		resSignUpFailed.Email = isValid
+		if userData.ConfirmPassword != userData.Password {
+			resSignUpFailed.ConfirmPassword = "ConfirmPassword is not correct , cross check"
+		}
 		return resSignUpFailed
 	}
-	
 
-	if isExist := u.repo.IsUserExist(userData); isExist >=1 {
-		resSignUpFailed.IsUserExist="User Exist ,change mail"
+	if isExist := u.repo.IsUserExist(userData); isExist >= 1 {
+		resSignUpFailed.IsUserExist = "User Exist ,change mail"
 		return resSignUpFailed
 	} else {
-		//otp
-		//token
+		userData.Id = helper.GenerateUUID()
+		u.otp.TwilioSetup()
+		_,err:=u.otp.SendOtp(userData.Phone)
+		if err!=nil{
+			resSignUpFailed.OTP="error of otp creation"
+			return resSignUpFailed
+		}
 		u.repo.CreateUser(userData)
 	}
 
 	return resSignUpFailed
 }
+

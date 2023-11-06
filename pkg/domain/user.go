@@ -6,6 +6,7 @@ type UserDetails struct{
 	Email		string	`gorm:"not null"`
 	Phone		string
 	Password	string
+	OtpVerify	bool	`gorm:"default:false"`
 	Blocked		bool	`gorm:"default:false"`
 	Delete		bool	`gorm:"default:false"`
 }
