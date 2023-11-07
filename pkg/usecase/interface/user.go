@@ -7,4 +7,5 @@ import (
 
 type IuserUseCase interface {
 	UserSignup(*requestmodel.UserDetails) responsemodel.SignupData
+	VerifyOtp(requestmodel.OtpVerification) (responsemodel.OtpValidation,string)
 }

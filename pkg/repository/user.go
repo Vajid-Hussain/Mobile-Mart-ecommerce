@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -33,4 +34,17 @@ func (d *userRepository) IsUserExist(userDetails *requestmodel.UserDetails) int 
 	}
 
 	return userCount
+}
+
+func (d *userRepository) CheckUserByPhone(phone string)error{
+	var count int
+
+	query:="SELECT COUNT(*) FROM user_details WHERE Phone=$1"
+	result:=d.DB.Raw(query,phone).Row()
+	result.Scan(&count)
+	if count>=1{
+		return errors.New("no user Exist , phone number is wrong")
+	}else{
+		return nil
+	}
 }

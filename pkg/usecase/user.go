@@ -43,7 +43,6 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) responsemod
 	}
 
 	if err := validator.Validate(userData); err != nil {
-		fmt.Println(err)
 
 		for key := range err.(validator.ErrorMap) {
 			switch key {
@@ -79,9 +78,9 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) responsemod
 	} else {
 		userData.Id = helper.GenerateUUID()
 		u.otp.TwilioSetup()
-		_,err:=u.otp.SendOtp(userData.Phone)
-		if err!=nil{
-			resSignUpFailed.OTP="error of otp creation"
+		_, err := u.otp.SendOtp(userData.Phone)
+		if err != nil {
+			resSignUpFailed.OTP = "error of otp creation"
 			return resSignUpFailed
 		}
 		u.repo.CreateUser(userData)
@@ -90,3 +89,37 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) responsemod
 	return resSignUpFailed
 }
 
+func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification) (responsemodel.OtpValidation, string) {
+	var otpResponse responsemodel.OtpValidation
+	fmt.Println(otpConstrain)
+
+
+	if err := validator.Validate(otpConstrain); err != nil {
+		for key := range err.(validator.ErrorMap) {
+			switch key {
+			case "Phone":
+				otpResponse.Phone = "wrong format of phone number"
+			case "otp":
+				otpResponse.Otp = "strictly six numbers "
+			}
+		}
+		fmt.Println("-----------------")
+		return otpResponse, ""
+	}
+	
+	if err := u.repo.CheckUserByPhone(otpConstrain.Phone); err != nil {
+		fmt.Println("?????????????????????",err)
+		otpResponse.Result = "no user exist with phone number , verify is phone number is correct "
+	}
+
+	fmt.Println("-----------------------------------")
+	u.otp.TwilioSetup()
+	
+	if err := u.otp.VerifyOtp(otpConstrain.Phone, otpConstrain.Otp); err != nil {
+		otpResponse.Result = "otp verification failed"
+		return otpResponse, ""
+	}
+	fmt.Println("00000")
+	otpResponse.Result = "success"
+	return otpResponse, "verification successfull"
+}
