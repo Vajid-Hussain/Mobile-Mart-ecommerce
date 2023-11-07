@@ -16,10 +16,10 @@ func InitializeAPI(config config.Config) (*server.ServerHttp, error) {
 		return nil, err
 	}
 
-	otpServices := service.NewOtpService(config.Otp)
+	service.OtpService(config.Otp)
 
 	userRepository := repository.NewUserRepository(DB)
-	userUseCase := usecase.NewUserUseCase(userRepository, otpServices)
+	userUseCase := usecase.NewUserUseCase(userRepository, &config.Token)
 	userHandler := handler.NewUserHandler(userUseCase)
 
 	serverHttp := server.NewServerHttp(userHandler)

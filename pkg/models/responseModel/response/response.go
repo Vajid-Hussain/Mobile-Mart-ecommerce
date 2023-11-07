@@ -1,7 +1,7 @@
 package response
 type Response struct {
 	StatusCode int         `json:"status_code"`
-	Message    string      `json:"message"`
+	Message    string      `json:"message,omitempty"`
 	Data       interface{} `json:"after exicution"`
 	Error      interface{} `json:"error,omitempty"`
 }

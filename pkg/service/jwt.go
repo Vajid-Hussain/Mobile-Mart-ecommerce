@@ -1,38 +1,56 @@
 package service
 
-
 import (
+	"errors"
 	"fmt"
 
 	"github.com/golang-jwt/jwt"
 )
 
-// type jwtAuth struct {
-// 	adminSecurityKey string
-// 	userSecurityKey  string
-// }
 
-// func NewTokenService(adminAuthKey string, userAuthKey string) TokenService {
-// 	return &jwtAuth{
-// 		adminSecurityKey: adminAuthKey,
-// 		userSecurityKey:  userAuthKey,
-// 	}
-// }
 
-func GenerateToken(securityKey []byte, id string) string{
+func TemperveryTokenStorePhone(securityKey string, phone string) (string, error) {
+	key := []byte(securityKey)
+	claims := jwt.MapClaims{
+		"Phone": phone,
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(key)
+	if err != nil {
+		fmt.Println(err, "error at create token ")
+	}
+	return tokenString, err
+}
 
+func GenerateToken(securityKey string, id string) (string, error) {
+	Kye := []byte(securityKey)
 	claims := jwt.MapClaims{
 		"id": id,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(securityKey)
+	tokenString, err := token.SignedString(Kye)
 	if err != nil {
 		fmt.Println(err, "error at create token ")
 	}
-	return tokenString
+	return tokenString, err
 }
 
 func VerifyToken(token string) {
 
 }
-	
+
+func FetchPhoneFromToken(tokenString string, secretkey string) (string, error) {
+	secret := []byte(secretkey)
+	fmt.Println(tokenString,secret,"--------------------")
+	parsedToken, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return secret, nil
+	})
+	if err != nil || !parsedToken.Valid {
+		fmt.Println(err, "wronge user with wrong token")
+		return "", errors.New("wrong token or expired")
+	}
+	claims := parsedToken.Claims.(jwt.MapClaims)
+	phone := claims["Phone"].(string)
+
+	return phone, nil
+}

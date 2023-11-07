@@ -6,6 +6,7 @@ type SignupData struct {
 	Phone           string `json:"phone,omitempty"`
 	Password        string `json:"password,omitempty"`
 	OTP             string `json:"otp,omitempty"`
+	Token           string `json:"token,omitempty"`
 	ConfirmPassword string `json:"confirmPassword,omitempty"`
 	IsUserExist     string `json:"isUserExist,omitempty"`
 }
@@ -14,4 +15,5 @@ type OtpValidation struct {
 	Phone string `json:"phone,omitempty"`
 	Otp   string `json:"otp,omitempty"`
 	Result string`json:"result,omitempty"`
+	Token string `json:"token,omitempty"`
 }

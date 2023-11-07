@@ -25,23 +25,32 @@ func (u *UserHandler) UserSignup(c *gin.Context) {
 	if err := c.BindJSON(&userSignupData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	} else {
-		resSignup := u.userUseCase.UserSignup(&userSignupData)
-		c.JSON(http.StatusOK, resSignup)
+		resSignup, err := u.userUseCase.UserSignup(&userSignupData)
+		if err != nil {
+			response := response.Responses(http.StatusUnauthorized, err.Error(), resSignup, nil)
+			c.JSON(http.StatusUnauthorized, response)
+		} else {
+			response := response.Responses(http.StatusOK, "", resSignup, nil)
+			c.JSON(http.StatusOK, response)
+		}
 	}
 }
 
 func (u *UserHandler) VerifyOTP(c *gin.Context) {
+
 	var otpData requestmodel.OtpVerification
-	if err:=c.BindJSON(&otpData); err!=nil{
+	token := c.Request.Header.Get("Authorization")
+
+	if err := c.BindJSON(&otpData); err != nil {
 		fmt.Println(err)
 	}
-	
-	result, err := u.userUseCase.VerifyOtp(otpData)
-	if err == "" {
-		response := response.Responses(http.StatusUnauthorized, "Invalid credentials", result, nil)
+
+	result, err := u.userUseCase.VerifyOtp(otpData, token)
+	if err !=nil {
+		response := response.Responses(http.StatusUnauthorized, err.Error(), result, nil)
 		c.JSON(http.StatusUnauthorized, response)
-	}else{
-		response := response.Responses(http.StatusUnauthorized, "Succesfully verified", result, nil)
-		c.JSON(http.StatusUnauthorized, response)
+	} else {
+		response := response.Responses(http.StatusOK, "Succesfully verified", result, nil)
+		c.JSON(http.StatusOK, response)
 	}
 }

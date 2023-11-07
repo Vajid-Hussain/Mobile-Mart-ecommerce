@@ -16,6 +16,7 @@ type Token struct {
 	AdminSecurityKey  string `mapstructure:"ADMIN_TOKENKEY"`
 	VenderSecurityKey string `mapstructure:"VENDER_TOKENKEY"`
 	UserSecurityKey   string `mapstructure:"USER_TOKENKEY"`
+	TemperveryKey	  string `mapstructure:"TEMPERVERY_TOKENKEY"`
 }
 
 type OTP struct{

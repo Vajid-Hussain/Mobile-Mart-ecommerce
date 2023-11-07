@@ -4,7 +4,7 @@ import requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/r
 
 type IUserRepo interface {
 	CreateUser(*requestmodel.UserDetails)
-	IsUserExist(*requestmodel.UserDetails) int 
+	IsUserExist(string) int 
 	CheckUserByPhone(string)error
 }
    

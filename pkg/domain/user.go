@@ -1,11 +1,20 @@
 package domain
 
+type status_user string
+
+const(
+	Active status_user ="active"
+	Block  status_user ="block"
+	Delete status_user ="delete"
+	Pending status_user="pending"
+)
+
 type UserDetails struct{
 	ID			string	`gorm:"unique;not null; primary key"`
 	Name 		string
-	Email		string	`gorm:"not null"`
-	Phone		string
+	Email		string	
+	Phone		string  
 	Password	string
-	Blocked		bool	`gorm:"default:false"`
-	Delete		bool	`gorm:"default:false"`
+	Status		status_user	`gorm:"default:pending"`
 }
+

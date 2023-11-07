@@ -24,27 +24,27 @@ func (d *userRepository) CreateUser(userDetails *requestmodel.UserDetails) {
 	d.DB.Exec(query,userDetails.Id, userDetails.Name, userDetails.Email, userDetails.Phone, userDetails.Password)
 }
 
-func (d *userRepository) IsUserExist(userDetails *requestmodel.UserDetails) int {
+func (d *userRepository) IsUserExist(phone string) int {
 	var userCount int
 
-	query := "SELECT COUNT(*) FROM user_details WHERE email=?"
-	err := d.DB.Raw(query, userDetails.Email).Row().Scan(&userCount)
+	query := "SELECT COUNT(*) FROM user_details WHERE phone=$1 AND status!=$2"
+	err := d.DB.Raw(query, phone, "delete").Row().Scan(&userCount)
 	if err != nil {
-		fmt.Println("Error for user exist using email in signup")
+		fmt.Println("Error for user exist, using same phone in signup")
 	}
-
 	return userCount
+
 }
 
 func (d *userRepository) CheckUserByPhone(phone string)error{
-	var count int
 
-	query:="SELECT COUNT(*) FROM user_details WHERE Phone=$1"
-	result:=d.DB.Raw(query,phone).Row()
-	result.Scan(&count)
-	if count>=1{
+	query:="UPDATE user_details SET status=$2 WHERE phone=$1"
+	result:=d.DB.Raw(query, "active", phone).Error
+
+	if result!=nil{
 		return errors.New("no user Exist , phone number is wrong")
 	}else{
 		return nil
 	}
+
 }

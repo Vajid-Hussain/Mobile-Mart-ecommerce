@@ -1,14 +1,16 @@
 package usecase
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
 
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
-	serviceInterface "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service/interface"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
 	"github.com/go-playground/validator/v10"
@@ -17,18 +19,20 @@ import (
 
 type userUseCase struct {
 	repo interfaces.IUserRepo
-	otp  serviceInterface.Ijwt
+	token config.Token
 }
 
-func NewUserUseCase(userRepository interfaces.IUserRepo, otp serviceInterface.Ijwt) interfaceUseCase.IuserUseCase {
-	return &userUseCase{repo: userRepository, otp: otp}
+func NewUserUseCase(userRepository interfaces.IUserRepo, token *config.Token) interfaceUseCase.IuserUseCase {
+	return &userUseCase{repo: userRepository, 
+		token: *token,
+	}
 }
 
 //useCases
 
-func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) responsemodel.SignupData {
+func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) (responsemodel.SignupData ,error){
 
-	var resSignUpFailed responsemodel.SignupData
+	var resSignup responsemodel.SignupData
 
 	ValidateEmailStructure := func(email string) string {
 		pattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
@@ -48,82 +52,93 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) responsemod
 		for key := range err.(validaters.ErrorMap) {
 			switch key {
 			case "Name":
-				resSignUpFailed.Name = "Field is empty"
+				resSignup.Name = "Field is empty"
 			case "Phone":
-				resSignUpFailed.Phone = "must contain 10 numbers"
+				resSignup.Phone = "must contain 10 numbers"
 			case "Password":
-				resSignUpFailed.Password = "password need more than 4 digit "
+				resSignup.Password = "password need more than 4 digit "
 			}
 		}
 
 		isValid := ValidateEmailStructure(userData.Email)
-		resSignUpFailed.Email = isValid
+		resSignup.Email = isValid
 		if userData.ConfirmPassword != userData.Password {
-			resSignUpFailed.ConfirmPassword = "ConfirmPassword is not correct , cross check"
+			resSignup.ConfirmPassword = "ConfirmPassword is not correct , cross check"
 		}
-		return resSignUpFailed
+		return resSignup, errors.New("not satisfying user credentials")
 	}
 
 	isValid := ValidateEmailStructure(userData.Email)
 	if isValid != "" || userData.ConfirmPassword != userData.Password {
-		resSignUpFailed.Email = isValid
+		resSignup.Email = isValid
 		if userData.ConfirmPassword != userData.Password {
-			resSignUpFailed.ConfirmPassword = "ConfirmPassword is not correct , cross check"
+			resSignup.ConfirmPassword = "ConfirmPassword is not match , cross check"
 		}
-		return resSignUpFailed
+		return resSignup, errors.New("not satisfying user credentials")
 	}
 
-	if isExist := u.repo.IsUserExist(userData); isExist >= 1 {
-		resSignUpFailed.IsUserExist = "User Exist ,change mail"
-		return resSignUpFailed
+	if isExist := u.repo.IsUserExist(userData.Phone); isExist >= 1 {
+		resSignup.IsUserExist = "User Exist ,change phone number"
+		return resSignup, errors.New("user is exist try again , with another phone number")
 	} else {
 		userData.Id = helper.GenerateUUID()
-		u.otp.TwilioSetup()
-		_, err := u.otp.SendOtp(userData.Phone)
+			service.TwilioSetup()
+		_, err := service.SendOtp(userData.Phone)
 		if err != nil {
-			resSignUpFailed.OTP = "error of otp creation"
-			return resSignUpFailed
+			resSignup.OTP = "error of otp creation"
+			return resSignup, errors.New("error at attempt for creating new OTP")
 		}
+
+		HashedPassword:=helper.HashPassword(userData.Password)
+		userData.Password=HashedPassword
 		u.repo.CreateUser(userData)
+		token, err:=service.TemperveryTokenStorePhone(u.token.TemperveryKey, userData.Phone)
+		if err!=nil{
+			resSignup.Token="error of create a token" 
+			return resSignup, errors.New("creating token is error")
+		}
+		resSignup.Token=token
 	}
 
-	return resSignUpFailed
+	return resSignup , nil 
 }
 
-func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification) (responsemodel.OtpValidation, string) {
-	var otpResponse responsemodel.OtpValidation
-	// var validate *validator.Validate
-	validate:=validator.New(validator.WithRequiredStructEnabled())
+func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification, token string) (responsemodel.OtpValidation, error) {
 
-	err :=validate.Struct(otpConstrain)
-	if err!=nil{
-		fmt.Println(err,"00000000000000")
+	var otpResponse responsemodel.OtpValidation
+	validate := validator.New(validator.WithRequiredStructEnabled())
+
+	err := validate.Struct(otpConstrain)
+	if err != nil {
 		if ve, ok := err.(validator.ValidationErrors); ok {
 			for _, e := range ve {
-				fmt.Println("Field:", e.Field())
-				fmt.Println("Tag:", e.Tag())
-				fmt.Println("Value:", e.Value())
-				fmt.Println("Param:", e.Param())
+				switch e.Field() {
+				case "otp":
+					otpResponse.Otp = "otp should 6 numbers"
+				}
 			}
 		}
-	
+		return otpResponse, nil
 	}
-	fmt.Println(err,"000000000000999900")
+	phone,err:=service.FetchPhoneFromToken(token, u.token.TemperveryKey)
+	if err!=nil{
+		otpResponse.Token="invalid token"
+		return otpResponse, errors.New("error ar token extraction , cause by invalid token")
+	}
 
-		
-	// if err := u.repo.CheckUserByPhone(otpConstrain.Phone); err != nil {
-	// 	fmt.Println("?????????????????????",err)
-	// 	otpResponse.Result = "no user exist with phone number , verify is phone number is correct "
-	// }
+	service.TwilioSetup()
 
-	// fmt.Println("-----------------------------------")
-	// u.otp.TwilioSetup()
-	
-	// if err := u.otp.VerifyOtp(otpConstrain.Phone, otpConstrain.Otp); err != nil {
-	// 	otpResponse.Result = "otp verification failed"
-	// 	return otpResponse, ""
-	// }
-	// fmt.Println("00000")
-	// otpResponse.Result = "success"
-	return otpResponse, "verification successfull"
+	if err := service.VerifyOtp(phone, otpConstrain.Otp); err != nil {
+		otpResponse.Otp = "otp verification failed"
+		return otpResponse, errors.New("otp is not match with your number, try egain")
+	}
+
+	if err := u.repo.CheckUserByPhone(phone); err != nil {
+		otpResponse.Phone = "no user exist with phone number , verify is phone number is it correct "
+		return otpResponse, errors.New("no user exist ")
+	}
+
+	fmt.Println("00000")
+	otpResponse.Result= "success"
+	return otpResponse, nil
 }
