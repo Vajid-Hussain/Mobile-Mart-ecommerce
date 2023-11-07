@@ -11,6 +11,6 @@ type UserDetails struct {
 
 //validate:"len=10, numeric"
 type OtpVerification struct{
-	Phone	string	`json:"phone" validation:"len=10,required"`
-	Otp		string	`json:"otp"   validation:"len=6"`
+	Phone	string	`json:"phone" validate:"e164,required"`
+	Otp		string	`json:"otp"   validate:"len=6"`
 }

@@ -11,7 +11,8 @@ import (
 	serviceInterface "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service/interface"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
-	"gopkg.in/validator.v2"
+	"github.com/go-playground/validator/v10"
+	validaters "gopkg.in/validator.v2"
 )
 
 type userUseCase struct {
@@ -42,9 +43,9 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) responsemod
 		}
 	}
 
-	if err := validator.Validate(userData); err != nil {
+	if err := validaters.Validate(userData); err != nil {
 
-		for key := range err.(validator.ErrorMap) {
+		for key := range err.(validaters.ErrorMap) {
 			switch key {
 			case "Name":
 				resSignUpFailed.Name = "Field is empty"
@@ -91,35 +92,38 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) responsemod
 
 func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification) (responsemodel.OtpValidation, string) {
 	var otpResponse responsemodel.OtpValidation
-	fmt.Println(otpConstrain)
+	// var validate *validator.Validate
+	validate:=validator.New(validator.WithRequiredStructEnabled())
 
-
-	if err := validator.Validate(otpConstrain); err != nil {
-		for key := range err.(validator.ErrorMap) {
-			switch key {
-			case "Phone":
-				otpResponse.Phone = "wrong format of phone number"
-			case "otp":
-				otpResponse.Otp = "strictly six numbers "
+	err :=validate.Struct(otpConstrain)
+	if err!=nil{
+		fmt.Println(err,"00000000000000")
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				fmt.Println("Field:", e.Field())
+				fmt.Println("Tag:", e.Tag())
+				fmt.Println("Value:", e.Value())
+				fmt.Println("Param:", e.Param())
 			}
 		}
-		fmt.Println("-----------------")
-		return otpResponse, ""
-	}
 	
-	if err := u.repo.CheckUserByPhone(otpConstrain.Phone); err != nil {
-		fmt.Println("?????????????????????",err)
-		otpResponse.Result = "no user exist with phone number , verify is phone number is correct "
 	}
+	fmt.Println(err,"000000000000999900")
 
-	fmt.Println("-----------------------------------")
-	u.otp.TwilioSetup()
+		
+	// if err := u.repo.CheckUserByPhone(otpConstrain.Phone); err != nil {
+	// 	fmt.Println("?????????????????????",err)
+	// 	otpResponse.Result = "no user exist with phone number , verify is phone number is correct "
+	// }
+
+	// fmt.Println("-----------------------------------")
+	// u.otp.TwilioSetup()
 	
-	if err := u.otp.VerifyOtp(otpConstrain.Phone, otpConstrain.Otp); err != nil {
-		otpResponse.Result = "otp verification failed"
-		return otpResponse, ""
-	}
-	fmt.Println("00000")
-	otpResponse.Result = "success"
+	// if err := u.otp.VerifyOtp(otpConstrain.Phone, otpConstrain.Otp); err != nil {
+	// 	otpResponse.Result = "otp verification failed"
+	// 	return otpResponse, ""
+	// }
+	// fmt.Println("00000")
+	// otpResponse.Result = "success"
 	return otpResponse, "verification successfull"
 }

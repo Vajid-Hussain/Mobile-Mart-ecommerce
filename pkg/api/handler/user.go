@@ -42,7 +42,6 @@ func (u *UserHandler) VerifyOTP(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, response)
 	}else{
 		response := response.Responses(http.StatusUnauthorized, "Succesfully verified", result, nil)
-		fmt.Println(response)
 		c.JSON(http.StatusUnauthorized, response)
 	}
 }
