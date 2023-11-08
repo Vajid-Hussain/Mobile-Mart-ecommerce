@@ -13,3 +13,8 @@ type UserDetails struct {
 type OtpVerification struct{
 	Otp		string	`json:"otp"   validate:"len=6"`
 }
+
+type UserLogin struct{
+	Phone	 string	`json:"phone"    validate:"len=10"`
+	Password string	`json:"password" validation:"required"`
+}

@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"errors"
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -18,19 +17,19 @@ import (
 )
 
 type userUseCase struct {
-	repo interfaces.IUserRepo
+	repo  interfaces.IUserRepo
 	token config.Token
 }
 
 func NewUserUseCase(userRepository interfaces.IUserRepo, token *config.Token) interfaceUseCase.IuserUseCase {
-	return &userUseCase{repo: userRepository, 
+	return &userUseCase{repo: userRepository,
 		token: *token,
 	}
 }
 
 //useCases
 
-func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) (responsemodel.SignupData ,error){
+func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) (responsemodel.SignupData, error) {
 
 	var resSignup responsemodel.SignupData
 
@@ -82,25 +81,25 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) (responsemo
 		return resSignup, errors.New("user is exist try again , with another phone number")
 	} else {
 		userData.Id = helper.GenerateUUID()
-			service.TwilioSetup()
+		service.TwilioSetup()
 		_, err := service.SendOtp(userData.Phone)
 		if err != nil {
 			resSignup.OTP = "error of otp creation"
 			return resSignup, errors.New("error at attempt for creating new OTP")
 		}
 
-		HashedPassword:=helper.HashPassword(userData.Password)
-		userData.Password=HashedPassword
+		HashedPassword := helper.HashPassword(userData.Password)
+		userData.Password = HashedPassword
 		u.repo.CreateUser(userData)
-		token, err:=service.TemperveryTokenStorePhone(u.token.TemperveryKey, userData.Phone)
-		if err!=nil{
-			resSignup.Token="error of create a token" 
+		token, err := service.TemperveryTokenForOtpVerification(u.token.TemperveryKey, userData.Phone)
+		if err != nil {
+			resSignup.Token = "error of create a token"
 			return resSignup, errors.New("creating token is error")
 		}
-		resSignup.Token=token
+		resSignup.Token = token
 	}
 
-	return resSignup , nil 
+	return resSignup, nil
 }
 
 func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification, token string) (responsemodel.OtpValidation, error) {
@@ -120,9 +119,9 @@ func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification, token
 		}
 		return otpResponse, nil
 	}
-	phone,err:=service.FetchPhoneFromToken(token, u.token.TemperveryKey)
-	if err!=nil{
-		otpResponse.Token="invalid token"
+	phone, err := service.FetchPhoneFromToken(token, u.token.TemperveryKey)
+	if err != nil {
+		otpResponse.Token = "invalid token"
 		return otpResponse, errors.New("error ar token extraction , cause by invalid token")
 	}
 
@@ -133,12 +132,71 @@ func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification, token
 		return otpResponse, errors.New("otp is not match with your number, try egain")
 	}
 
-	if err := u.repo.CheckUserByPhone(phone); err != nil {
+	if err := u.repo.ChangeUserStatusActive(phone); err != nil {
 		otpResponse.Phone = "no user exist with phone number , verify is phone number is it correct "
 		return otpResponse, errors.New("no user exist ")
 	}
 
-	fmt.Println("00000")
-	otpResponse.Result= "success"
+	userID, err := u.repo.FetchUserID(phone)
+	if err != nil {
+		otpResponse.Result = "error at db attempt to featch userID"
+		return otpResponse, errors.New("error cause by fetching user id")
+	}
+
+	token, err = service.GenerateToken(u.token.UserSecurityKey, userID)
+	if err != nil {
+		otpResponse.Result = "creating token not done succesfully"
+		return otpResponse, errors.New("token creation cause error")
+	}
+
+	otpResponse.Token = token
+	otpResponse.Result = "success"
 	return otpResponse, nil
+}
+
+func (u *userUseCase) UserLogin(loginCredential requestmodel.UserLogin) (responsemodel.UserLogin, error) {
+	var resUserLogin responsemodel.UserLogin
+	validate := validator.New(validator.WithRequiredStructEnabled())
+
+	err := validate.Struct(loginCredential)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				switch e.Field() {
+				case "phone":
+					resUserLogin.Phone = "phone number should be 10"
+				case "password":
+					resUserLogin.Password = "Password atleast 4 digit"
+				}
+			}
+		}
+		return resUserLogin, errors.New("login credential not obey")
+	}
+
+	password, err := u.repo.FetchPasswordUsingPhone(loginCredential.Phone)
+	if err != nil {
+		resUserLogin.Error = err.Error()
+		return resUserLogin, err
+	}
+
+	err = helper.CompairPassword(loginCredential.Password, password)
+	if err != nil {
+		resUserLogin.Error = err.Error()
+		return resUserLogin, err
+	}
+
+	userID, err := u.repo.FetchUserID(loginCredential.Phone)
+	if err != nil {
+		resUserLogin.Error = err.Error()
+		return resUserLogin, err
+	}
+
+	token, err := service.GenerateToken(u.token.UserSecurityKey, userID)
+	if err != nil {
+		resUserLogin.Error = err.Error()
+		return resUserLogin, err
+	}
+
+	resUserLogin.Token = token
+	return resUserLogin, nil
 }

@@ -9,7 +9,7 @@ import (
 
 
 
-func TemperveryTokenStorePhone(securityKey string, phone string) (string, error) {
+func TemperveryTokenForOtpVerification(securityKey string, phone string) (string, error) {
 	key := []byte(securityKey)
 	claims := jwt.MapClaims{
 		"Phone": phone,
@@ -35,13 +35,22 @@ func GenerateToken(securityKey string, id string) (string, error) {
 	return tokenString, err
 }
 
-func VerifyToken(token string) {
+func VerifyToken(token string, secretkey string) (string, error){
+	key:= []byte(secretkey)
+	parsedToken, err:=jwt.Parse(token , func(token *jwt.Token) (interface{}, error){
+		return key, nil
+	})
+	if err!=nil{
+		return "", errors.New("wrong token structure")
+	}
+	claims:= parsedToken.Claims.(jwt.MapClaims)
+	id:=claims["id"].(string)
 
+	return id, nil
 }
 
 func FetchPhoneFromToken(tokenString string, secretkey string) (string, error) {
 	secret := []byte(secretkey)
-	fmt.Println(tokenString,secret,"--------------------")
 	parsedToken, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return secret, nil
 	})

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 
@@ -21,7 +22,7 @@ func NewUserRepository(DB *gorm.DB) interfaces.IUserRepo {
 
 func (d *userRepository) CreateUser(userDetails *requestmodel.UserDetails) {
 	query := "INSERT INTO user_details (id, name, email, phone, password) VALUES($1, $2, $3, $4, $5)"
-	d.DB.Exec(query,userDetails.Id, userDetails.Name, userDetails.Email, userDetails.Phone, userDetails.Password)
+	d.DB.Exec(query, userDetails.Id, userDetails.Name, userDetails.Email, userDetails.Phone, userDetails.Password)
 }
 
 func (d *userRepository) IsUserExist(phone string) int {
@@ -36,15 +37,47 @@ func (d *userRepository) IsUserExist(phone string) int {
 
 }
 
-func (d *userRepository) CheckUserByPhone(phone string)error{
+func (d *userRepository) ChangeUserStatusActive(phone string) error {
+	fmt.Println(phone)
+	query := "UPDATE user_details SET status = 'active' WHERE phone = ?"
+	result := d.DB.Exec(query, phone)
+	// count:=result.RowsAffected
 
-	query:="UPDATE user_details SET status=$2 WHERE phone=$1"
-	result:=d.DB.Raw(query, "active", phone).Error
-
-	if result!=nil{
+	if result.Error != nil {
 		return errors.New("no user Exist , phone number is wrong")
-	}else{
+	} else {
 		return nil
 	}
+}
 
+func (d *userRepository) FetchUserID(phone string) (string, error) {
+	var userID string
+
+	query := "SELECT id FROM user_details WHERE phone=? AND status='active'"
+	data := d.DB.Raw(query, phone).Row()
+
+	if err := data.Scan(&userID); err != nil {
+		return "", errors.New("fetching user id cause error")
+	}
+	return userID, nil
+}
+
+func (d *userRepository) FetchPasswordUsingPhone(phone string) (string, error) {
+	var password string
+
+	query := "SELECT password FROM user_details WHERE phone=? AND status='active'"
+	row := d.DB.Raw(query, phone).Row()
+
+	if row == nil {
+		return "", errors.New("no rows returned from the query")
+	}
+
+	err := row.Scan(&password)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", errors.New("user does not exist")
+		}
+		return "", fmt.Errorf("error scanning row: %s", err)
+	}
+	return password, nil
 }

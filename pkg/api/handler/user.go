@@ -46,11 +46,25 @@ func (u *UserHandler) VerifyOTP(c *gin.Context) {
 	}
 
 	result, err := u.userUseCase.VerifyOtp(otpData, token)
-	if err !=nil {
+	if err != nil {
 		response := response.Responses(http.StatusUnauthorized, err.Error(), result, nil)
 		c.JSON(http.StatusUnauthorized, response)
 	} else {
 		response := response.Responses(http.StatusOK, "Succesfully verified", result, nil)
+		c.JSON(http.StatusOK, response)
+	}
+}
+
+func (u *UserHandler) UserLogin(c *gin.Context) {
+	var loginCredential requestmodel.UserLogin
+	c.BindJSON(&loginCredential)
+
+	result, err := u.userUseCase.UserLogin(loginCredential)
+	if err != nil {
+		response := response.Responses(http.StatusUnauthorized, "", result, nil)
+		c.JSON(http.StatusUnauthorized, response)
+	} else {
+		response := response.Responses(http.StatusOK, "Succesfully login", result, nil)
 		c.JSON(http.StatusOK, response)
 	}
 }

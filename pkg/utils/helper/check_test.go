@@ -1,16 +1,23 @@
 package helper
 
 import (
-	"fmt"
 	"testing"
-
-	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository"
-	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 )
 
+// type forTest struct{
+// 	collection interfaces.IUserRepo
+// }
+// var functions forTest
+
+// func Setup(repo interfaces.IUserRepo){
+// 	functions.collection=repo
+// }
+
 // func TestCheck(t *testing.T) {
-// 	result :=HashPassword("123")
-// 	t.Logf("%s", result)
+// 	result := HashPassword("9876")
+// 	t.Logf("%s --------------", result)
+// 	fmt.Println(result)
+// 	fmt.Println([]byte(result))
 // }
 
 // func Test_config(t *testing.T) {
@@ -28,7 +35,14 @@ import (
 
 // }
 
-func Test_dataload(){
-	repository.
-	CheckUserByPhone("9744703558")
+// func Test_dataload(t *testing.T){
+// 	err:=functions.collection.CheckUserByPhone("9744703558")
+// 	if err!=nil{
+// 		fmt.Println(err ,"something is wrong")
+// 	}
+// }
+
+func Test_CompairPassword(t *testing.T) {
+	err := CompairPassword("9876", "$2a$10$vs/ljK7YN.s..kq/.MJX8egzqG8aO5XFKZFq6wmIcQLJrMHgUTp9O")
+	t.Logf(err.Error())
 }
