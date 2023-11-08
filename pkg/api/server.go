@@ -13,11 +13,12 @@ type ServerHttp struct {
 	engin *gin.Engine
 }
 
-func NewServerHttp(user *handler.UserHandler) *ServerHttp {
+func NewServerHttp(user *handler.UserHandler, seller *handler.SellerHandler) *ServerHttp {
 	engin := gin.New()
 	engin.Use(gin.Logger())
 
 	routes.UserRoutes(engin.Group("/user"), user)
+	routes.SellerRoutes(engin.Group("/seller",), seller)
 
 	return &ServerHttp{engin: engin}
 }

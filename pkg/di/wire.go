@@ -22,7 +22,11 @@ func InitializeAPI(config config.Config) (*server.ServerHttp, error) {
 	userUseCase := usecase.NewUserUseCase(userRepository, &config.Token)
 	userHandler := handler.NewUserHandler(userUseCase)
 
-	serverHttp := server.NewServerHttp(userHandler)
+	sellerRepository := repository.NewSellerHandler(DB)
+	sellerUseCase := usecase.NewSellerUseCase(sellerRepository)
+	sellerHandler := handler.NewSellerHandler(sellerUseCase)
+
+	serverHttp := server.NewServerHttp(userHandler, sellerHandler)
 
 	return serverHttp, nil
 }
