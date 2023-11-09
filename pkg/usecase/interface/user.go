@@ -10,3 +10,4 @@ type IuserUseCase interface {
 	VerifyOtp(requestmodel.OtpVerification, string) (responsemodel.OtpValidation, error)
 	UserLogin( requestmodel.UserLogin) (responsemodel.UserLogin, error)
 }
+ 

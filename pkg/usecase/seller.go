@@ -48,3 +48,4 @@ func (r *sellerUseCase) SellerSignup(signData requestmodel.SellerSignup) (respon
 
 	return SellerSignupRes, nil
 }
+

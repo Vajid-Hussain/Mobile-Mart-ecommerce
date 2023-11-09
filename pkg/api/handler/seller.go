@@ -34,3 +34,7 @@ func (u *SellerHandler) SellerSignup(c *gin.Context) {
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
+                    
+
+
+
