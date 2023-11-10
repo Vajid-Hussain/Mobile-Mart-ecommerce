@@ -3,6 +3,7 @@ package di
 import (
 	server "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/api"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/api/handler"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/api/middlewire"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/db"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository"
@@ -17,6 +18,10 @@ func InitializeAPI(config config.Config) (*server.ServerHttp, error) {
 	}
 
 	service.OtpService(config.Otp)
+
+	jwtRepository := repository.NewJwtTokenRepository(DB)
+	jwtUseCase := usecase.NewJwtTokenUseCase(jwtRepository)
+	middlewire.NewJwtTokenMiddleWire(jwtUseCase)
 
 	userRepository := repository.NewUserRepository(DB)
 	userUseCase := usecase.NewUserUseCase(userRepository, &config.Token)

@@ -12,7 +12,7 @@ air:
 	air
 
 build:
-	${GO} build -o ./cmd/api/tmp/api ./cmd/api/main.go 
+	${GO} build -o ./cmd/api/tmp/api.exe ./cmd/api/main.go 
 
 buildrun:
 	./cmd/api/build/mobileMart

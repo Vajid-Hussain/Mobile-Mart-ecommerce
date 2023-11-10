@@ -1,9 +1,5 @@
 package helper
 
-import (
-	"testing"
-)
-
 // type forTest struct{
 // 	collection interfaces.IUserRepo
 // }
@@ -26,13 +22,12 @@ import (
 // 	fmt.Println("---------",config)
 // }
 
-// func Test_token(t *testing.T){
-// 	phone,err:=service.FetchPhoneFromToken( "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJQaG9uZSI6Ijk3NDQ3MDM1NTgifQ.VvEB7YffTW_8taP6cpZBnPDgTtMfz6ZSnXoFw4jq6bI", "tempervary12345jlkh")
-// 	if err!=nil{
-// 		fmt.Println(err)
+// func Test_VerifyToken(t *testing.T) {
+// 	phone, err := service.FetchPhoneFromToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTk2MTc2NTV9.KRGCOgJ_wxLWgUdiRLqOIldwTQ0Ew5BCfd8YnlHKnjs", "21345tytrgfdsw2345")
+// 	if err != nil {
+// 		fmt.Println(err, "---")
 // 	}
-// 	fmt.Println(phone)
-
+// 	fmt.Println(phone, "===")
 // }
 
 // func Test_dataload(t *testing.T){
@@ -42,7 +37,13 @@ import (
 // 	}
 // }
 
-func Test_CompairPassword(t *testing.T) {
-	err := CompairPassword("9876", "$2a$10$vs/ljK7YN.s..kq/.MJX8egzqG8aO5XFKZFq6wmIcQLJrMHgUTp9O")
-	t.Logf(err.Error())
-}
+// func Test_CompairPassword(t *testing.T) {
+// 	err := CompairPassword("9876", "$2a$10$vs/ljK7YN.s..kq/.MJX8egzqG8aO5XFKZFq6wmIcQLJrMHgUTp9O")
+// 	t.Logf(err.Error())
+// }
+
+// func Test_Refreshtoken(t *testing.T) {
+// 	token, err := service.GenerateRefreshToken("21345tytrgfdsw2345")
+// 	fmt.Println(token)
+// 	t.Logf("%s,---%s", token, err)
+// }

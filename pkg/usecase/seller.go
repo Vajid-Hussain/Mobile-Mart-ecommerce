@@ -2,12 +2,13 @@ package usecase
 
 import (
 	"errors"
-	"fmt"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
+
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -15,37 +16,104 @@ type sellerUseCase struct {
 	repo interfaces.ISellerRepo
 }
 
-func NewSellerUseCase(sellerRepo interfaces.ISellerRepo) interfaceUseCase.IVenderUseCase {
+func NewSellerUseCase(sellerRepo interfaces.ISellerRepo) interfaceUseCase.ISellerUseCase {
 	return &sellerUseCase{repo: sellerRepo}
 }
 
-func (r *sellerUseCase) SellerSignup(signData requestmodel.SellerSignup) (responsemodel.SellerSignupRes, error) {
+func (r *sellerUseCase) SellerSignup(sellerSignupData *requestmodel.SellerSignup) (*responsemodel.SellerSignupRes, error) {
 	var SellerSignupRes responsemodel.SellerSignupRes
 
 	validate := validator.New(validator.WithRequiredStructEnabled())
-	err := validate.Struct(signData)
+	err := validate.Struct(sellerSignupData)
 	if err != nil {
 		if ve, ok := err.(validator.ValidationErrors); ok {
 			for _, e := range ve {
 				switch e.Field() {
 				case "Name":
 					SellerSignupRes.Name = "don't empty fill with a name"
-				case "Email":
-					SellerSignupRes.Email = "email format is wrong"
 				case "Password":
 					SellerSignupRes.Password = "Password atleast 4 digit"
-				case "ConfirmPassword":
-					SellerSignupRes.ConfirmPassword = "must match with password"
 				case "GST_NO":
 					SellerSignupRes.GST_NO = "Must have fifteen digit number"
+				case "Description":
+					SellerSignupRes.Description = "Must discribe about your company"
+				}
+
+			}
+			if sellerSignupData.ConfirmPassword != sellerSignupData.Password {
+
+				SellerSignupRes.ConfirmPassword = "ConfirmPassword is not correct , cross check"
+				return &SellerSignupRes, errors.New("login credential not obey")
+			}
+		}
+
+		return &SellerSignupRes, errors.New("login credential not obey")
+	}
+	if sellerSignupData.ConfirmPassword != sellerSignupData.Password {
+		SellerSignupRes.ConfirmPassword = "ConfirmPassword is not correct , cross check"
+		return &SellerSignupRes, errors.New("login credential not obey")
+	}
+
+	count, err := r.repo.IsSellerExist(sellerSignupData.Email)
+	if err != nil {
+		return &SellerSignupRes, err
+	} else {
+		if count >= 1 {
+			return &SellerSignupRes, errors.New("seller exist with same email id, ")
+		}
+	}
+
+	SellerUUID := helper.GenerateUUID()
+	sellerSignupData.ID = SellerUUID
+
+	hashPassword := helper.HashPassword(sellerSignupData.Password)
+	sellerSignupData.Password = hashPassword
+
+	err = r.repo.CreateSeller(sellerSignupData)
+	if err != nil {
+		return &SellerSignupRes, err
+	}
+
+	SellerSignupRes.Result = "Registeration saved ! Your request is now in processing. You will receive a confirmation once you have been admitted and granted access to start selling."
+	return &SellerSignupRes, nil
+}
+
+func (r *sellerUseCase) SellerLogin(loginData *requestmodel.SellerLogin) (*responsemodel.SellerLoginRes, error) {
+	var loginResponse responsemodel.SellerLoginRes
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(loginData)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				switch e.Field() {
+				case "Email":
+					loginResponse.Email = "email id is wrong "
+				case "Password":
+					loginResponse.Password = "password have four or more digit"
 				}
 			}
 		}
-		fmt.Println(SellerSignupRes)
-		return SellerSignupRes, errors.New("login credential not obey")
+		return &loginResponse, errors.New("don't fullfill the login requirement ")
 	}
 
+	hashedPassword, status, err := r.repo.GetEmailAndStatus(loginData.Email)
+	if err != nil {
+		return &loginResponse, err
+	}
 
-	return SellerSignupRes, nil
+	if status == "block" {
+		return &loginResponse, errors.New("vender blocked by admin")
+	}
+
+	// if status == "pending" {
+	// 	return &loginResponse, errors.New("your request under process pls whait ")
+	// }
+
+	err = helper.CompairPassword(hashedPassword, loginData.Password)
+	if err != nil {
+		return &loginResponse, err
+	}
+
+	return &loginResponse, nil
 }
-

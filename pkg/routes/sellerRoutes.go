@@ -5,9 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 func SellerRoutes(engin *gin.RouterGroup,
-	seller *handler.SellerHandler){
+	seller *handler.SellerHandler) {
 
 	engin.POST("/signup", seller.SellerSignup)
+	engin.POST("/login", seller.SellerLogin)
 }

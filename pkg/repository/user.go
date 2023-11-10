@@ -69,13 +69,13 @@ func (d *userRepository) FetchPasswordUsingPhone(phone string) (string, error) {
 	row := d.DB.Raw(query, phone).Row()
 
 	if row == nil {
-		return "", errors.New("no rows returned from the query")
+		return "", errors.New("no user exist or you are blocked by admin")
 	}
 
 	err := row.Scan(&password)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return "", errors.New("user does not exist")
+			return "", errors.New("user does not exist or user get blocked")
 		}
 		return "", fmt.Errorf("error scanning row: %s", err)
 	}

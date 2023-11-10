@@ -3,11 +3,10 @@ package service
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/golang-jwt/jwt"
 )
-
-
 
 func TemperveryTokenForOtpVerification(securityKey string, phone string) (string, error) {
 	key := []byte(securityKey)
@@ -22,31 +21,60 @@ func TemperveryTokenForOtpVerification(securityKey string, phone string) (string
 	return tokenString, err
 }
 
-func GenerateToken(securityKey string, id string) (string, error) {
-	Kye := []byte(securityKey)
+func GenerateAcessToken(securityKey string, id string, status string) (string, error) {
+	key := []byte(securityKey)
 	claims := jwt.MapClaims{
-		"id": id,
+		"id":     id,
+		"status": status,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(Kye)
+	tokenString, err := token.SignedString(key)
 	if err != nil {
 		fmt.Println(err, "error at create token ")
 	}
 	return tokenString, err
 }
 
-func VerifyToken(token string, secretkey string) (string, error){
-	key:= []byte(secretkey)
-	parsedToken, err:=jwt.Parse(token , func(token *jwt.Token) (interface{}, error){
+func GenerateRefreshToken(securityKey string) (string, error) {
+	key := []byte(securityKey)
+	clamis := jwt.MapClaims{
+		"exp": time.Now().Unix() + 24*7,
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, clamis)
+	signedToken, err := token.SignedString(key)
+	if err != nil {
+		return "", errors.New("making refresh token lead to error")
+	}
+
+	return signedToken, nil
+}
+
+func VerifyAcessToken(token string, secretkey string) (string, string, error) {
+	key := []byte(secretkey)
+	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		return key, nil
 	})
-	if err!=nil{
-		return "", errors.New("wrong token structure")
+	if err != nil {
+		return "", "", errors.New(" token tamperd or expired")
 	}
-	claims:= parsedToken.Claims.(jwt.MapClaims)
-	id:=claims["id"].(string)
+	claims := parsedToken.Claims.(jwt.MapClaims)
+	id := claims["id"].(string)
+	status := claims["status"].(string)
 
-	return id, nil
+	return id, status, nil
+}
+
+func VerifyRefreshToken(token string, securityKey string) error {
+	key := []byte(securityKey)
+
+	_, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		return key, nil
+	})
+	if err != nil {
+		return errors.New(" token tamperd or expired")
+	}
+
+	return nil
 }
 
 func FetchPhoneFromToken(tokenString string, secretkey string) (string, error) {
