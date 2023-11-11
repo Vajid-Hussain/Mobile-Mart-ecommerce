@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -42,7 +41,7 @@ func (u *UserHandler) VerifyOTP(c *gin.Context) {
 	token := c.Request.Header.Get("Authorization")
 
 	if err := c.BindJSON(&otpData); err != nil {
-		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	result, err := u.userUseCase.VerifyOtp(otpData, token)
@@ -57,7 +56,9 @@ func (u *UserHandler) VerifyOTP(c *gin.Context) {
 
 func (u *UserHandler) UserLogin(c *gin.Context) {
 	var loginCredential requestmodel.UserLogin
-	c.BindJSON(&loginCredential)
+	if err := c.BindJSON(&loginCredential); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
 
 	result, err := u.userUseCase.UserLogin(loginCredential)
 	if err != nil {

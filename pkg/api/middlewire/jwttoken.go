@@ -25,36 +25,32 @@ func TokenVerify(c *gin.Context) {
 	accessToken := c.Request.Header.Get("accesstoken")
 	refreshToken := c.Request.Header.Get("refreshtoken")
 
-	id, status, err := service.VerifyAcessToken(accessToken, token.securityKeys.SellerSecurityKey)
+	id, _, err := service.VerifyAcessToken(accessToken, token.securityKeys.SellerSecurityKey)
 
 	if err != nil {
 		err := service.VerifyRefreshToken(refreshToken, token.securityKeys.SellerSecurityKey)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"err": err})
-			fmt.Println(status, "--------1----", err)
-
+			c.JSON(http.StatusUnauthorized, gin.H{"err": err.Error()})
+			c.Abort()
 		} else {
-			status, err := token.JwtTokenUseCase.ValidateJwtToken(id)
+			status, err := token.JwtTokenUseCase.GetDataForCreteAccessToken(id)
 			if err != nil {
 				c.JSON(http.StatusUnauthorized, err)
-				fmt.Println(status, "---------2---", err)
-
+				c.Abort()
 			} else {
 				token, err := service.GenerateAcessToken(token.securityKeys.SellerSecurityKey, id, status)
 				if err != nil {
 					c.JSON(http.StatusUnauthorized, err)
-					fmt.Println(status, "---------3---", err)
-
+					c.Abort()
 				} else {
-					c.JSON(http.StatusOK, token)
-					fmt.Println(status, "----------4--", token)
-
+					c.JSON(http.StatusOK, gin.H{"token": token})
+					c.Next()
 				}
 			}
 		}
 	} else {
-		c.JSON(http.StatusOK, "all perfect you access token is uptodate")
-		fmt.Println("refresh id sonde")
+		c.JSON(http.StatusOK, "all perfect, your access token is uptodate")
+		fmt.Println("access token is upto date")
 	}
-	fmt.Println(status, "chumma ------------")
+	c.Next()
 }

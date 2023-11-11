@@ -1,5 +1,5 @@
 package interfaceUseCase
 
 type IJwtTokenUseCase interface {
-	ValidateJwtToken(string) (string, error)
+	GetDataForCreteAccessToken(string) (string, error)
 }

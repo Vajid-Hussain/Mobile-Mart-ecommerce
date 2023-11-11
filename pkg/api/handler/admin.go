@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -23,13 +22,12 @@ func (u *AdminHandler) AdminLogin(c *gin.Context) {
 
 	err := c.BindJSON(&loginCredential)
 	if err != nil {
-		finalReslt := response.Responses(http.StatusUnauthorized, "json is wrong can't bind", nil, "Double chuck json")
+		finalReslt := response.Responses(http.StatusBadRequest, "json is wrong can't bind", nil, err)
 		c.JSON(http.StatusUnauthorized, finalReslt)
 		return
 	}
 
 	result, err := u.AdminUseCase.AdminLogin(&loginCredential)
-	fmt.Println(result, "=========")
 	if err != nil {
 		finalReslt := response.Responses(http.StatusUnauthorized, "", result, err)
 		c.JSON(http.StatusUnauthorized, finalReslt)

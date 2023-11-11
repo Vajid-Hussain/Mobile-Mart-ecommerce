@@ -22,7 +22,7 @@ func (d *jwtTokenRepository) GetUserStatus(id string) (string, error) {
 	err := d.DB.Raw(query, id).Row().Scan(&status)
 	if err != nil {
 		fmt.Println(err, "99999999")
-		return "", errors.New("can't fetch data from database for crating jwt token")
+		return "", errors.New("can't fetch data from database for crating access token")
 	}
 	return status, nil
 }

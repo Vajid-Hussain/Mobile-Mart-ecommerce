@@ -15,14 +15,14 @@ func NewJwtTokenUseCase(repo interfaces.IJwtTokenRepository) interfaceUseCase.IJ
 	return &JwtTokenUseCase{repo: repo}
 }
 
-func (r *JwtTokenUseCase) ValidateJwtToken(id string) (string, error) {
+func (r *JwtTokenUseCase) GetDataForCreteAccessToken(id string) (string, error) {
 	status, err := r.repo.GetUserStatus(id)
 	if err != nil {
 		return "", err
 	}
 
 	if status != "active" {
-		return "", errors.New("user is not active user")
+		return "", errors.New("not a active user")
 	}
 
 	return status, nil

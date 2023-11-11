@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -37,7 +38,7 @@ func (u *SellerHandler) SellerSignup(c *gin.Context) {
 
 func (u *SellerHandler) SellerLogin(c *gin.Context) {
 	var loginData requestmodel.SellerLogin
-
+	fmt.Println("seller login handler ***************s")
 	if err := c.BindJSON(&loginData); err != nil {
 		c.JSON(http.StatusBadRequest, "can't bind json with struct")
 	}
