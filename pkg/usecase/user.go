@@ -143,13 +143,20 @@ func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification, token
 		return otpResponse, errors.New("error cause by fetching user id")
 	}
 
-	token, err = service.GenerateAcessToken(u.token.UserSecurityKey, userID, "active")
+	accessToken, err := service.GenerateAcessToken(u.token.UserSecurityKey, userID)
 	if err != nil {
 		otpResponse.Result = "creating token not done succesfully"
 		return otpResponse, errors.New("token creation cause error")
 	}
 
-	otpResponse.Token = token
+	refreshToken, err := service.GenerateRefreshToken(u.token.UserSecurityKey)
+	if err != nil {
+		otpResponse.Result = "creating token not done succesfully"
+		return otpResponse, errors.New("token creation cause error")
+	}
+
+	otpResponse.AccessToken = accessToken
+	otpResponse.RefreshToken = refreshToken
 	otpResponse.Result = "success"
 	return otpResponse, nil
 }
@@ -191,12 +198,18 @@ func (u *userUseCase) UserLogin(loginCredential requestmodel.UserLogin) (respons
 		return resUserLogin, err
 	}
 
-	token, err := service.GenerateAcessToken(u.token.UserSecurityKey, userID, "active")
+	accessToken, err := service.GenerateAcessToken(u.token.UserSecurityKey, userID)
 	if err != nil {
 		resUserLogin.Error = err.Error()
 		return resUserLogin, err
 	}
 
-	resUserLogin.Token = token
+	refreshToken, err := service.GenerateRefreshToken(u.token.UserSecurityKey)
+	if err != nil {
+		resUserLogin.Error = err.Error()
+	}
+
+	resUserLogin.AccessToken = accessToken
+	resUserLogin.RefreshToken = refreshToken
 	return resUserLogin, nil
 }

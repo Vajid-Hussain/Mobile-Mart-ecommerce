@@ -1,6 +1,5 @@
 package responsemodel
 
-
 type SignupData struct {
 	Name            string `json:"name,omitempty"`
 	Email           string `json:"email,omitempty"`
@@ -13,19 +12,22 @@ type SignupData struct {
 }
 
 type OtpValidation struct {
-	Phone string `json:"phone,omitempty"`
-	Otp   string `json:"otp,omitempty"`
-	Result string`json:"result,omitempty"`
-	Token string `json:"token,omitempty"`
+	Phone        string `json:"phone,omitempty"`
+	Otp          string `json:"otp,omitempty"`
+	Result       string `json:"result,omitempty"`
+	Token        string `json:"token,omitempty"`
+	AccessToken  string `json:"accesstoken,omitempty"`
+	RefreshToken string `json:"refreshtoken,omitempty"`
 }
 
-type UserLogin struct{
-	Phone 		string	`json:"phone,omitempty"`
-	Password 	string	`json:"password,omitempty"`
-	Token		string	`json:"token,omitempty"`
-	Error		string	`json:"error,omitempty"`
+type UserLogin struct {
+	Phone        string `json:"phone,omitempty"`
+	Password     string `json:"password,omitempty"`
+	AccessToken  string `json:"accesstoken,omitempty"`
+	RefreshToken string `json:"refreshtoken,omitempty"`
+	Error        string `json:"error,omitempty"`
 }
 
-type TokenVerificationMiddlewire struct{
-	Error		string	`json:"error"`
+type TokenVerificationMiddlewire struct {
+	Error string `json:"error"`
 }

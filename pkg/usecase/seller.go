@@ -110,16 +110,16 @@ func (r *sellerUseCase) SellerLogin(loginData *requestmodel.SellerLogin) (*respo
 		return &loginResponse, errors.New("vender blocked by admin")
 	}
 
-	// if status == "pending" {
-	// 	return &loginResponse, errors.New("your request under process pls whait ")
-	// }
+	if status == "pending" {
+		return &loginResponse, errors.New("your request under process pls whait ")
+	}
 
 	err = helper.CompairPassword(hashedPassword, loginData.Password)
 	if err != nil {
 		return &loginResponse, err
 	}
 
-	accessToken, err := service.GenerateAcessToken(r.token.SellerSecurityKey, sellerID, status)
+	accessToken, err := service.GenerateAcessToken(r.token.SellerSecurityKey, sellerID)
 	if err != nil {
 		return &loginResponse, err
 	}

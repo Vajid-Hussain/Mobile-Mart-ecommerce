@@ -9,8 +9,9 @@ import (
 func SellerRoutes(engin *gin.RouterGroup,
 	seller *handler.SellerHandler) {
 
-	engin.Use(middlewire.TokenVerify)
-
 	engin.POST("/signup", seller.SellerSignup)
 	engin.POST("/login", seller.SellerLogin)
+
+	engin.Use(middlewire.TokenVerifySeller)
+
 }

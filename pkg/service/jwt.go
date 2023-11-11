@@ -21,12 +21,11 @@ func TemperveryTokenForOtpVerification(securityKey string, phone string) (string
 	return tokenString, err
 }
 
-func GenerateAcessToken(securityKey string, id string, status string) (string, error) {
+func GenerateAcessToken(securityKey string, id string) (string, error) {
 	key := []byte(securityKey)
 	claims := jwt.MapClaims{
-		"exp":    time.Now().Unix() + 300,
-		"id":     id,
-		"status": status,
+		"exp": time.Now().Unix() + 300,
+		"id":  id,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(key)
@@ -50,19 +49,18 @@ func GenerateRefreshToken(securityKey string) (string, error) {
 	return signedToken, nil
 }
 
-func VerifyAcessToken(token string, secretkey string) (string, string, error) {
+func VerifyAcessToken(token string, secretkey string) (string, error) {
 	key := []byte(secretkey)
 	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		return key, nil
 	})
 	claims := parsedToken.Claims.(jwt.MapClaims)
 	id := claims["id"].(string)
-	status := claims["status"].(string)
 	if err != nil {
-		return id, "", errors.New(" token tamperd or expired")
+		return id, errors.New(" token tamperd or expired")
 	}
 
-	return id, status, nil
+	return id, nil
 }
 
 func VerifyRefreshToken(token string, securityKey string) error {

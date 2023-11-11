@@ -16,6 +16,19 @@ func NewJwtTokenUseCase(repo interfaces.IJwtTokenRepository) interfaceUseCase.IJ
 }
 
 func (r *JwtTokenUseCase) GetDataForCreteAccessToken(id string) (string, error) {
+	status, err := r.repo.GetSellerStatus(id)
+	if err != nil {
+		return "", err
+	}
+
+	if status != "active" {
+		return "", errors.New("not a active user")
+	}
+
+	return status, nil
+}
+
+func (r *JwtTokenUseCase) GetStatusOfUser(id string) (string, error) {
 	status, err := r.repo.GetUserStatus(id)
 	if err != nil {
 		return "", err
