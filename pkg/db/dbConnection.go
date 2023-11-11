@@ -5,6 +5,7 @@ import (
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/domain"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -16,12 +17,35 @@ func ConnectDatabase(config config.DataBase) (*gorm.DB, error) {
 		return DB, nil
 	}
 
-	if err:=DB.AutoMigrate(&domain.UserDetails{}); err!=nil{
+	// Table Creation
+	if err := DB.AutoMigrate(&domain.UserDetails{}); err != nil {
 		return DB, err
 	}
-	if err:=DB.AutoMigrate(&domain.Seller{}); err!=nil{
+	if err := DB.AutoMigrate(&domain.Seller{}); err != nil {
+		return DB, err
+	}
+	if err := DB.AutoMigrate(&domain.Admin{}); err != nil {
 		return DB, err
 	}
 
+	CheckAndCreateAdmin(DB)
+
 	return DB, nil
+}
+
+func CheckAndCreateAdmin(DB *gorm.DB) {
+	var count int
+	var (
+		Name     = "mobileMart"
+		Email    = "mobilemart@gmail.com"
+		Password = "buyMobiles"
+	)
+	HashedPassword := helper.HashPassword(Password)
+
+	query := "SELECT COUNT(*) FROM admins"
+	DB.Raw(query).Row().Scan(&count)
+	if count <= 0 {
+		query = "INSERT INTO admins(name, email, password) VALUES(?, ?, ?)"
+		DB.Exec(query, Name, Email, HashedPassword).Row().Err()
+	}
 }
