@@ -3,9 +3,11 @@ package usecase
 import (
 	"errors"
 
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
@@ -13,11 +15,13 @@ import (
 )
 
 type sellerUseCase struct {
-	repo interfaces.ISellerRepo
+	repo  interfaces.ISellerRepo
+	token config.Token
 }
 
-func NewSellerUseCase(sellerRepo interfaces.ISellerRepo) interfaceUseCase.ISellerUseCase {
-	return &sellerUseCase{repo: sellerRepo}
+func NewSellerUseCase(sellerRepo interfaces.ISellerRepo, token *config.Token) interfaceUseCase.ISellerUseCase {
+	return &sellerUseCase{repo: sellerRepo,
+		token: *token}
 }
 
 func (r *sellerUseCase) SellerSignup(sellerSignupData *requestmodel.SellerSignup) (*responsemodel.SellerSignupRes, error) {
@@ -97,7 +101,7 @@ func (r *sellerUseCase) SellerLogin(loginData *requestmodel.SellerLogin) (*respo
 		return &loginResponse, errors.New("don't fullfill the login requirement ")
 	}
 
-	hashedPassword, status, err := r.repo.GetEmailAndStatus(loginData.Email)
+	hashedPassword, sellerID, status, err := r.repo.GetHashPassAndStatus(loginData.Email)
 	if err != nil {
 		return &loginResponse, err
 	}
@@ -114,6 +118,19 @@ func (r *sellerUseCase) SellerLogin(loginData *requestmodel.SellerLogin) (*respo
 	if err != nil {
 		return &loginResponse, err
 	}
+
+	accessToken, err := service.GenerateAcessToken(r.token.SellerSecurityKey, sellerID, status)
+	if err != nil {
+		return &loginResponse, err
+	}
+
+	refreshToken, err := service.GenerateRefreshToken(r.token.SellerSecurityKey)
+	if err != nil {
+		return &loginResponse, err
+	}
+
+	loginResponse.AccessToken = accessToken
+	loginResponse.RefreshToken = refreshToken
 
 	return &loginResponse, nil
 }

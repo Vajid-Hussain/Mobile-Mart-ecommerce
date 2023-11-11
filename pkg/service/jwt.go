@@ -24,6 +24,7 @@ func TemperveryTokenForOtpVerification(securityKey string, phone string) (string
 func GenerateAcessToken(securityKey string, id string, status string) (string, error) {
 	key := []byte(securityKey)
 	claims := jwt.MapClaims{
+		"exp":    time.Now().Unix() + 300,
 		"id":     id,
 		"status": status,
 	}
@@ -38,7 +39,7 @@ func GenerateAcessToken(securityKey string, id string, status string) (string, e
 func GenerateRefreshToken(securityKey string) (string, error) {
 	key := []byte(securityKey)
 	clamis := jwt.MapClaims{
-		"exp": time.Now().Unix() + 24*7,
+		"exp": time.Now().Unix() + 3600000,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, clamis)
 	signedToken, err := token.SignedString(key)

@@ -17,7 +17,7 @@ func NewJwtTokenRepository(db *gorm.DB) interfaces.IJwtTokenRepository {
 
 func (d *jwtTokenRepository) GetUserStatus(id string) (string, error) {
 	var status string
-	query := "SELECT status FROM user_details WHERE id=?"
+	query := "SELECT status FROM seller WHERE id=?"
 	err := d.DB.Raw(query, id).Row().Scan(&status)
 	if err != nil {
 		return "", errors.New("can't fetch data from database for crating jwt token")

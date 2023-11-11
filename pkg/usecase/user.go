@@ -143,7 +143,7 @@ func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification, token
 		return otpResponse, errors.New("error cause by fetching user id")
 	}
 
-	token, err = service.GenerateAcessToken(u.token.UserSecurityKey, userID)
+	token, err = service.GenerateAcessToken(u.token.UserSecurityKey, userID, "active")
 	if err != nil {
 		otpResponse.Result = "creating token not done succesfully"
 		return otpResponse, errors.New("token creation cause error")
@@ -191,7 +191,7 @@ func (u *userUseCase) UserLogin(loginCredential requestmodel.UserLogin) (respons
 		return resUserLogin, err
 	}
 
-	token, err := service.GenerateAcessToken(u.token.UserSecurityKey, userID)
+	token, err := service.GenerateAcessToken(u.token.UserSecurityKey, userID, "active")
 	if err != nil {
 		resUserLogin.Error = err.Error()
 		return resUserLogin, err

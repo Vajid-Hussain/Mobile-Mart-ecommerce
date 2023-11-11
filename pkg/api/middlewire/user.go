@@ -20,10 +20,10 @@ func UserTokenVerify(c *gin.Context) {
 		fmt.Println("NO environmental variable available at this name")
 	}
 
-	_, err := service.VerifyToken(token, securityKet)
+	_, _, err := service.VerifyAcessToken(token, securityKet)
 	if err != nil {
 		responses.Error = err.Error()
-		finalResponse:=response.Responses(http.StatusUnauthorized, "pls login", responses, nil)
+		finalResponse := response.Responses(http.StatusUnauthorized, "pls login", responses, nil)
 		c.JSON(http.StatusUnauthorized, finalResponse)
 	}
 	c.Next()

@@ -11,8 +11,10 @@ type SellerSignupRes struct {
 	Result          string `json:"result,omitempty"`
 }
 
-type SellerLoginRes struct{
-	Email           string `json:"email,omitempty"`
-	Password        string `json:"password,omitempty"`
-	Result          string `json:"result,omitempty"`
+type SellerLoginRes struct {
+	Email        string `json:"email,omitempty"`
+	Password     string `json:"password,omitempty"`
+	Result       string `json:"result,omitempty"`
+	AccessToken  string `json:"accesstoken,omitempty"`
+	RefreshToken string `json:"refreshtoken,omitempty"`
 }

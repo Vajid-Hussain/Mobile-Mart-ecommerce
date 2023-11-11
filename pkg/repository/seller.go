@@ -39,14 +39,14 @@ func (d *sellerRepository) CreateSeller(SellerData *requestmodel.SellerSignup) e
 	return nil
 }
 
-func (d *sellerRepository) GetEmailAndStatus(email string) (string, string, error) {
-	var password, status string
-	query := "SELECT password, status FROM sellers WHERE email=? AND status!='delete'"
-	err := d.DB.Raw(query, email).Row().Scan(&password, &status)
+func (d *sellerRepository) GetHashPassAndStatus(email string) (string, string, string, error) {
+	var password, status, sellerID string
+	query := "SELECT password, id, status FROM sellers WHERE email=? AND status!='delete'"
+	err := d.DB.Raw(query, email).Row().Scan(&password, &sellerID, &status)
 	if err != nil {
-		return "", "", errors.New("feching password and status, can't make action in database")
+		return "", "", "", errors.New("feching password and status, can't make action in database")
 	}
-	return password, status, nil
+	return password, sellerID, status, nil
 }
 
 func (d *sellerRepository) GetPasswordByMail(email string) string {

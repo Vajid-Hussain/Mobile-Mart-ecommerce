@@ -21,14 +21,14 @@ func InitializeAPI(config config.Config) (*server.ServerHttp, error) {
 
 	jwtRepository := repository.NewJwtTokenRepository(DB)
 	jwtUseCase := usecase.NewJwtTokenUseCase(jwtRepository)
-	middlewire.NewJwtTokenMiddleWire(jwtUseCase)
+	middlewire.NewJwtTokenMiddleWire(jwtUseCase, config.Token)
 
 	userRepository := repository.NewUserRepository(DB)
 	userUseCase := usecase.NewUserUseCase(userRepository, &config.Token)
 	userHandler := handler.NewUserHandler(userUseCase)
 
 	sellerRepository := repository.NewSellerHandler(DB)
-	sellerUseCase := usecase.NewSellerUseCase(sellerRepository)
+	sellerUseCase := usecase.NewSellerUseCase(sellerRepository, &config.Token)
 	sellerHandler := handler.NewSellerHandler(sellerUseCase)
 
 	serverHttp := server.NewServerHttp(userHandler, sellerHandler)

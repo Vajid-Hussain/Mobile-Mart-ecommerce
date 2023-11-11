@@ -14,15 +14,15 @@ type DataBase struct {
 
 type Token struct {
 	AdminSecurityKey  string `mapstructure:"ADMIN_TOKENKEY"`
-	VenderSecurityKey string `mapstructure:"VENDER_TOKENKEY"`
+	SellerSecurityKey string `mapstructure:"SELLER_TOKENKEY"`
 	UserSecurityKey   string `mapstructure:"USER_TOKENKEY"`
-	TemperveryKey	  string `mapstructure:"TEMPERVERY_TOKENKEY"`
+	TemperveryKey     string `mapstructure:"TEMPERVERY_TOKENKEY"`
 }
 
-type OTP struct{
-	AccountSid	string	`mapstructure:"Account_SID"`
-	AuthToken	string	`mapstructure:"Auth_Token"`
-	ServiceSid	string	`mapstructure:"Service_SID"`
+type OTP struct {
+	AccountSid string `mapstructure:"Account_SID"`
+	AuthToken  string `mapstructure:"Auth_Token"`
+	ServiceSid string `mapstructure:"Service_SID"`
 }
 
 type Config struct {
@@ -33,9 +33,9 @@ type Config struct {
 
 func LoadConfig() (*Config, error) {
 
-	var db 	  DataBase
+	var db DataBase
 	var token Token
-	var otp   OTP
+	var otp OTP
 
 	viper.AddConfigPath("./")
 	viper.SetConfigFile(".env")
