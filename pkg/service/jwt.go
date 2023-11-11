@@ -39,7 +39,7 @@ func GenerateAcessToken(securityKey string, id string, status string) (string, e
 func GenerateRefreshToken(securityKey string) (string, error) {
 	key := []byte(securityKey)
 	clamis := jwt.MapClaims{
-		"exp": time.Now().Unix() + 3600000,
+		"exp": time.Now().Unix() + 36000,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, clamis)
 	signedToken, err := token.SignedString(key)
@@ -55,12 +55,12 @@ func VerifyAcessToken(token string, secretkey string) (string, string, error) {
 	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		return key, nil
 	})
-	if err != nil {
-		return "", "", errors.New(" token tamperd or expired")
-	}
 	claims := parsedToken.Claims.(jwt.MapClaims)
 	id := claims["id"].(string)
 	status := claims["status"].(string)
+	if err != nil {
+		return id, "", errors.New(" token tamperd or expired")
+	}
 
 	return id, status, nil
 }
