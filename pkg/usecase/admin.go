@@ -3,6 +3,7 @@ package usecase
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -62,4 +63,42 @@ func (r *adminUsecase) AdminLogin(adminData *requestmodel.AdminLoginData) (*resp
 
 	adminLoginRes.Token = token
 	return &adminLoginRes, nil
+}
+
+func (r *adminUsecase) GetAllUsers(page string, limit string) (*[]responsemodel.UserDetails, *int, error) {
+	ch := make(chan int)
+
+	go r.repo.UserCount(ch)
+	count := <-ch
+
+	pageNO, err := strconv.Atoi(page)
+	if err != nil {
+		return nil, nil, errors.New("attempt to convert string to int , page")
+	}
+
+	limits, err := strconv.Atoi(limit)
+	if err != nil {
+		return nil, nil, errors.New("attempt to convert string to int , page limit")
+	}
+
+	if pageNO < 1 {
+		return nil, nil, errors.New("page must start from one")
+	}
+
+	offSet := (pageNO * limits) - limits
+
+	userDetails, err := r.repo.AllUsers(offSet, limits)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return userDetails, &count, nil
+}
+
+func (r *adminUsecase) BlcokUser(id string) error {
+	err := r.repo.BlockUser(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

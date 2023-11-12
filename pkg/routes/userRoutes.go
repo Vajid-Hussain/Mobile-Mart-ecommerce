@@ -5,11 +5,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UserRoutes(engin *gin.RouterGroup,
-	user *handler.UserHandler){
+func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler) {
 
-	engin.POST("/signup",user.UserSignup)
-	engin.POST("/verifyOTP",user.VerifyOTP)
-	engin.POST("/login",user.UserLogin)
+	engin.POST("/signup", user.UserSignup)
+	engin.POST("/verifyOTP", user.VerifyOTP)
+	engin.POST("/login", user.UserLogin)
 
 }

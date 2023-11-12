@@ -21,7 +21,7 @@ func NewJwtTokenMiddleWire(jwtUseCase interfaceUseCase.IJwtTokenUseCase, keys co
 	token = TokenRequirement{JwtTokenUseCase: jwtUseCase, securityKeys: keys}
 }
 
-func TokenVerifySeller(c *gin.Context) {
+func SellerAuthorization(c *gin.Context) {
 	accessToken := c.Request.Header.Get("accesstoken")
 	refreshToken := c.Request.Header.Get("refreshtoken")
 
@@ -55,7 +55,7 @@ func TokenVerifySeller(c *gin.Context) {
 	c.Next()
 }
 
-func TokenVerifyUser(c *gin.Context) {
+func UserAuthorization(c *gin.Context) {
 	accessToken := c.Request.Header.Get("accesstoken")
 	refreshToken := c.Request.Header.Get("refreshtoken")
 
@@ -85,6 +85,17 @@ func TokenVerifyUser(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, "all perfect, your access token is uptodate")
 		fmt.Println("access token is upto date")
+	}
+	c.Next()
+}
+
+func AdminAuthorization(c *gin.Context) {
+	adminToken := c.Request.Header.Get("Authorization")
+
+	err := service.VerifyRefreshToken(adminToken, token.securityKeys.AdminSecurityKey)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"err": err.Error()})
+		c.Abort()
 	}
 	c.Next()
 }

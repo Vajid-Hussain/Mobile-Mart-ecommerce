@@ -34,6 +34,7 @@ func SendOtp(phone string) (string, error) {
 	params.SetChannel("sms")
 	res, err := tw.VerifyV2.CreateVerification(twilioOTP.requirements.ServiceSid, params)
 	if err != nil {
+		fmt.Println("************", err)
 		return "", err
 	}
 	return *res.Sid, nil

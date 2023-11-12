@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -33,6 +34,35 @@ func (u *AdminHandler) AdminLogin(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, finalReslt)
 	} else {
 		finalReslt := response.Responses(http.StatusOK, "succesfully login", result, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *AdminHandler) GetUser(c *gin.Context) {
+	page := c.Query("page")
+	limit := c.DefaultQuery("limit", "1")
+
+	users, count, err := u.AdminUseCase.GetAllUsers(page, limit)
+	if err != nil {
+		message := fmt.Sprintf("total users  %d", *count)
+		finalReslt := response.Responses(http.StatusNotFound, message, "", err.Error())
+		c.JSON(http.StatusNotFound, finalReslt)
+	} else {
+		message := fmt.Sprintf("total users  %d", *count)
+		finalReslt := response.Responses(http.StatusOK, message, users, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *AdminHandler) BlockUser(c *gin.Context) {
+	userID := c.Query("id")
+	fmt.Println(userID)
+	err := u.AdminUseCase.BlcokUser(userID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusNotFound, "", "", err.Error())
+		c.JSON(http.StatusNotFound, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "Succesfully block", "", nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
