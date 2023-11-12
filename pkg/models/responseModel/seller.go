@@ -18,3 +18,12 @@ type SellerLoginRes struct {
 	AccessToken  string `json:"accesstoken,omitempty"`
 	RefreshToken string `json:"refreshtoken,omitempty"`
 }
+
+type SellerDetails struct {
+	ID          string `json:"id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Email       string `json:"email,omitempty"`
+	GST_NO      string `json:"gstno,omitempty"`
+	Description string `json:"description,omitempty"`
+	Status      string `json:"status,omitempty"`
+}

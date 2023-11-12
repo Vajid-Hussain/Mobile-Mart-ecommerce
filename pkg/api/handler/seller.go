@@ -27,7 +27,7 @@ func (u *SellerHandler) SellerSignup(c *gin.Context) {
 
 	result, err := u.usecase.SellerSignup(&sellerDetails)
 	if err != nil {
-		finalReslt := response.Responses(http.StatusUnauthorized, "", result, err.Error())
+		finalReslt := response.Responses(http.StatusBadRequest, "", result, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	} else {
@@ -45,7 +45,7 @@ func (u *SellerHandler) SellerLogin(c *gin.Context) {
 
 	result, err := u.usecase.SellerLogin(&loginData)
 	if err != nil {
-		finalReslt := response.Responses(http.StatusUnauthorized, "", result, err.Error())
+		finalReslt := response.Responses(http.StatusBadRequest, "", result, err.Error())
 
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {

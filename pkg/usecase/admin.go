@@ -73,19 +73,20 @@ func (r *adminUsecase) GetAllUsers(page string, limit string) (*[]responsemodel.
 
 	pageNO, err := strconv.Atoi(page)
 	if err != nil {
-		return nil, nil, errors.New("attempt to convert string to int , page")
+		return nil, nil, responsemodel.ConversionOFPageErr
 	}
 
 	limits, err := strconv.Atoi(limit)
 	if err != nil {
-		return nil, nil, errors.New("attempt to convert string to int , page limit")
+		return nil, nil, responsemodel.ConversionOfLimitErr
 	}
 
 	if pageNO < 1 {
-		return nil, nil, errors.New("page must start from one")
+		return nil, nil, responsemodel.PaginationError
 	}
 
 	offSet := (pageNO * limits) - limits
+	limits = pageNO * limits
 
 	userDetails, err := r.repo.AllUsers(offSet, limits)
 	if err != nil {
@@ -101,4 +102,93 @@ func (r *adminUsecase) BlcokUser(id string) error {
 		return err
 	}
 	return nil
+}
+
+func (r *adminUsecase) UnblockUser(id string) error {
+	err := r.repo.UnblockUser(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *adminUsecase) GetAllSellers(page string, limit string) (*[]responsemodel.SellerDetails, *int, error) {
+	ch := make(chan int)
+
+	go r.repo.SellerCount(ch)
+	count := <-ch
+
+	pageNO, err := strconv.Atoi(page)
+	if err != nil {
+		return nil, nil, responsemodel.ConversionOFPageErr
+	}
+
+	limits, err := strconv.Atoi(limit)
+	if err != nil {
+		return nil, nil, responsemodel.ConversionOfLimitErr
+	}
+
+	if pageNO < 1 {
+		return nil, nil, responsemodel.PaginationError
+	}
+
+	offSet := (pageNO * limits) - limits
+	limits = pageNO * limits
+
+	SellerDetails, err := r.repo.AllSellers(offSet, limits)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return SellerDetails, &count, nil
+}
+
+func (r *adminUsecase) BlockSeller(id string) error {
+	err := r.repo.BlockSeller(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *adminUsecase) UnblockSeller(id string) error {
+	err := r.repo.UnblockSeller(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *adminUsecase) GetAllPendingSellers(page string, limit string) (*[]responsemodel.SellerDetails, error) {
+
+	pageNO, err := strconv.Atoi(page)
+	if err != nil {
+		return nil, responsemodel.ConversionOFPageErr
+	}
+
+	limits, err := strconv.Atoi(limit)
+	if err != nil {
+		return nil, responsemodel.ConversionOfLimitErr
+	}
+
+	if pageNO < 1 {
+		return nil, responsemodel.PaginationError
+	}
+	offSet := (pageNO * limits) - limits
+	limits = pageNO * limits
+
+	SellerDetails, err := r.repo.GetPendingSellers(offSet, limits)
+	if err != nil {
+		return nil, err
+	}
+
+	return SellerDetails, nil
+}
+
+func (r *adminUsecase) FetchSingleVender(id string) (*responsemodel.SellerDetails, error) {
+	sellerData, err := r.repo.GetSingleSeller(id)
+	if err != nil {
+		return nil, err
+	}
+	return sellerData, nil
 }
