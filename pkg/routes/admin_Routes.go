@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AdminRoutes(engin *gin.RouterGroup, admin *handler.AdminHandler) {
+func AdminRoutes(engin *gin.RouterGroup, admin *handler.AdminHandler, seller *handler.SellerHandler, user *handler.UserHandler, category *handler.CategoryHandler) {
 
 	engin.POST("/login", admin.AdminLogin)
 
@@ -14,18 +14,25 @@ func AdminRoutes(engin *gin.RouterGroup, admin *handler.AdminHandler) {
 	{
 		usermanagement := engin.Group("/users")
 		{
-			usermanagement.GET("/getuser", admin.GetUser)
-			usermanagement.GET("/block", admin.BlockUser)
-			usermanagement.GET("/unblock", admin.UnblockUser)
+			usermanagement.GET("/getuser", user.GetUser)
+			usermanagement.GET("/block", user.BlockUser)
+			usermanagement.GET("/unblock", user.UnblockUser)
 		}
 
 		sellermanagement := engin.Group("/sellers")
 		{
-			sellermanagement.GET("/getsellers", admin.GetSellers)
-			sellermanagement.GET("/block", admin.BlockSeller)
-			sellermanagement.GET("/unblock", admin.UnblockSeller)
-			sellermanagement.GET("/pending", admin.GetPendingSellers)
-			sellermanagement.GET("/singleview", admin.FetchSingleSeller)
+			sellermanagement.GET("/getsellers", seller.GetSellers)
+			sellermanagement.GET("/block", seller.BlockSeller)
+			sellermanagement.GET("/unblock", seller.UnblockSeller)
+			sellermanagement.GET("/pending", seller.GetPendingSellers)
+			sellermanagement.GET("/singleview", seller.FetchSingleSeller)
+		}
+
+		categorymanagement := engin.Group("/category")
+		{
+			categorymanagement.POST("/add", category.NewCategory)
+			categorymanagement.GET("/all", category.FetchAllCatogry)
+
 		}
 	}
 }

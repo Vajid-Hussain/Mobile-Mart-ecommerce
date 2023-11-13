@@ -2,10 +2,12 @@ package usecase
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
+	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
@@ -133,4 +135,103 @@ func (r *sellerUseCase) SellerLogin(loginData *requestmodel.SellerLogin) (*respo
 	loginResponse.RefreshToken = refreshToken
 
 	return &loginResponse, nil
+}
+
+func (r *sellerUseCase) GetAllSellers(page string, limit string) (*[]responsemodel.SellerDetails, *int, error) {
+	ch := make(chan int)
+
+	go r.repo.SellerCount(ch)
+	count := <-ch
+
+	pageNO, err := strconv.Atoi(page)
+	if err != nil {
+		return nil, nil, resCustomError.ConversionOFPageErr
+	}
+
+	limits, err := strconv.Atoi(limit)
+	if err != nil {
+		return nil, nil, resCustomError.ConversionOfLimitErr
+	}
+
+	if pageNO < 1 {
+		return nil, nil, resCustomError.PaginationError
+	}
+
+	if limits <= 0 {
+		return nil, nil, resCustomError.PageLimitError
+	}
+
+	offSet := (pageNO * limits) - limits
+	limits = pageNO * limits
+
+	SellerDetails, err := r.repo.AllSellers(offSet, limits)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return SellerDetails, &count, nil
+}
+
+func (r *sellerUseCase) BlockSeller(id string) error {
+	err := r.repo.BlockSeller(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *sellerUseCase) UnblockSeller(id string) error {
+	err := r.repo.UnblockSeller(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *sellerUseCase) GetAllPendingSellers(page string, limit string) (*[]responsemodel.SellerDetails, error) {
+	// pages := strings.TrimSpace(page)
+	// if len(pages) == 0 {
+	// 	return nil, errors.New("page start from 1")
+	// }
+
+	// limits := strings.TrimSpace(limit)
+	// if len(limits) <= 0 {
+	// 	return nil, errors.New("limit must grater than 1")
+	// }
+
+	pageNO, err := strconv.Atoi(page)
+	if err != nil {
+		return nil, resCustomError.ConversionOFPageErr
+	}
+
+	if pageNO < 1 {
+		return nil, resCustomError.PaginationError
+	}
+
+	limits, err := strconv.Atoi(limit)
+	if err != nil {
+		return nil, resCustomError.ConversionOfLimitErr
+	}
+
+	if limits <= 0 {
+		return nil, resCustomError.PageLimitError
+	}
+
+	offSet := (pageNO * limits) - limits
+	limits = pageNO * limits
+
+	SellerDetails, err := r.repo.GetPendingSellers(offSet, limits)
+	if err != nil {
+		return nil, err
+	}
+
+	return SellerDetails, nil
+}
+
+func (r *sellerUseCase) FetchSingleVender(id string) (*responsemodel.SellerDetails, error) {
+	sellerData, err := r.repo.GetSingleSeller(id)
+	if err != nil {
+		return nil, err
+	}
+	return sellerData, nil
 }

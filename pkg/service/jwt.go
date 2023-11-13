@@ -38,7 +38,7 @@ func GenerateAcessToken(securityKey string, id string) (string, error) {
 func GenerateRefreshToken(securityKey string) (string, error) {
 	key := []byte(securityKey)
 	clamis := jwt.MapClaims{
-		"exp": time.Now().Unix() + 36000,
+		"exp": time.Now().Unix() + 3600000,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, clamis)
 	signedToken, err := token.SignedString(key)

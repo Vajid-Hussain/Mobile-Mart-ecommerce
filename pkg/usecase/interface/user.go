@@ -8,6 +8,8 @@ import (
 type IuserUseCase interface {
 	UserSignup(*requestmodel.UserDetails) (responsemodel.SignupData, error)
 	VerifyOtp(requestmodel.OtpVerification, string) (responsemodel.OtpValidation, error)
-	UserLogin( requestmodel.UserLogin) (responsemodel.UserLogin, error)
+	UserLogin(requestmodel.UserLogin) (responsemodel.UserLogin, error)
+	GetAllUsers(string, string) (*[]responsemodel.UserDetails, *int, error)
+	BlcokUser(string) error
+	UnblockUser(string) error
 }
- 

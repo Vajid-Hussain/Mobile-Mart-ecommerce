@@ -1,6 +1,6 @@
 package domain
 
 type Category struct {
-	ID       int `gorm:"unique key"`
-	Category string
+	ID   uint   `gorm:"unique key"`
+	Name string `gorm:"unique"`
 }
