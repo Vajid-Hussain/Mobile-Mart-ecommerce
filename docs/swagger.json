@@ -149,7 +149,7 @@
             }
         },
         "/admin/seller/block/{id}": {
-            "put": {
+            "patch": {
                 "security": [
                     {
                         "Bearer": []
@@ -192,7 +192,7 @@
             }
         },
         "/admin/sellers/block/": {
-            "put": {
+            "patch": {
                 "security": [
                     {
                         "Bearer": []
@@ -378,7 +378,7 @@
             }
         },
         "/admin/user/block/": {
-            "put": {
+            "patch": {
                 "security": [
                     {
                         "Bearer": []
@@ -464,7 +464,7 @@
             }
         },
         "/admin/user/unblock/": {
-            "put": {
+            "patch": {
                 "security": [
                     {
                         "Bearer": []

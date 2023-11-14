@@ -13,7 +13,6 @@ func HashPassword(password string) string {
 	if err != nil {
 		fmt.Println(err, "problem at hashing ")
 	}
-	fmt.Println(HashedPassword)
 	return string(HashedPassword)
 }
 

@@ -18,7 +18,7 @@ func ConnectDatabase(config config.DataBase) (*gorm.DB, error) {
 	}
 
 	// Table Creation
-	if err := DB.AutoMigrate(&domain.UserDetails{}); err != nil {
+	if err := DB.AutoMigrate(&domain.Users{}); err != nil {
 		return DB, err
 	}
 	if err := DB.AutoMigrate(&domain.Seller{}); err != nil {

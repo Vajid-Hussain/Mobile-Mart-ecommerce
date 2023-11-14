@@ -22,25 +22,24 @@ func NewUserRepository(DB *gorm.DB) interfaces.IUserRepo {
 //user Repository
 
 func (d *userRepository) CreateUser(userDetails *requestmodel.UserDetails) {
-	query := "INSERT INTO user_details (id, name, email, phone, password) VALUES($1, $2, $3, $4, $5)"
-	d.DB.Exec(query, userDetails.Id, userDetails.Name, userDetails.Email, userDetails.Phone, userDetails.Password)
+	query := "INSERT INTO users (name, email, phone, password) VALUES($1, $2, $3, $4)"
+	d.DB.Exec(query, userDetails.Name, userDetails.Email, userDetails.Phone, userDetails.Password)
 }
 
 func (d *userRepository) IsUserExist(phone string) int {
 	var userCount int
 
-	query := "SELECT COUNT(*) FROM user_details WHERE phone=$1 AND status!=$2"
+	query := "SELECT COUNT(*) FROM users WHERE phone=$1 AND status!=$2"
 	err := d.DB.Raw(query, phone, "delete").Row().Scan(&userCount)
 	if err != nil {
 		fmt.Println("Error for user exist, using same phone in signup")
 	}
 	return userCount
-
 }
 
 func (d *userRepository) ChangeUserStatusActive(phone string) error {
 	fmt.Println(phone)
-	query := "UPDATE user_details SET status = 'active' WHERE phone = ?"
+	query := "UPDATE users SET status = 'active' WHERE phone = ?"
 	result := d.DB.Exec(query, phone)
 	// count:=result.RowsAffected
 
@@ -54,7 +53,7 @@ func (d *userRepository) ChangeUserStatusActive(phone string) error {
 func (d *userRepository) FetchUserID(phone string) (string, error) {
 	var userID string
 
-	query := "SELECT id FROM user_details WHERE phone=? AND status='active'"
+	query := "SELECT id FROM users WHERE phone=? AND status='active'"
 	data := d.DB.Raw(query, phone).Row()
 
 	if err := data.Scan(&userID); err != nil {
@@ -66,7 +65,7 @@ func (d *userRepository) FetchUserID(phone string) (string, error) {
 func (d *userRepository) FetchPasswordUsingPhone(phone string) (string, error) {
 	var password string
 
-	query := "SELECT password FROM user_details WHERE phone=? AND status='active'"
+	query := "SELECT password FROM users WHERE phone=? AND status='active'"
 	row := d.DB.Raw(query, phone).Row()
 
 	if row == nil {
@@ -86,7 +85,7 @@ func (d *userRepository) FetchPasswordUsingPhone(phone string) (string, error) {
 func (d *userRepository) AllUsers(offSet int, limit int) (*[]responsemodel.UserDetails, error) {
 	var users []responsemodel.UserDetails
 
-	query := "SELECT * FROM user_details ORDER BY name OFFSET ? LIMIT ?"
+	query := "SELECT * FROM users ORDER BY name OFFSET ? LIMIT ?"
 	err := d.DB.Raw(query, offSet, limit).Scan(&users).Error
 	if err != nil {
 		return nil, errors.New("can't get user data from db")
@@ -98,13 +97,13 @@ func (d *userRepository) AllUsers(offSet int, limit int) (*[]responsemodel.UserD
 func (d *userRepository) UserCount(ch chan int) {
 	var count int
 
-	query := "SELECT COUNT(phone) FROM user_details WHERE status!='delete'"
+	query := "SELECT COUNT(phone) FROM users WHERE status!='delete'"
 	d.DB.Raw(query).Scan(&count)
 	ch <- count
 }
 
 func (d *userRepository) BlockUser(id string) error {
-	query := "UPDATE user_details SET status = 'block' WHERE id=? "
+	query := "UPDATE users SET status = 'block' WHERE id=? "
 	err := d.DB.Exec(query, id)
 	if err.Error != nil {
 		return errors.New("block user process , is not satisfied")
@@ -117,7 +116,7 @@ func (d *userRepository) BlockUser(id string) error {
 }
 
 func (d *userRepository) UnblockUser(id string) error {
-	query := "UPDATE user_details SET status = 'active' WHERE id=?"
+	query := "UPDATE users SET status = 'active' WHERE id=?"
 	err := d.DB.Exec(query, id)
 	if err.Error != nil {
 		return errors.New("active user process , is not satisfied")

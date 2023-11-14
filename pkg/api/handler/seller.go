@@ -109,7 +109,7 @@ func (u *SellerHandler) GetSellers(c *gin.Context) {
 // @Param           id      path    string  true    "Seller ID in the URL path"
 // @Success         200     {object}    response.Response{}
 // @Failure         400     {object}    response.Response{}
-// @Router          /admin/seller/block/{id} [put]
+// @Router          /admin/seller/block/{id} [patch]
 func (u *SellerHandler) BlockSeller(c *gin.Context) {
 	userID := c.Query("id")
 	id := strings.TrimSpace(userID)
@@ -138,7 +138,7 @@ func (u *SellerHandler) BlockSeller(c *gin.Context) {
 // @Param           id      path    string  true    "Seller ID in the URL path"
 // @Success         200     {object}    response.Response{}
 // @Failure         400     {object}    response.Response{}
-// @Router          /admin/sellers/block/ [put]
+// @Router          /admin/sellers/block/ [patch]
 func (u *SellerHandler) UnblockSeller(c *gin.Context) {
 	userID := c.Query("id")
 	id := strings.TrimSpace(userID)
@@ -148,7 +148,7 @@ func (u *SellerHandler) UnblockSeller(c *gin.Context) {
 		return
 	}
 
-	err := u.usecase.UnblockSeller(userID)
+	err := u.usecase.ActiveSeller(userID)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusNotFound, "", "", err.Error())
 		c.JSON(http.StatusNotFound, finalReslt)
@@ -211,4 +211,23 @@ func (u *SellerHandler) FetchSingleSeller(c *gin.Context) {
 		c.JSON(http.StatusOK, finalReslt)
 	}
 
+}
+
+func (u *SellerHandler) VerifySeller(c *gin.Context) {
+	userID := c.Query("id")
+	id := strings.TrimSpace(userID)
+
+	if len(id) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": resCustomError.IDParamsEmpty})
+		return
+	}
+
+	err := u.usecase.ActiveSeller(userID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusNotFound, "", "", err.Error())
+		c.JSON(http.StatusNotFound, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "Verification Success", "", nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
 }

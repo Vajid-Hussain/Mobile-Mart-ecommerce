@@ -37,11 +37,24 @@ func (d *categoryRepository) GetAllCategory(offSet int, limit int) (*[]responsem
 	return &categories, nil
 }
 
-func (d *categoryRepository) EditCategory(id int, name string) error {
-	query := "UPDATE categories SET name= ? WHERE id= ?"
-	err := d.DB.Exec(query, name, id).Error
-	if err != nil {
-		return errors.New("updating category,  facing an error, confirm id of category too")
+// func (d *categoryRepository) EditCategory(id int, name string) error {
+// 	query := "UPDATE categories SET name= ? WHERE id= ?"
+// 	err := d.DB.Exec(query, name, id).Error
+// 	if err != nil {
+// 		return errors.New("updating category,  facing an error, confirm id of category too")
+// 	}
+// 	return nil
+// }
+
+func (d *categoryRepository) EditCategoryName(category *requestmodel.CategoryDetails) error {
+	query := "UPDATE categories SET name=? WHERE id=?"
+	result := d.DB.Exec(query, category.Name, category.ID)
+
+	if result.RowsAffected == 0 {
+		return errors.New("no category exist by id")
+	}
+	if result.Error != nil {
+		return errors.New("some problem from database for update category")
 	}
 	return nil
 }

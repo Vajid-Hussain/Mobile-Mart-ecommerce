@@ -135,7 +135,7 @@ func (u *UserHandler) GetUser(c *gin.Context) {
 // @Param			id		path	string	true	"User ID in the URL path"
 // @Success		200	{object}	response.Response{}
 // @Failure		400	{object}	response.Response{}
-// @Router			/admin/user/block/ [put]
+// @Router			/admin/user/block/ [patch]
 func (u *UserHandler) BlockUser(c *gin.Context) {
 	userID := c.Query("id")
 	id := strings.TrimSpace(userID)
@@ -164,7 +164,7 @@ func (u *UserHandler) BlockUser(c *gin.Context) {
 // @Param			id		path	string	true	"User ID in the URL path"
 // @Success		200	{object}	response.Response{}
 // @Failure		400	{object}	response.Response{}
-// @Router			/admin/user/unblock/ [put]
+// @Router			/admin/user/unblock/ [patch]
 func (u *UserHandler) UnblockUser(c *gin.Context) {
 	userID := c.Query("id")
 	id := strings.TrimSpace(userID)

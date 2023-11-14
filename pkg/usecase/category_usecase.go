@@ -3,6 +3,7 @@ package usecase
 import (
 	"errors"
 	"strconv"
+	"strings"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
@@ -76,18 +77,30 @@ func (r *categoryUseCase) GetAllCategory(page string, limit string) (*[]response
 	return categoryDetails, nil
 }
 
-// func (r *categoryUseCase) EditCategory(categoryData requestmodel.Category) error{
-// 	validate := validator.New(validator.WithRequiredStructEnabled())
-// 	err := validate.Struct(categoryData)
-// 	if err != nil {
-// 		if ve, ok := err.(validator.ValidationErrors); ok {
-// 			for _, e := range ve {
-// 				switch e.Field() {
-// 				case "Name":
-// 					resCategory.Name = "name is medetary"
-// 				}
-// 			}
-// 		}
-// 		return &resCategory, errors.New("don't fullfill the category requirement ")
-// 	}
-// }
+func (r *categoryUseCase) EditCategory(categoryData *requestmodel.CategoryDetails) (*responsemodel.CategoryDetails, error) {
+	var categoryRes responsemodel.CategoryDetails
+
+	categoryData.ID = strings.TrimSpace(categoryData.ID)
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(categoryData)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				switch e.Field() {
+				case "Name":
+					categoryRes.Name = "name is medetary"
+				case "ID":
+					categoryRes.ID = "id is required,as query"
+				}
+			}
+		}
+		return &categoryRes, errors.New("don't fullfill the category requirement ")
+	}
+
+	err = r.repo.EditCategoryName(categoryData)
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}

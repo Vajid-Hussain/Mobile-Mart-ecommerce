@@ -1,7 +1,7 @@
 package domain
 
 type Seller struct {
-	ID          string `gorm:"primary key"`
+	ID          uint `gorm:"primary key"`
 	Name        string
 	Email       string `gorm:"unique"`
 	Password    string

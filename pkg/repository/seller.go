@@ -31,8 +31,8 @@ func (d *sellerRepository) IsSellerExist(email string) (int, error) {
 
 func (d *sellerRepository) CreateSeller(SellerData *requestmodel.SellerSignup) error {
 
-	query := "INSERT INTO sellers (id, name, email, password, gst_no, description) VALUES($1, $2, $3, $4, $5, $6)"
-	err := d.DB.Exec(query, SellerData.ID, SellerData.Name, SellerData.Email, SellerData.Password, SellerData.GST_NO, SellerData.Description).Error
+	query := "INSERT INTO sellers (name, email, password, gst_no, description) VALUES($1, $2, $3, $4, $5)"
+	err := d.DB.Exec(query, SellerData.Name, SellerData.Email, SellerData.Password, SellerData.GST_NO, SellerData.Description).Error
 	if err != nil {
 		return errors.New("seller data not save in database face some issue")
 	}

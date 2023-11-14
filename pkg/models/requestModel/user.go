@@ -15,5 +15,5 @@ type OtpVerification struct {
 
 type UserLogin struct {
 	Phone    string `json:"phone"    validate:"len=10"`
-	Password string `json:"password" validate:"required"`
+	Password string `json:"password" validate:"required,min=4"`
 }

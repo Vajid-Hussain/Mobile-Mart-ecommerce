@@ -8,10 +8,11 @@ import (
 
 func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler) {
 
+	engin.POST("/signup", seller.SellerSignup)
+	engin.POST("/login", seller.SellerLogin)
+
 	engin.Use(middlewire.SellerAuthorization)
-	{
-		engin.POST("/signup", seller.SellerSignup)
-		engin.POST("/login", seller.SellerLogin)
-	}
+	// {
+	// }
 
 }

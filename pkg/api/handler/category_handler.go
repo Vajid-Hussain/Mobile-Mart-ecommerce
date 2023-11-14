@@ -70,3 +70,24 @@ func (u *CategoryHandler) FetchAllCatogry(c *gin.Context) {
 	}
 
 }
+
+func (u *CategoryHandler) UpdateCategory(c *gin.Context) {
+	var categoryData requestmodel.CategoryDetails
+
+	if err := c.BindJSON(&categoryData); err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "can't bind json with struct", nil, nil)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	categoryData.ID = c.Query("id")
+
+	categoryRes, err := u.categoryUseCase.EditCategory(&categoryData)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "refine request", categoryRes, nil)
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "succesfully acomplish", categoryRes, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}

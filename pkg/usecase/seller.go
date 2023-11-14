@@ -69,8 +69,8 @@ func (r *sellerUseCase) SellerSignup(sellerSignupData *requestmodel.SellerSignup
 		}
 	}
 
-	SellerUUID := helper.GenerateUUID()
-	sellerSignupData.ID = SellerUUID
+	// SellerUUID := helper.GenerateUUID()
+	// sellerSignupData.ID = SellerUUID
 
 	hashPassword := helper.HashPassword(sellerSignupData.Password)
 	sellerSignupData.Password = hashPassword
@@ -180,7 +180,7 @@ func (r *sellerUseCase) BlockSeller(id string) error {
 	return nil
 }
 
-func (r *sellerUseCase) UnblockSeller(id string) error {
+func (r *sellerUseCase) ActiveSeller(id string) error {
 	err := r.repo.UnblockSeller(id)
 	if err != nil {
 		return err
@@ -189,15 +189,6 @@ func (r *sellerUseCase) UnblockSeller(id string) error {
 }
 
 func (r *sellerUseCase) GetAllPendingSellers(page string, limit string) (*[]responsemodel.SellerDetails, error) {
-	// pages := strings.TrimSpace(page)
-	// if len(pages) == 0 {
-	// 	return nil, errors.New("page start from 1")
-	// }
-
-	// limits := strings.TrimSpace(limit)
-	// if len(limits) <= 0 {
-	// 	return nil, errors.New("limit must grater than 1")
-	// }
 
 	pageNO, err := strconv.Atoi(page)
 	if err != nil {

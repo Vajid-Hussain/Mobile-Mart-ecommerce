@@ -10,7 +10,7 @@ type ISellerUseCase interface {
 	SellerLogin(*requestmodel.SellerLogin) (*responsemodel.SellerLoginRes, error)
 	GetAllSellers(string, string) (*[]responsemodel.SellerDetails, *int, error)
 	BlockSeller(string) error
-	UnblockSeller(string) error
+	ActiveSeller(string) error
 	GetAllPendingSellers(string, string) (*[]responsemodel.SellerDetails, error)
 	FetchSingleVender(string) (*responsemodel.SellerDetails, error)
 }

@@ -8,4 +8,5 @@ import (
 type ICategoryUseCase interface {
 	NewCategory(*requestmodel.Category) (*responsemodel.Category, error)
 	GetAllCategory(string, string) (*[]responsemodel.CategoryDetails, error)
+	EditCategory(*requestmodel.CategoryDetails) (*responsemodel.CategoryDetails, error)
 }

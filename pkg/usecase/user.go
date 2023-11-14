@@ -82,7 +82,7 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) (responsemo
 		resSignup.IsUserExist = "User Exist ,change phone number"
 		return resSignup, errors.New("user is exist try again , with another phone number")
 	} else {
-		userData.Id = helper.GenerateUUID()
+		// userData.Id = helper.GenerateUUID()
 		service.TwilioSetup()
 		_, err := service.SendOtp(userData.Phone)
 		if err != nil {
@@ -172,9 +172,9 @@ func (u *userUseCase) UserLogin(loginCredential requestmodel.UserLogin) (respons
 		if ve, ok := err.(validator.ValidationErrors); ok {
 			for _, e := range ve {
 				switch e.Field() {
-				case "phone":
+				case "Phone":
 					resUserLogin.Phone = "phone number should be 10"
-				case "password":
+				case "Password":
 					resUserLogin.Password = "Password atleast 4 digit"
 				}
 			}

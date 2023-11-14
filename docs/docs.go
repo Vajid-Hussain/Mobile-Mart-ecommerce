@@ -158,7 +158,7 @@ const docTemplate = `{
             }
         },
         "/admin/seller/block/{id}": {
-            "put": {
+            "patch": {
                 "security": [
                     {
                         "Bearer": []
@@ -201,7 +201,7 @@ const docTemplate = `{
             }
         },
         "/admin/sellers/block/": {
-            "put": {
+            "patch": {
                 "security": [
                     {
                         "Bearer": []
@@ -387,7 +387,7 @@ const docTemplate = `{
             }
         },
         "/admin/user/block/": {
-            "put": {
+            "patch": {
                 "security": [
                     {
                         "Bearer": []
@@ -473,7 +473,7 @@ const docTemplate = `{
             }
         },
         "/admin/user/unblock/": {
-            "put": {
+            "patch": {
                 "security": [
                     {
                         "Bearer": []

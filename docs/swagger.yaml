@@ -192,7 +192,7 @@ paths:
       tags:
       - Admins
   /admin/seller/block/{id}:
-    put:
+    patch:
       consumes:
       - application/json
       description: Using this handler, admin can block a seller
@@ -219,7 +219,7 @@ paths:
       tags:
       - Admins
   /admin/sellers/block/:
-    put:
+    patch:
       consumes:
       - application/json
       description: Using this handler, admin can block a seller
@@ -337,7 +337,7 @@ paths:
       tags:
       - Admins
   /admin/user/block/:
-    put:
+    patch:
       consumes:
       - application/json
       description: using this handler admin can block user
@@ -391,7 +391,7 @@ paths:
       tags:
       - Admins
   /admin/user/unblock/:
-    put:
+    patch:
       consumes:
       - application/json
       description: using this handler admin Unblock user

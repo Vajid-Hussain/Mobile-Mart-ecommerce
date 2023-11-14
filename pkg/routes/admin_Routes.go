@@ -15,23 +15,25 @@ func AdminRoutes(engin *gin.RouterGroup, admin *handler.AdminHandler, seller *ha
 		usermanagement := engin.Group("/users")
 		{
 			usermanagement.GET("/getuser", user.GetUser)
-			usermanagement.PUT("/block", user.BlockUser)
-			usermanagement.PUT("/unblock", user.UnblockUser)
+			usermanagement.PATCH("/block", user.BlockUser)
+			usermanagement.PATCH("/unblock", user.UnblockUser)
 		}
 
 		sellermanagement := engin.Group("/sellers")
 		{
 			sellermanagement.GET("/getsellers", seller.GetSellers)
-			sellermanagement.PUT("/block", seller.BlockSeller)
-			sellermanagement.PUT("/unblock", seller.UnblockSeller)
+			sellermanagement.PATCH("/block", seller.BlockSeller)
+			sellermanagement.PATCH("/unblock", seller.UnblockSeller)
 			sellermanagement.GET("/pending", seller.GetPendingSellers)
 			sellermanagement.GET("/singleview", seller.FetchSingleSeller)
+			sellermanagement.PATCH("/verify", seller.VerifySeller)
 		}
 
 		categorymanagement := engin.Group("/category")
 		{
 			categorymanagement.POST("/add", category.NewCategory)
 			categorymanagement.GET("/all", category.FetchAllCatogry)
+			categorymanagement.PATCH("/edit", category.UpdateCategory)
 
 		}
 	}
