@@ -22,6 +22,15 @@ func NewUserHandler(userUseCase interfaceUseCase.IuserUseCase) *UserHandler {
 
 //handlers
 
+// @Summary		User Signup
+// @Description	using this handler User can SIgnup
+// @Tags			User
+// @Accept			json
+// @Produce			json
+// @Param			user	body		requestmodel.UserDetails{}	true	"User Signup details"
+// @Success		200	{object}	responsemodel.SignupData{}
+// @Failure		400	{object}	response.Response{}
+// @Router			/user/signup/ [post]
 func (u *UserHandler) UserSignup(c *gin.Context) {
 	var userSignupData requestmodel.UserDetails
 	if err := c.BindJSON(&userSignupData); err != nil {
@@ -38,6 +47,15 @@ func (u *UserHandler) UserSignup(c *gin.Context) {
 	}
 }
 
+// @Summary		User Otp verification
+// @Description	using this handler User can send otp
+// @Tags			User
+// @Accept			json
+// @Produce			json
+// @Param			user	body		requestmodel.OtpVerification{}	true	"User otp details"
+// @Success		200	{object}	response.Response{}
+// @Failure		400	{object}	response.Response{}
+// @Router			/user/verifyOTP/ [post]
 func (u *UserHandler) VerifyOTP(c *gin.Context) {
 
 	var otpData requestmodel.OtpVerification
@@ -57,6 +75,15 @@ func (u *UserHandler) VerifyOTP(c *gin.Context) {
 	}
 }
 
+// @Summary		User Login
+// @Description	using this handler User can Login
+// @Tags			User
+// @Accept			json
+// @Produce			json
+// @Param			user	body		requestmodel.UserLogin{}	true	"User Login details"
+// @Success		200	{object}	response.Response{}
+// @Failure		400	{object}	response.Response{}
+// @Router			/user/login/ [post]
 func (u *UserHandler) UserLogin(c *gin.Context) {
 	var loginCredential requestmodel.UserLogin
 	if err := c.BindJSON(&loginCredential); err != nil {
@@ -73,6 +100,16 @@ func (u *UserHandler) UserLogin(c *gin.Context) {
 	}
 }
 
+// @Summary			All User
+// @Description	 	using this handler admin can view user
+// @Tags			Admins
+// @Accept			json
+// @Produce			json
+// @Security        Bearer
+// @Param			id		path	string	true	"User ID in the URL path"
+// @Success			200	{object}	response.Response{}
+// @Failure			400	{object}	response.Response{}
+// @Router			/admin/user/getuser/{id} [get]
 func (u *UserHandler) GetUser(c *gin.Context) {
 	page := c.DefaultQuery("page", "1")
 	limit := c.DefaultQuery("limit", "1")
@@ -89,6 +126,16 @@ func (u *UserHandler) GetUser(c *gin.Context) {
 	}
 }
 
+// @Summary		    Block User
+// @Description	using this handler admin can block user
+// @Tags			Admins
+// @Accept			json
+// @Produce			json
+// @Security        Bearer
+// @Param			id		path	string	true	"User ID in the URL path"
+// @Success		200	{object}	response.Response{}
+// @Failure		400	{object}	response.Response{}
+// @Router			/admin/user/block/ [put]
 func (u *UserHandler) BlockUser(c *gin.Context) {
 	userID := c.Query("id")
 	id := strings.TrimSpace(userID)
@@ -108,6 +155,16 @@ func (u *UserHandler) BlockUser(c *gin.Context) {
 	}
 }
 
+// @Summary		    Unblock User
+// @Description	using this handler admin Unblock user
+// @Tags			Admins
+// @Accept			json
+// @Produce			json
+// @Security        Bearer
+// @Param			id		path	string	true	"User ID in the URL path"
+// @Success		200	{object}	response.Response{}
+// @Failure		400	{object}	response.Response{}
+// @Router			/admin/user/unblock/ [put]
 func (u *UserHandler) UnblockUser(c *gin.Context) {
 	userID := c.Query("id")
 	id := strings.TrimSpace(userID)

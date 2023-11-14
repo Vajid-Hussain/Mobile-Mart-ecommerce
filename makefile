@@ -17,5 +17,7 @@ build:
 buildrun:
 	./cmd/api/build/mobileMart
 
+swaggo:
+	swag init -g ./cmd/api/main.go
 
 

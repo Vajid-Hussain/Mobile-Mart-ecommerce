@@ -17,6 +17,16 @@ func NewAdminHandler(useCase interfaceUseCase.IAdminUseCase) *AdminHandler {
 	return &AdminHandler{AdminUseCase: useCase}
 }
 
+// @Summary		Admin login
+// @Description	using this handler admins can login
+// @Tags			Admins
+// @Accept			json
+// @Produce			json
+// @Param Authorization header string true "With the bearer started"
+// @Param			admin	body		requestmodel.AdminLoginData	true	"Admin login details"
+// @Success		200	{object}	response.Response{}
+// @Failure		400	{object}	response.Response{}
+// @Router			/admin/login/ [post]
 func (u *AdminHandler) AdminLogin(c *gin.Context) {
 	var loginCredential requestmodel.AdminLoginData
 

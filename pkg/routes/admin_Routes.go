@@ -15,15 +15,15 @@ func AdminRoutes(engin *gin.RouterGroup, admin *handler.AdminHandler, seller *ha
 		usermanagement := engin.Group("/users")
 		{
 			usermanagement.GET("/getuser", user.GetUser)
-			usermanagement.GET("/block", user.BlockUser)
-			usermanagement.GET("/unblock", user.UnblockUser)
+			usermanagement.PUT("/block", user.BlockUser)
+			usermanagement.PUT("/unblock", user.UnblockUser)
 		}
 
 		sellermanagement := engin.Group("/sellers")
 		{
 			sellermanagement.GET("/getsellers", seller.GetSellers)
-			sellermanagement.GET("/block", seller.BlockSeller)
-			sellermanagement.GET("/unblock", seller.UnblockSeller)
+			sellermanagement.PUT("/block", seller.BlockSeller)
+			sellermanagement.PUT("/unblock", seller.UnblockSeller)
 			sellermanagement.GET("/pending", seller.GetPendingSellers)
 			sellermanagement.GET("/singleview", seller.FetchSingleSeller)
 		}

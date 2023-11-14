@@ -1,0 +1,555 @@
+definitions:
+  requestmodel.AdminLoginData:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 4
+        type: string
+    type: object
+  requestmodel.OtpVerification:
+    properties:
+      otp:
+        type: string
+    type: object
+  requestmodel.SellerLogin:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 4
+        type: string
+    type: object
+  requestmodel.SellerSignup:
+    properties:
+      confirmpassword:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      gstno:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 4
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  requestmodel.UserDetails:
+    properties:
+      confirmpassword:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 4
+        type: string
+      phone:
+        type: string
+    type: object
+  requestmodel.UserLogin:
+    properties:
+      password:
+        type: string
+      phone:
+        type: string
+    required:
+    - password
+    type: object
+  response.Response:
+    properties:
+      after exicution: {}
+      error: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  responsemodel.SignupData:
+    properties:
+      confirmPassword:
+        type: string
+      email:
+        type: string
+      isUserExist:
+        type: string
+      name:
+        type: string
+      otp:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      token:
+        type: string
+    type: object
+info:
+  contact:
+    name: API Support
+  description: TechDeck is an E-commerce platform to purchase and sell Electronic
+    itmes
+  title: Go + Gin Mobile-Mart
+paths:
+  /admin/category/add:
+    post:
+      consumes:
+      - application/json
+      description: Using this handler, admin can add a new category
+      parameters:
+      - description: Name of the category
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Add Category
+      tags:
+      - Admins
+  /admin/category/all:
+    get:
+      consumes:
+      - application/json
+      description: Using this handler, admin can get a list of all categories
+      parameters:
+      - description: Page number for pagination (default 1)
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: Number of items to return per page (default 5)
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Get All Categories
+      tags:
+      - Admins
+  /admin/login/:
+    post:
+      consumes:
+      - application/json
+      description: using this handler admins can login
+      parameters:
+      - description: With the bearer started
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Admin login details
+        in: body
+        name: admin
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.AdminLoginData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin login
+      tags:
+      - Admins
+  /admin/seller/block/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Using this handler, admin can block a seller
+      parameters:
+      - description: Seller ID in the URL path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Block Seller
+      tags:
+      - Admins
+  /admin/sellers/block/:
+    put:
+      consumes:
+      - application/json
+      description: Using this handler, admin can block a seller
+      parameters:
+      - description: Seller ID in the URL path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Block Seller
+      tags:
+      - Admins
+  /admin/sellers/getsellers:
+    get:
+      consumes:
+      - application/json
+      description: Using this handler, admin can get a list of sellers
+      parameters:
+      - description: Page number for pagination (default 1)
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: Number of items to return per page (default 5)
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Get Sellers
+      tags:
+      - Admins
+  /admin/sellers/pending:
+    get:
+      consumes:
+      - application/json
+      description: Using this handler, admin can get a list of pending sellers
+      parameters:
+      - description: Page number for pagination (default 1)
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: Number of items to return per page (default 5)
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Get Pending Sellers
+      tags:
+      - Admins
+  /admin/sellers/singleview:
+    get:
+      consumes:
+      - application/json
+      description: Using this handler, admin can get details of a single seller
+      parameters:
+      - description: Seller ID in the URL query
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Get Single Seller Details
+      tags:
+      - Admins
+  /admin/user/block/:
+    put:
+      consumes:
+      - application/json
+      description: using this handler admin can block user
+      parameters:
+      - description: User ID in the URL path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Block User
+      tags:
+      - Admins
+  /admin/user/getuser/{id}:
+    get:
+      consumes:
+      - application/json
+      description: using this handler admin can view user
+      parameters:
+      - description: User ID in the URL path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: All User
+      tags:
+      - Admins
+  /admin/user/unblock/:
+    put:
+      consumes:
+      - application/json
+      description: using this handler admin Unblock user
+      parameters:
+      - description: User ID in the URL path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Unblock User
+      tags:
+      - Admins
+  /seller/login/:
+    post:
+      consumes:
+      - application/json
+      description: using this handler Seller can Login
+      parameters:
+      - description: Seller Login details
+        in: body
+        name: Seller
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.SellerLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Seller Login
+      tags:
+      - Seller
+  /seller/signup/:
+    post:
+      consumes:
+      - application/json
+      description: using this handler Seller can signup
+      parameters:
+      - description: Seller signup details
+        in: body
+        name: Seller
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.SellerSignup'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Seller Signup
+      tags:
+      - Seller
+  /user/login/:
+    post:
+      consumes:
+      - application/json
+      description: using this handler User can Login
+      parameters:
+      - description: User Login details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User Login
+      tags:
+      - User
+  /user/signup/:
+    post:
+      consumes:
+      - application/json
+      description: using this handler User can SIgnup
+      parameters:
+      - description: User Signup details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.UserDetails'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responsemodel.SignupData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User Signup
+      tags:
+      - User
+  /user/verifyOTP/:
+    post:
+      consumes:
+      - application/json
+      description: using this handler User can send otp
+      parameters:
+      - description: User otp details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.OtpVerification'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User Otp verification
+      tags:
+      - User
+securityDefinitions:
+  BearerTokenAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

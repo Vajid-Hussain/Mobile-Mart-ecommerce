@@ -17,6 +17,16 @@ func NewCategoryHandler(useCase interfaceUseCase.ICategoryUseCase) *CategoryHand
 	return &CategoryHandler{categoryUseCase: useCase}
 }
 
+// @Summary         Add Category
+// @Description     Using this handler, admin can add a new category
+// @Tags            Admins
+// @Accept          json
+// @Produce         json
+// @Security        BearerTokenAuth
+// @Param           name    query   string  true    "Name of the category"
+// @Success         200     {object}    response.Response{}
+// @Failure         400     {object}    response.Response{}
+// @Router          /admin/category/add [post]
 func (u *CategoryHandler) NewCategory(c *gin.Context) {
 
 	var categoryDetails requestmodel.Category
@@ -36,6 +46,17 @@ func (u *CategoryHandler) NewCategory(c *gin.Context) {
 	}
 }
 
+// @Summary         Get All Categories
+// @Description     Using this handler, admin can get a list of all categories
+// @Tags            Admins
+// @Accept          json
+// @Produce         json
+// @Security        BearerTokenAuth
+// @Param           page    query   int     true    "Page number for pagination (default 1)"
+// @Param           limit   query   int     true    "Number of items to return per page (default 5)"
+// @Success         200     {object}    response.Response{}
+// @Failure         400     {object}    response.Response{}
+// @Router          /admin/category/all [get]
 func (u *CategoryHandler) FetchAllCatogry(c *gin.Context) {
 	page := c.Query("page")
 	limit := c.DefaultQuery("limit", "1")
@@ -47,4 +68,5 @@ func (u *CategoryHandler) FetchAllCatogry(c *gin.Context) {
 		finalReslt := response.Responses(http.StatusOK, "", category, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
+
 }

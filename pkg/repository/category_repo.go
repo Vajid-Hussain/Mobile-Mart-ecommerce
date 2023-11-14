@@ -37,7 +37,7 @@ func (d *categoryRepository) GetAllCategory(offSet int, limit int) (*[]responsem
 	return &categories, nil
 }
 
-func (d *categoryRepository) EditCategory(id string, name string) error {
+func (d *categoryRepository) EditCategory(id int, name string) error {
 	query := "UPDATE categories SET name= ? WHERE id= ?"
 	err := d.DB.Exec(query, name, id).Error
 	if err != nil {

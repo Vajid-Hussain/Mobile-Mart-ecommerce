@@ -7,6 +7,8 @@ import (
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/api/handler"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/routes"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type ServerHttp struct {
@@ -16,6 +18,9 @@ type ServerHttp struct {
 func NewServerHttp(user *handler.UserHandler, seller *handler.SellerHandler, admin *handler.AdminHandler, category *handler.CategoryHandler) *ServerHttp {
 	engin := gin.New()
 	engin.Use(gin.Logger())
+
+	// use ginSwagger middleware to serve the API docs
+	engin.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	routes.UserRoutes(engin.Group("/user"), user)
 	routes.SellerRoutes(engin.Group("/seller"), seller)
