@@ -31,9 +31,17 @@ func AdminRoutes(engin *gin.RouterGroup, admin *handler.AdminHandler, seller *ha
 
 		categorymanagement := engin.Group("/category")
 		{
-			categorymanagement.POST("/add", category.NewCategory)
-			categorymanagement.GET("/all", category.FetchAllCatogry)
-			categorymanagement.PATCH("/edit", category.UpdateCategory)
+			categorymanagement.POST("/", category.NewCategory)
+			categorymanagement.GET("/", category.FetchAllCatogry)
+			categorymanagement.PATCH("/", category.UpdateCategory)
+
+		}
+
+		brandmanagement := engin.Group("/brand")
+		{
+			brandmanagement.POST("/", category.CreateBrand)
+			brandmanagement.GET("/", category.FetchAllBrand)
+			brandmanagement.PATCH("/", category.UpdateBrand)
 
 		}
 	}

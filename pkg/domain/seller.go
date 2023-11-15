@@ -7,5 +7,5 @@ type Seller struct {
 	Password    string
 	GST_NO      string `gorm:"not null"`
 	Description string
-	Status      status_user `gorm:"default:pending"`
+	Status      status `gorm:"default:pending"`
 }

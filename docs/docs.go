@@ -17,14 +17,14 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin/category/add": {
-            "post": {
+        "/admin/brand": {
+            "get": {
                 "security": [
                     {
                         "BearerTokenAuth": []
                     }
                 ],
-                "description": "Using this handler, admin can add a new category",
+                "description": "Get a paginated list of brands using this handler.",
                 "consumes": [
                     "application/json"
                 ],
@@ -32,27 +32,81 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Admins"
+                    "Brand"
                 ],
-                "summary": "Add Category",
+                "summary": "Get Paginated List of Brands",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Name of the category",
-                        "name": "name",
+                        "type": "integer",
+                        "description": "Page number for pagination (default 1)",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of items to return per page (default 5)",
+                        "name": "limit",
                         "in": "query",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Paginated list of brands",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Invalid input or validation error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Create a new brand using this handler.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Brand"
+                ],
+                "summary": "Create a Brand",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Name of the brand",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description of the brand",
+                        "name": "description",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Brand created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input or validation error",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -60,7 +114,69 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/category/all": {
+        "/admin/brand/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Edit an existing brand using this handler.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Brand"
+                ],
+                "summary": "Edit a Brand by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the brand to edit",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Updated name of the brand",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Updated description of the brand",
+                        "name": "description",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Brand edited successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input or validation error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Brand not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/category": {
             "get": {
                 "security": [
                     {
@@ -75,7 +191,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Admins"
+                    "Category"
                 ],
                 "summary": "Get All Categories",
                 "parameters": [
@@ -108,6 +224,109 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Using this handler, admin can add a new category",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Add Category",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Name of the category",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/category/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Edit an existing category using this handler.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Edit a Category by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the category to edit",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Updated name of the category",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Updated description of the category",
+                        "name": "description",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category edited successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input or validation error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
             }
         },
         "/admin/login/": {
@@ -124,13 +343,6 @@ const docTemplate = `{
                 ],
                 "summary": "Admin login",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "With the bearer started",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "description": "Admin login details",
                         "name": "admin",
@@ -157,11 +369,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/seller/block/{id}": {
+        "/admin/seller/block": {
             "patch": {
                 "security": [
                     {
-                        "Bearer": []
+                        "BearerTokenAuth": []
                     }
                 ],
                 "description": "Using this handler, admin can block a seller",
@@ -200,11 +412,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/sellers/block/": {
+        "/admin/sellers/block": {
             "patch": {
                 "security": [
                     {
-                        "Bearer": []
+                        "BearerTokenAuth": []
                     }
                 ],
                 "description": "Using this handler, admin can block a seller",
@@ -247,7 +459,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "Bearer": []
+                        "BearerTokenAuth": []
                     }
                 ],
                 "description": "Using this handler, admin can get a list of sellers",
@@ -386,11 +598,54 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/user/block/": {
+        "/admin/sellers/verify": {
             "patch": {
                 "security": [
                     {
-                        "Bearer": []
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Using this handler, admin can Verify a seller",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admins"
+                ],
+                "summary": "Verify Seller",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Seller ID in the URL path",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/user/block": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
                     }
                 ],
                 "description": "using this handler admin can block user",
@@ -429,11 +684,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/user/getuser/{id}": {
+        "/admin/user/getuser": {
             "get": {
                 "security": [
                     {
-                        "Bearer": []
+                        "BearerTokenAuth": []
                     }
                 ],
                 "description": "using this handler admin can view user",
@@ -472,11 +727,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/user/unblock/": {
+        "/admin/user/unblock": {
             "patch": {
                 "security": [
                     {
-                        "Bearer": []
+                        "BearerTokenAuth": []
                     }
                 ],
                 "description": "using this handler admin Unblock user",
@@ -515,7 +770,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/seller/login/": {
+        "/seller/login": {
             "post": {
                 "description": "using this handler Seller can Login",
                 "consumes": [
@@ -555,7 +810,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/seller/signup/": {
+        "/seller/signup": {
             "post": {
                 "description": "using this handler Seller can signup",
                 "consumes": [
@@ -811,7 +1066,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 4
                 },
                 "phone": {
                     "type": "string"
@@ -821,11 +1077,11 @@ const docTemplate = `{
         "response.Response": {
             "type": "object",
             "properties": {
-                "after exicution": {},
                 "error": {},
                 "message": {
                     "type": "string"
                 },
+                "result": {},
                 "status_code": {
                     "type": "integer"
                 }
@@ -865,6 +1121,11 @@ const docTemplate = `{
         "BearerTokenAuth": {
             "type": "apiKey",
             "name": "Authorization",
+            "in": "header"
+        },
+        "Refreshtoken": {
+            "type": "apiKey",
+            "name": "Refreshtoken",
             "in": "header"
         }
     }

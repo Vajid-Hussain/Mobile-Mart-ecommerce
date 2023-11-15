@@ -20,6 +20,9 @@ func main() {
 	// @securityDefinitions.apikey BearerTokenAuth
 	// @in header
 	// @name Authorization
+	// @securityDefinitions.apikey Refreshtoken
+	// @in header
+	// @name Refreshtoken
 	// @host localhost:8080
 	// @BasePath /
 	// @query.collection.format multi
@@ -38,6 +41,6 @@ func main() {
 	server.Start()
 }
 
-// securityDefinitions.apikey BearerTokenAuth
-// in header
-// name Refreshtoken
+// @securityDefinitions.apikey Refreshtoken
+// @in header
+// @name Refreshtoken

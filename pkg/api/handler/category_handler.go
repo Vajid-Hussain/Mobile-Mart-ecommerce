@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
+	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/response"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 	"github.com/gin-gonic/gin"
@@ -19,21 +20,21 @@ func NewCategoryHandler(useCase interfaceUseCase.ICategoryUseCase) *CategoryHand
 
 // @Summary         Add Category
 // @Description     Using this handler, admin can add a new category
-// @Tags            Admins
+// @Tags            Category
 // @Accept          json
 // @Produce         json
 // @Security        BearerTokenAuth
 // @Param           name    query   string  true    "Name of the category"
 // @Success         200     {object}    response.Response{}
 // @Failure         400     {object}    response.Response{}
-// @Router          /admin/category/add [post]
+// @Router          /admin/category [post]
 func (u *CategoryHandler) NewCategory(c *gin.Context) {
 
 	var categoryDetails requestmodel.Category
 
 	err := c.BindJSON(&categoryDetails)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, "can't bind json with struct")
+		c.JSON(http.StatusBadRequest, resCustomError.BindingConflict)
 	}
 
 	result, err := u.categoryUseCase.NewCategory(&categoryDetails)
@@ -48,7 +49,7 @@ func (u *CategoryHandler) NewCategory(c *gin.Context) {
 
 // @Summary         Get All Categories
 // @Description     Using this handler, admin can get a list of all categories
-// @Tags            Admins
+// @Tags            Category
 // @Accept          json
 // @Produce         json
 // @Security        BearerTokenAuth
@@ -56,7 +57,7 @@ func (u *CategoryHandler) NewCategory(c *gin.Context) {
 // @Param           limit   query   int     true    "Number of items to return per page (default 5)"
 // @Success         200     {object}    response.Response{}
 // @Failure         400     {object}    response.Response{}
-// @Router          /admin/category/all [get]
+// @Router          /admin/category [get]
 func (u *CategoryHandler) FetchAllCatogry(c *gin.Context) {
 	page := c.Query("page")
 	limit := c.DefaultQuery("limit", "1")
@@ -71,11 +72,24 @@ func (u *CategoryHandler) FetchAllCatogry(c *gin.Context) {
 
 }
 
+// @Summary         Edit a Category by ID
+// @Description     Edit an existing category using this handler.
+// @Tags            Category
+// @Accept          json
+// @Produce         json
+// @Security        BearerTokenAuth
+// @Param           id      path    int     true    "ID of the category to edit"
+// @Param           name    formData   string  true    "Updated name of the category"
+// @Param           description formData   string  false   "Updated description of the category"
+// @Success         200     {object}    response.Response{}  "Category edited successfully"
+// @Failure         400     {object}    response.Response{}  "Invalid input or validation error"
+// @Failure         404     {object}    response.Response{}  "Category not found"
+// @Router          /admin/category/{id} [patch]
 func (u *CategoryHandler) UpdateCategory(c *gin.Context) {
 	var categoryData requestmodel.CategoryDetails
 
 	if err := c.BindJSON(&categoryData); err != nil {
-		finalReslt := response.Responses(http.StatusBadRequest, "can't bind json with struct", nil, nil)
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
@@ -88,6 +102,97 @@ func (u *CategoryHandler) UpdateCategory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
 		finalReslt := response.Responses(http.StatusOK, "succesfully acomplish", categoryRes, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+// Brand
+
+// @Summary         Create a Brand
+// @Description     Create a new brand using this handler.
+// @Tags            Brand
+// @Accept          json
+// @Produce         json
+// @Security        BearerTokenAuth
+// @Param           name    formData   string  true    "Name of the brand"
+// @Param           description formData   string  false   "Description of the brand"
+// @Success         201     {object}    response.Response{}  "Brand created successfully"
+// @Failure         400     {object}    response.Response{}  "Invalid input or validation error"
+// @Router          /admin/brand [post]
+func (u *CategoryHandler) CreateBrand(c *gin.Context) {
+	var BrandDetails requestmodel.Brand
+
+	err := c.ShouldBindJSON(&BrandDetails)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, resCustomError.BindingConflict)
+		return
+	}
+
+	result, err := u.categoryUseCase.CreateBrand(&BrandDetails)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", result, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "Brand succesfully added", result, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+// @Summary         Get Paginated List of Brands
+// @Description     Get a paginated list of brands using this handler.
+// @Tags            Brand
+// @Accept          json
+// @Produce         json
+// @Security        BearerTokenAuth
+// @Param           page    query   int     true    "Page number for pagination (default 1)"
+// @Param           limit   query   int     true    "Number of items to return per page (default 5)"
+// @Success         200     {object}    response.Response{}  "Paginated list of brands"
+// @Failure         400     {object}    response.Response{}  "Invalid input or validation error"
+// @Router          /admin/brand [get]
+func (u *CategoryHandler) FetchAllBrand(c *gin.Context) {
+	page := c.Query("page")
+	limit := c.DefaultQuery("limit", "1")
+
+	brand, err := u.categoryUseCase.GetAllBrand(page, limit)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", brand, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+
+}
+
+// @Summary         Edit a Brand by ID
+// @Description     Edit an existing brand using this handler.
+// @Tags            Brand
+// @Accept          json
+// @Produce         json
+// @Security        BearerTokenAuth
+// @Param           id      path    int     true    "ID of the brand to edit"
+// @Param           name    formData   string  true    "Updated name of the brand"
+// @Param           description formData   string  false   "Updated description of the brand"
+// @Success         200     {object}    response.Response{}  "Brand edited successfully"
+// @Failure         400     {object}    response.Response{}  "Invalid input or validation error"
+// @Failure         404     {object}    response.Response{}  "Brand not found"
+// @Router          /admin/brand/{id} [patch]
+func (u *CategoryHandler) UpdateBrand(c *gin.Context) {
+	var brandData requestmodel.BrandDetails
+
+	if err := c.BindJSON(&brandData); err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, nil)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	brandData.ID = c.Query("id")
+
+	brandRes, err := u.categoryUseCase.EditBrand(&brandData)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "refine request", brandRes, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "succesfully acomplish", brandRes, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }

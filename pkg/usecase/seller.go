@@ -145,20 +145,20 @@ func (r *sellerUseCase) GetAllSellers(page string, limit string) (*[]responsemod
 
 	pageNO, err := strconv.Atoi(page)
 	if err != nil {
-		return nil, nil, resCustomError.ConversionOFPageErr
+		return nil, nil, resCustomError.ErrConversionOFPage
 	}
 
 	limits, err := strconv.Atoi(limit)
 	if err != nil {
-		return nil, nil, resCustomError.ConversionOfLimitErr
+		return nil, nil, resCustomError.ErrConversionOfLimit
 	}
 
 	if pageNO < 1 {
-		return nil, nil, resCustomError.PaginationError
+		return nil, nil, resCustomError.ErrPagination
 	}
 
 	if limits <= 0 {
-		return nil, nil, resCustomError.PageLimitError
+		return nil, nil, resCustomError.ErrPageLimit
 	}
 
 	offSet := (pageNO * limits) - limits
@@ -192,20 +192,20 @@ func (r *sellerUseCase) GetAllPendingSellers(page string, limit string) (*[]resp
 
 	pageNO, err := strconv.Atoi(page)
 	if err != nil {
-		return nil, resCustomError.ConversionOFPageErr
+		return nil, resCustomError.ErrConversionOFPage
 	}
 
 	if pageNO < 1 {
-		return nil, resCustomError.PaginationError
+		return nil, resCustomError.ErrPagination
 	}
 
 	limits, err := strconv.Atoi(limit)
 	if err != nil {
-		return nil, resCustomError.ConversionOfLimitErr
+		return nil, resCustomError.ErrConversionOfLimit
 	}
 
 	if limits <= 0 {
-		return nil, resCustomError.PageLimitError
+		return nil, resCustomError.ErrPageLimit
 	}
 
 	offSet := (pageNO * limits) - limits

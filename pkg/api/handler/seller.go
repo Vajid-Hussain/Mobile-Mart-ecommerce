@@ -28,7 +28,7 @@ func NewSellerHandler(venderUuseCase interfaceUseCase.ISellerUseCase) *SellerHan
 // @Param			Seller	body		requestmodel.SellerSignup{}	true	"Seller signup details"
 // @Success	     	200	{object}	response.Response{}
 // @Failure		    400	{object}	response.Response{}
-// @Router			/seller/signup/ [post]
+// @Router			/seller/signup [post]
 func (u *SellerHandler) SellerSignup(c *gin.Context) {
 	var sellerDetails requestmodel.SellerSignup
 
@@ -55,7 +55,7 @@ func (u *SellerHandler) SellerSignup(c *gin.Context) {
 // @Param			Seller	body		requestmodel.SellerLogin{}	true	"Seller Login details"
 // @Success	     	200	{object}	response.Response{}
 // @Failure		    400	{object}	response.Response{}
-// @Router			/seller/login/ [post]
+// @Router			/seller/login [post]
 func (u *SellerHandler) SellerLogin(c *gin.Context) {
 	var loginData requestmodel.SellerLogin
 	if err := c.BindJSON(&loginData); err != nil {
@@ -78,7 +78,7 @@ func (u *SellerHandler) SellerLogin(c *gin.Context) {
 // @Tags            Admins
 // @Accept          json
 // @Produce         json
-// @Security        Bearer
+// @Security        BearerTokenAuth
 // @Param           page    query   int     true    "Page number for pagination (default 1)"
 // @Param           limit   query   int     true    "Number of items to return per page (default 5)"
 // @Success         200     {object}    response.Response{}
@@ -105,11 +105,11 @@ func (u *SellerHandler) GetSellers(c *gin.Context) {
 // @Tags            Admins
 // @Accept          json
 // @Produce         json
-// @Security        Bearer
+// @Security        BearerTokenAuth
 // @Param           id      path    string  true    "Seller ID in the URL path"
 // @Success         200     {object}    response.Response{}
 // @Failure         400     {object}    response.Response{}
-// @Router          /admin/seller/block/{id} [patch]
+// @Router          /admin/seller/block [patch]
 func (u *SellerHandler) BlockSeller(c *gin.Context) {
 	userID := c.Query("id")
 	id := strings.TrimSpace(userID)
@@ -134,11 +134,11 @@ func (u *SellerHandler) BlockSeller(c *gin.Context) {
 // @Tags            Admins
 // @Accept          json
 // @Produce         json
-// @Security        Bearer
+// @Security        BearerTokenAuth
 // @Param           id      path    string  true    "Seller ID in the URL path"
 // @Success         200     {object}    response.Response{}
 // @Failure         400     {object}    response.Response{}
-// @Router          /admin/sellers/block/ [patch]
+// @Router          /admin/sellers/block [patch]
 func (u *SellerHandler) UnblockSeller(c *gin.Context) {
 	userID := c.Query("id")
 	id := strings.TrimSpace(userID)
@@ -213,6 +213,16 @@ func (u *SellerHandler) FetchSingleSeller(c *gin.Context) {
 
 }
 
+// @Summary         Verify Seller
+// @Description     Using this handler, admin can Verify a seller
+// @Tags            Admins
+// @Accept          json
+// @Produce         json
+// @Security        BearerTokenAuth
+// @Param           id      path    string  true    "Seller ID in the URL path"
+// @Success         200     {object}    response.Response{}
+// @Failure         400     {object}    response.Response{}
+// @Router          /admin/sellers/verify [patch]
 func (u *SellerHandler) VerifySeller(c *gin.Context) {
 	userID := c.Query("id")
 	id := strings.TrimSpace(userID)

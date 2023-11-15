@@ -50,20 +50,20 @@ func (r *categoryUseCase) GetAllCategory(page string, limit string) (*[]response
 
 	pageNO, err := strconv.Atoi(page)
 	if err != nil {
-		return nil, resCustomError.ConversionOFPageErr
+		return nil, resCustomError.ErrConversionOFPage
 	}
 
 	limits, err := strconv.Atoi(limit)
 	if err != nil {
-		return nil, resCustomError.ConversionOfLimitErr
+		return nil, resCustomError.ErrConversionOfLimit
 	}
 
 	if pageNO < 1 {
-		return nil, resCustomError.PaginationError
+		return nil, resCustomError.ErrPagination
 	}
 
 	if limits <= 0 {
-		return nil, resCustomError.PageLimitError
+		return nil, resCustomError.ErrPageLimit
 	}
 
 	offSet := (pageNO * limits) - limits
@@ -99,6 +99,91 @@ func (r *categoryUseCase) EditCategory(categoryData *requestmodel.CategoryDetail
 	}
 
 	err = r.repo.EditCategoryName(categoryData)
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+// Brand
+func (r *categoryUseCase) CreateBrand(brandDetails *requestmodel.Brand) (*responsemodel.BrandRes, error) {
+	var resBrand responsemodel.BrandRes
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(brandDetails)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				switch e.Field() {
+				case "Name":
+					resBrand.Name = "name is medetary"
+				}
+			}
+		}
+		return &resBrand, errors.New("don't fullfill the brand requirement ")
+	}
+
+	err = r.repo.InsertBrand(brandDetails)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+func (r *categoryUseCase) GetAllBrand(page string, limit string) (*[]responsemodel.BrandRes, error) {
+
+	pageNO, err := strconv.Atoi(page)
+	if err != nil {
+		return nil, resCustomError.ErrConversionOFPage
+	}
+
+	limits, err := strconv.Atoi(limit)
+	if err != nil {
+		return nil, resCustomError.ErrConversionOfLimit
+	}
+
+	if pageNO < 1 {
+		return nil, resCustomError.ErrPagination
+	}
+
+	if limits <= 0 {
+		return nil, resCustomError.ErrPageLimit
+	}
+
+	offSet := (pageNO * limits) - limits
+	limits = pageNO * limits
+
+	brandDetails, err := r.repo.GetAllBrand(offSet, limits)
+	if err != nil {
+		return nil, err
+	}
+
+	return brandDetails, nil
+}
+
+func (r *categoryUseCase) EditBrand(brandData *requestmodel.BrandDetails) (*responsemodel.BrandRes, error) {
+	var brandRes responsemodel.BrandRes
+
+	brandData.ID = strings.TrimSpace(brandData.ID)
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(brandData)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				switch e.Field() {
+				case "Name":
+					brandRes.Name = "name is medetary"
+				case "ID":
+					brandRes.ID = "id is required,as query"
+				}
+			}
+		}
+		return &brandRes, errors.New("don't fullfill the brand requirement ")
+	}
+
+	err = r.repo.EditBrandName(brandData)
 	if err != nil {
 		return nil, err
 	}

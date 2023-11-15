@@ -91,7 +91,6 @@ func UserAuthorization(c *gin.Context) {
 
 func AdminAuthorization(c *gin.Context) {
 	adminToken := c.GetHeader("Authorization")
-	fmt.Println("------------", adminToken)
 
 	err := service.VerifyRefreshToken(adminToken, token.securityKeys.AdminSecurityKey)
 	if err != nil {

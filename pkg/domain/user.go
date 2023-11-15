@@ -1,12 +1,12 @@
 package domain
 
-type status_user string
+type status string
 
 const (
-	Active  status_user = "active"
-	Block   status_user = "block"
-	Delete  status_user = "delete"
-	Pending status_user = "pending"
+	Active  status = "active"
+	Block   status = "block"
+	Delete  status = "delete"
+	Pending status = "pending"
 )
 
 type Users struct {
@@ -15,5 +15,5 @@ type Users struct {
 	Email    string
 	Phone    string
 	Password string
-	Status   status_user `gorm:"default:pending"`
+	Status   status `gorm:"default:pending"`
 }

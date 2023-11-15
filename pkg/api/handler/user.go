@@ -105,11 +105,11 @@ func (u *UserHandler) UserLogin(c *gin.Context) {
 // @Tags			Admins
 // @Accept			json
 // @Produce			json
-// @Security        Bearer
+// @Security        BearerTokenAuth
 // @Param			id		path	string	true	"User ID in the URL path"
 // @Success			200	{object}	response.Response{}
 // @Failure			400	{object}	response.Response{}
-// @Router			/admin/user/getuser/{id} [get]
+// @Router			/admin/user/getuser [get]
 func (u *UserHandler) GetUser(c *gin.Context) {
 	page := c.DefaultQuery("page", "1")
 	limit := c.DefaultQuery("limit", "1")
@@ -131,11 +131,11 @@ func (u *UserHandler) GetUser(c *gin.Context) {
 // @Tags			Admins
 // @Accept			json
 // @Produce			json
-// @Security        Bearer
+// @Security        BearerTokenAuth
 // @Param			id		path	string	true	"User ID in the URL path"
 // @Success		200	{object}	response.Response{}
 // @Failure		400	{object}	response.Response{}
-// @Router			/admin/user/block/ [patch]
+// @Router			/admin/user/block [patch]
 func (u *UserHandler) BlockUser(c *gin.Context) {
 	userID := c.Query("id")
 	id := strings.TrimSpace(userID)
@@ -160,11 +160,11 @@ func (u *UserHandler) BlockUser(c *gin.Context) {
 // @Tags			Admins
 // @Accept			json
 // @Produce			json
-// @Security        Bearer
+// @Security        BearerTokenAuth
 // @Param			id		path	string	true	"User ID in the URL path"
 // @Success		200	{object}	response.Response{}
 // @Failure		400	{object}	response.Response{}
-// @Router			/admin/user/unblock/ [patch]
+// @Router			/admin/user/unblock [patch]
 func (u *UserHandler) UnblockUser(c *gin.Context) {
 	userID := c.Query("id")
 	id := strings.TrimSpace(userID)

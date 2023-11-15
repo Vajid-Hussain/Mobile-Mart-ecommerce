@@ -225,20 +225,20 @@ func (r *userUseCase) GetAllUsers(page string, limit string) (*[]responsemodel.U
 
 	pageNO, err := strconv.Atoi(page)
 	if err != nil {
-		return nil, nil, resCustomError.ConversionOFPageErr
+		return nil, nil, resCustomError.ErrConversionOFPage
 	}
 
 	limits, err := strconv.Atoi(limit)
 	if err != nil {
-		return nil, nil, resCustomError.ConversionOfLimitErr
+		return nil, nil, resCustomError.ErrConversionOfLimit
 	}
 
 	if pageNO < 1 {
-		return nil, nil, resCustomError.PaginationError
+		return nil, nil, resCustomError.ErrPagination
 	}
 
 	if limits <= 0 {
-		return nil, nil, resCustomError.PageLimitError
+		return nil, nil, resCustomError.ErrPageLimit
 	}
 
 	offSet := (pageNO * limits) - limits

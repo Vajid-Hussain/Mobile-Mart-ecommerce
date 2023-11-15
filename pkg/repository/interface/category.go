@@ -10,4 +10,7 @@ type ICategoryRepository interface {
 	GetAllCategory(int, int) (*[]responsemodel.CategoryDetails, error)
 	// EditCategory(int, string) error
 	EditCategoryName(*requestmodel.CategoryDetails) error
+	InsertBrand(*requestmodel.Brand) error
+	GetAllBrand(int, int) (*[]responsemodel.BrandRes, error)
+	EditBrandName(*requestmodel.BrandDetails) error
 }

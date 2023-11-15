@@ -22,7 +22,6 @@ func NewAdminHandler(useCase interfaceUseCase.IAdminUseCase) *AdminHandler {
 // @Tags			Admins
 // @Accept			json
 // @Produce			json
-// @Param Authorization header string true "With the bearer started"
 // @Param			admin	body		requestmodel.AdminLoginData	true	"Admin login details"
 // @Success		200	{object}	response.Response{}
 // @Failure		400	{object}	response.Response{}

@@ -60,6 +60,7 @@ definitions:
   requestmodel.UserLogin:
     properties:
       password:
+        minLength: 4
         type: string
       phone:
         type: string
@@ -68,10 +69,10 @@ definitions:
     type: object
   response.Response:
     properties:
-      after exicution: {}
       error: {}
       message:
         type: string
+      result: {}
       status_code:
         type: integer
     type: object
@@ -101,34 +102,109 @@ info:
     itmes
   title: Go + Gin Mobile-Mart
 paths:
-  /admin/category/add:
+  /admin/brand:
+    get:
+      consumes:
+      - application/json
+      description: Get a paginated list of brands using this handler.
+      parameters:
+      - description: Page number for pagination (default 1)
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: Number of items to return per page (default 5)
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Paginated list of brands
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Invalid input or validation error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Get Paginated List of Brands
+      tags:
+      - Brand
     post:
       consumes:
       - application/json
-      description: Using this handler, admin can add a new category
+      description: Create a new brand using this handler.
       parameters:
-      - description: Name of the category
-        in: query
+      - description: Name of the brand
+        in: formData
         name: name
         required: true
+        type: string
+      - description: Description of the brand
+        in: formData
+        name: description
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Brand created successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Invalid input or validation error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Create a Brand
+      tags:
+      - Brand
+  /admin/brand/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Edit an existing brand using this handler.
+      parameters:
+      - description: ID of the brand to edit
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated name of the brand
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Updated description of the brand
+        in: formData
+        name: description
         type: string
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Brand edited successfully
           schema:
             $ref: '#/definitions/response.Response'
         "400":
-          description: Bad Request
+          description: Invalid input or validation error
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Brand not found
           schema:
             $ref: '#/definitions/response.Response'
       security:
       - BearerTokenAuth: []
-      summary: Add Category
+      summary: Edit a Brand by ID
       tags:
-      - Admins
-  /admin/category/all:
+      - Brand
+  /admin/category:
     get:
       consumes:
       - application/json
@@ -159,18 +235,79 @@ paths:
       - BearerTokenAuth: []
       summary: Get All Categories
       tags:
-      - Admins
+      - Category
+    post:
+      consumes:
+      - application/json
+      description: Using this handler, admin can add a new category
+      parameters:
+      - description: Name of the category
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Add Category
+      tags:
+      - Category
+  /admin/category/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Edit an existing category using this handler.
+      parameters:
+      - description: ID of the category to edit
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated name of the category
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Updated description of the category
+        in: formData
+        name: description
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Category edited successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Invalid input or validation error
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Category not found
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Edit a Category by ID
+      tags:
+      - Category
   /admin/login/:
     post:
       consumes:
       - application/json
       description: using this handler admins can login
       parameters:
-      - description: With the bearer started
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - description: Admin login details
         in: body
         name: admin
@@ -191,7 +328,7 @@ paths:
       summary: Admin login
       tags:
       - Admins
-  /admin/seller/block/{id}:
+  /admin/seller/block:
     patch:
       consumes:
       - application/json
@@ -214,11 +351,11 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       security:
-      - Bearer: []
+      - BearerTokenAuth: []
       summary: Block Seller
       tags:
       - Admins
-  /admin/sellers/block/:
+  /admin/sellers/block:
     patch:
       consumes:
       - application/json
@@ -241,7 +378,7 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       security:
-      - Bearer: []
+      - BearerTokenAuth: []
       summary: Block Seller
       tags:
       - Admins
@@ -273,7 +410,7 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       security:
-      - Bearer: []
+      - BearerTokenAuth: []
       summary: Get Sellers
       tags:
       - Admins
@@ -336,7 +473,34 @@ paths:
       summary: Get Single Seller Details
       tags:
       - Admins
-  /admin/user/block/:
+  /admin/sellers/verify:
+    patch:
+      consumes:
+      - application/json
+      description: Using this handler, admin can Verify a seller
+      parameters:
+      - description: Seller ID in the URL path
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Verify Seller
+      tags:
+      - Admins
+  /admin/user/block:
     patch:
       consumes:
       - application/json
@@ -359,11 +523,11 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       security:
-      - Bearer: []
+      - BearerTokenAuth: []
       summary: Block User
       tags:
       - Admins
-  /admin/user/getuser/{id}:
+  /admin/user/getuser:
     get:
       consumes:
       - application/json
@@ -386,11 +550,11 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       security:
-      - Bearer: []
+      - BearerTokenAuth: []
       summary: All User
       tags:
       - Admins
-  /admin/user/unblock/:
+  /admin/user/unblock:
     patch:
       consumes:
       - application/json
@@ -413,11 +577,11 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       security:
-      - Bearer: []
+      - BearerTokenAuth: []
       summary: Unblock User
       tags:
       - Admins
-  /seller/login/:
+  /seller/login:
     post:
       consumes:
       - application/json
@@ -443,7 +607,7 @@ paths:
       summary: Seller Login
       tags:
       - Seller
-  /seller/signup/:
+  /seller/signup:
     post:
       consumes:
       - application/json
@@ -551,5 +715,9 @@ securityDefinitions:
   BearerTokenAuth:
     in: header
     name: Authorization
+    type: apiKey
+  Refreshtoken:
+    in: header
+    name: Refreshtoken
     type: apiKey
 swagger: "2.0"
