@@ -69,9 +69,6 @@ func (r *sellerUseCase) SellerSignup(sellerSignupData *requestmodel.SellerSignup
 		}
 	}
 
-	// SellerUUID := helper.GenerateUUID()
-	// sellerSignupData.ID = SellerUUID
-
 	hashPassword := helper.HashPassword(sellerSignupData.Password)
 	sellerSignupData.Password = hashPassword
 
@@ -177,11 +174,19 @@ func (r *sellerUseCase) BlockSeller(id string) error {
 	if err != nil {
 		return err
 	}
+	err = r.repo.BlockInventoryOfSeller(id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (r *sellerUseCase) ActiveSeller(id string) error {
 	err := r.repo.UnblockSeller(id)
+	if err != nil {
+		return err
+	}
+	err = r.repo.ActiveInventoryOfSeller(id)
 	if err != nil {
 		return err
 	}

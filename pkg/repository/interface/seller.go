@@ -16,4 +16,6 @@ type ISellerRepo interface {
 	UnblockSeller(string) error
 	GetPendingSellers(int, int) (*[]responsemodel.SellerDetails, error)
 	GetSingleSeller(string) (*responsemodel.SellerDetails, error)
+	BlockInventoryOfSeller(string) error
+	ActiveInventoryOfSeller(string) error
 }

@@ -6,13 +6,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler) {
+func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, inventory *handler.InventotyHandler) {
 
 	engin.POST("/signup", seller.SellerSignup)
 	engin.POST("/login", seller.SellerLogin)
 
 	engin.Use(middlewire.SellerAuthorization)
-	// {
-	// }
+	{
+		inventorymanagement := engin.Group("/inventory")
+		{
+			inventorymanagement.POST("/", inventory.AddInventory)
+		}
+	}
 
 }

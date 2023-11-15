@@ -15,7 +15,7 @@ type ServerHttp struct {
 	engin *gin.Engine
 }
 
-func NewServerHttp(user *handler.UserHandler, seller *handler.SellerHandler, admin *handler.AdminHandler, category *handler.CategoryHandler) *ServerHttp {
+func NewServerHttp(user *handler.UserHandler, seller *handler.SellerHandler, admin *handler.AdminHandler, category *handler.CategoryHandler, inventory *handler.InventotyHandler) *ServerHttp {
 	engin := gin.New()
 	engin.Use(gin.Logger())
 
@@ -23,7 +23,7 @@ func NewServerHttp(user *handler.UserHandler, seller *handler.SellerHandler, adm
 	engin.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	routes.UserRoutes(engin.Group("/user"), user)
-	routes.SellerRoutes(engin.Group("/seller"), seller)
+	routes.SellerRoutes(engin.Group("/seller"), seller, inventory)
 	routes.AdminRoutes(engin.Group("/admin"), admin, seller, user, category)
 
 	return &ServerHttp{engin: engin}

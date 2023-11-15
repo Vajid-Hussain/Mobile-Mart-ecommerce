@@ -8,9 +8,13 @@ import (
 type ICategoryRepository interface {
 	InsertCategory(*requestmodel.Category) error
 	GetAllCategory(int, int) (*[]responsemodel.CategoryDetails, error)
-	// EditCategory(int, string) error
 	EditCategoryName(*requestmodel.CategoryDetails) error
+	DeleteCategory(string) error
+	DeleteInventoryOfCategory(string) error
+
 	InsertBrand(*requestmodel.Brand) error
 	GetAllBrand(int, int) (*[]responsemodel.BrandRes, error)
 	EditBrandName(*requestmodel.BrandDetails) error
+	DeleteBrand(string) error
+	DeleteInventoryOfBrand(string) error
 }

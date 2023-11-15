@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
@@ -45,6 +46,7 @@ func (d *sellerRepository) GetHashPassAndStatus(email string) (string, string, s
 	query := "SELECT password, id, status FROM sellers WHERE email=? AND status!='delete'"
 	err := d.DB.Raw(query, email).Row().Scan(&password, &sellerID, &status)
 	if err != nil {
+		fmt.Println("&&&&&&&&", err)
 		return "", "", "", errors.New("feching password and status, can't make action in database")
 	}
 	return password, sellerID, status, nil
@@ -131,4 +133,22 @@ func (d *sellerRepository) GetSingleSeller(id string) (*responsemodel.SellerDeta
 	}
 
 	return &seller, nil
+}
+
+func (d *sellerRepository) BlockInventoryOfSeller(id string) error {
+	query := "UPDATE inventories SET status= 'block' WHERE seller_id= $1 AND status!='delete'"
+	err := d.DB.Exec(query, id).Error
+	if err != nil {
+		return errors.New("blocking product of blocked seller can't achive to change")
+	}
+	return nil
+}
+
+func (d *sellerRepository) ActiveInventoryOfSeller(id string) error {
+	query := "UPDATE inventories SET status= 'active' WHERE seller_id= $1 AND status!='delete'"
+	err := d.DB.Exec(query, id).Error
+	if err != nil {
+		return errors.New("blocking product of active seller can't achive to change")
+	}
+	return nil
 }

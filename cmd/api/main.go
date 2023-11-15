@@ -14,18 +14,18 @@ func main() {
 		log.Fatal("error at loading the env file using viper")
 	}
 
-	// @title Go + Gin Mobile-Mart
-	// @description TechDeck is an E-commerce platform to purchase and sell Electronic itmes
-	// @contact.name API Support
-	// @securityDefinitions.apikey BearerTokenAuth
-	// @in header
-	// @name Authorization
-	// @securityDefinitions.apikey Refreshtoken
-	// @in header
-	// @name Refreshtoken
-	// @host localhost:8080
-	// @BasePath /
-	// @query.collection.format multi
+	//	@title						Go + Gin Mobile-Mart
+	//	@description				TechDeck is an E-commerce platform to purchase and sell Electronic itmes
+	//	@contact.name				API Support
+	//	@securityDefinitions.apikey	BearerTokenAuth
+	//	@in							header
+	//	@name						Authorization
+	//	@securityDefinitions.apikey	Refreshtoken
+	//	@in							header
+	//	@name						Refreshtoken
+	//	@host						localhost:8080
+	//	@BasePath					/
+	//	@query.collection.format	multi
 
 	docs.SwaggerInfo.Title = "Mobile_mart"
 	// docs.SwaggerInfo.Description = "This is a sample server Petstore server."
@@ -41,6 +41,6 @@ func main() {
 	server.Start()
 }
 
-// @securityDefinitions.apikey Refreshtoken
-// @in header
-// @name Refreshtoken
+//	@securityDefinitions.apikey	Refreshtoken
+//	@in							header
+//	@name						Refreshtoken

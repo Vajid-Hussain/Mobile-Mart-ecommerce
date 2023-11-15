@@ -22,11 +22,11 @@ func NewJwtTokenMiddleWire(jwtUseCase interfaceUseCase.IJwtTokenUseCase, keys co
 }
 
 func SellerAuthorization(c *gin.Context) {
-	accessToken := c.Request.Header.Get("accesstoken")
+	accessToken := c.Request.Header.Get("authorization")
 	refreshToken := c.Request.Header.Get("refreshtoken")
 
 	id, err := service.VerifyAcessToken(accessToken, token.securityKeys.SellerSecurityKey)
-
+	fmt.Println("##############", err)
 	if err != nil {
 		err := service.VerifyRefreshToken(refreshToken, token.securityKeys.SellerSecurityKey)
 		if err != nil {
@@ -44,14 +44,18 @@ func SellerAuthorization(c *gin.Context) {
 					c.Abort()
 				} else {
 					c.JSON(http.StatusOK, gin.H{"token": token})
+					c.Set("SellerID", id)
 					c.Next()
 				}
 			}
 		}
 	} else {
 		c.JSON(http.StatusOK, "all perfect, your access token is uptodate")
+		c.Set("SellerID", id)
 		fmt.Println("access token is upto date")
+		c.Next()
 	}
+	c.Set("SellerID", id)
 	c.Next()
 }
 

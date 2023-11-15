@@ -105,6 +105,29 @@ func (r *categoryUseCase) EditCategory(categoryData *requestmodel.CategoryDetail
 	return nil, nil
 }
 
+func (r *categoryUseCase) DeleteCategory(id string) error {
+
+	ID, err := strconv.Atoi(id)
+	if err != nil {
+		return resCustomError.ErrNegativeID
+	}
+
+	if ID < 1 {
+		return resCustomError.ErrNegativeID
+	}
+
+	err = r.repo.DeleteInventoryOfCategory(id)
+	if err != nil {
+		return err
+	}
+
+	err = r.repo.DeleteCategory(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Brand
 func (r *categoryUseCase) CreateBrand(brandDetails *requestmodel.Brand) (*responsemodel.BrandRes, error) {
 	var resBrand responsemodel.BrandRes
@@ -188,4 +211,27 @@ func (r *categoryUseCase) EditBrand(brandData *requestmodel.BrandDetails) (*resp
 		return nil, err
 	}
 	return nil, nil
+}
+
+func (r *categoryUseCase) DeleteBrand(id string) error {
+
+	ID, err := strconv.Atoi(id)
+	if err != nil {
+		return resCustomError.ErrNegativeID
+	}
+
+	if ID < 1 {
+		return resCustomError.ErrNegativeID
+	}
+
+	err = r.repo.DeleteInventoryOfBrand(id)
+	if err != nil {
+		return err
+	}
+
+	err = r.repo.DeleteBrand(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

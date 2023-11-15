@@ -39,7 +39,11 @@ func InitializeAPI(config config.Config) (*server.ServerHttp, error) {
 	categoryUseCase := usecase.NewCategoryUseCase(categoryRepository)
 	categoryHandler := handler.NewCategoryHandler(categoryUseCase)
 
-	serverHttp := server.NewServerHttp(userHandler, sellerHandler, adminHandler, categoryHandler)
+	inventoryRepository := repository.NewInventoryRepository(DB)
+	inventoryUseCase := usecase.NewInventoryUseCase(inventoryRepository)
+	inventoryHandler := handler.NewInventoryHandler(inventoryUseCase)
+
+	serverHttp := server.NewServerHttp(userHandler, sellerHandler, adminHandler, categoryHandler, inventoryHandler)
 
 	return serverHttp, nil
 }

@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
@@ -44,10 +42,19 @@ func (d *categoryRepository) EditCategoryName(category *requestmodel.CategoryDet
 	result := d.DB.Exec(query, category.Name, category.ID)
 
 	if result.RowsAffected == 0 {
-		return errors.New("no category exist by id")
+		return errors.New("no category exist by id, do't duplicate brand")
 	}
 	if result.Error != nil {
 		return errors.New("some problem from database for update category")
+	}
+	return nil
+}
+
+func (d *categoryRepository) DeleteCategory(id string) error {
+	query := "UPDATE categories SET status='delete' WHERE id= $1"
+	err := d.DB.Exec(query, id).Error
+	if err != nil {
+		return errors.New("can't delete category from database")
 	}
 	return nil
 }
@@ -77,13 +84,41 @@ func (d *categoryRepository) GetAllBrand(offSet int, limit int) (*[]responsemode
 func (d *categoryRepository) EditBrandName(brand *requestmodel.BrandDetails) error {
 	query := "UPDATE brands SET name=? WHERE id=?"
 	result := d.DB.Exec(query, brand.Name, brand.ID)
-	fmt.Println("========", brand.Name, result.RowsAffected)
 
 	if result.RowsAffected == 0 {
 		return errors.New("no brands exist by id")
 	}
 	if result.Error != nil {
 		return errors.New("some problem from database for update brand")
+	}
+	return nil
+}
+
+func (d *categoryRepository) DeleteBrand(id string) error {
+	query := "UPDATE brands SET status='delete' WHERE id= $1"
+	err := d.DB.Exec(query, id).Error
+	if err != nil {
+		return errors.New("can't delete brand from database")
+	}
+	return nil
+}
+
+// inventory
+
+func (d *categoryRepository) DeleteInventoryOfCategory(id string) error {
+	query := "UPDATE inventories SET status= 'delete' WHERE category_id= $1 AND status!='delete'"
+	err := d.DB.Exec(query, id).Error
+	if err != nil {
+		return errors.New("blocking product of blocked brand can't achive to change")
+	}
+	return nil
+}
+
+func (d *categoryRepository) DeleteInventoryOfBrand(id string) error {
+	query := "UPDATE inventories SET status= 'delete' WHERE brand_id= $1 AND status!='delete'"
+	err := d.DB.Exec(query, id).Error
+	if err != nil {
+		return errors.New("blocking product of blocked brand can't achive to change")
 	}
 	return nil
 }
