@@ -21,3 +21,9 @@ type InventoryRes struct {
 type Errors struct {
 	Err string
 }
+
+type InventoryShowcase struct {
+	Productname string `json:"productname" validate:"required,min=3,max=100"`
+	Mrp         int    `json:"mrp" validate:"required,min=0"`
+	Saleprice   int    `json:"saleprice" validate:"required,min=0"`
+}

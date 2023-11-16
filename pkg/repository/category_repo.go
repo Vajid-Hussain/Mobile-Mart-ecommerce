@@ -122,3 +122,15 @@ func (d *categoryRepository) DeleteInventoryOfBrand(id string) error {
 	}
 	return nil
 }
+
+// func (d *inventoryRepository) GetInventory(offSet int, limit int) (*[]responsemodel.InventoryShowcase, error) {
+// 	var inventory []responsemodel.InventoryShowcase
+
+// 	query := "SELECT * FROM inventories ORDER BY id OFFSET ? LIMIT ?"
+// 	err := d.DB.Raw(query, offSet, limit).Scan(&inventory).Error
+// 	if err != nil {
+// 		return nil, errors.New("can't get inventory data from db")
+// 	}
+
+// 	return &inventory, nil
+// }

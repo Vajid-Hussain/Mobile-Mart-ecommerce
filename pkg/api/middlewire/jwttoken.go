@@ -26,7 +26,6 @@ func SellerAuthorization(c *gin.Context) {
 	refreshToken := c.Request.Header.Get("refreshtoken")
 
 	id, err := service.VerifyAcessToken(accessToken, token.securityKeys.SellerSecurityKey)
-	fmt.Println("##############", err)
 	if err != nil {
 		err := service.VerifyRefreshToken(refreshToken, token.securityKeys.SellerSecurityKey)
 		if err != nil {
@@ -60,7 +59,7 @@ func SellerAuthorization(c *gin.Context) {
 }
 
 func UserAuthorization(c *gin.Context) {
-	accessToken := c.Request.Header.Get("accesstoken")
+	accessToken := c.Request.Header.Get("authorization")
 	refreshToken := c.Request.Header.Get("refreshtoken")
 
 	id, err := service.VerifyAcessToken(accessToken, token.securityKeys.UserSecurityKey)

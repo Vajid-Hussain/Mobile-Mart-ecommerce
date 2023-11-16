@@ -36,3 +36,66 @@ func (d *inventoryRepository) CreateProduct(inventory *requestmodel.InventoryReq
 	}
 	return &insertedData, nil
 }
+
+func (d *inventoryRepository) BlockSingleInventoryBySeller(SellerID string, productID string) error {
+	query := "UPDATE inventories SET status='block' WHERE id= $1"
+	err := d.DB.Exec(query, productID).Error
+	if err != nil {
+		return errors.New("can't change the status of product")
+	}
+	return nil
+}
+
+func (d *inventoryRepository) UNBlockSingleInventoryBySeller(SellerID string, productID string) error {
+	query := "UPDATE inventories SET status='active' WHERE id= $1"
+	err := d.DB.Exec(query, productID).Error
+	if err != nil {
+		return errors.New("can't change the status of product in inverntories")
+	}
+	return nil
+}
+
+func (d *inventoryRepository) DeleteInventoryBySeller(SellerID string, productID string) error {
+	query := "UPDATE inventories SET status='delete' WHERE id= $1"
+	err := d.DB.Exec(query, productID).Error
+	if err != nil {
+		return errors.New("can't change the status of product in inverntories")
+	}
+	return nil
+}
+
+func (d *inventoryRepository) GetInventory(offSet int, limit int) (*[]responsemodel.InventoryShowcase, error) {
+	var inventory []responsemodel.InventoryShowcase
+
+	query := "SELECT * FROM inventories ORDER BY id OFFSET ? LIMIT ?"
+	err := d.DB.Raw(query, offSet, limit).Scan(&inventory).Error
+	if err != nil {
+		return nil, errors.New("can't get inventory data from db")
+	}
+
+	return &inventory, nil
+}
+
+func (d *inventoryRepository) GetAInventory(id string) (*[]responsemodel.InventoryRes, error) {
+	var inventory []responsemodel.InventoryRes
+
+	query := "SELECT * FROM inventories WHERE id=? AND status='active'"
+	err := d.DB.Raw(query, id).Scan(&inventory).Error
+	if err != nil {
+		return nil, errors.New("can't get inventory data from db or inventory is not active state")
+	}
+
+	return &inventory, nil
+}
+
+func (d *inventoryRepository) GetSellerInventory(offSet int, limit int, sellerID string) (*[]responsemodel.InventoryShowcase, error) {
+	var inventory []responsemodel.InventoryShowcase
+
+	query := "SELECT * FROM inventories WHERE seller_id= ? ORDER BY id OFFSET ? LIMIT ?"
+	err := d.DB.Raw(query, sellerID, offSet, limit).Scan(&inventory).Error
+	if err != nil {
+		return nil, errors.New("can't get inventory data from db")
+	}
+
+	return &inventory, nil
+}
