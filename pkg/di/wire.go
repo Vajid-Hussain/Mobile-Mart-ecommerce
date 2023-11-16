@@ -32,7 +32,7 @@ func InitializeAPI(config config.Config) (*server.ServerHttp, error) {
 	sellerHandler := handler.NewSellerHandler(sellerUseCase)
 
 	adminRepository := repository.NewAdminRepository(DB)
-	adminUseCase := usecase.NewAdminUseCase(adminRepository, &config.Token)
+	adminUseCase := usecase.NewAdminUseCase(adminRepository, &config.Token, &config.S3aws)
 	adminHandler := handler.NewAdminHandler(adminUseCase)
 
 	categoryRepository := repository.NewCategoryRepository(DB)

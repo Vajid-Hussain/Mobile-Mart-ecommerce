@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -17,15 +18,15 @@ func NewAdminHandler(useCase interfaceUseCase.IAdminUseCase) *AdminHandler {
 	return &AdminHandler{AdminUseCase: useCase}
 }
 
-//	@Summary		Admin login
-//	@Description	using this handler admins can login
-//	@Tags			Admins
-//	@Accept			json
-//	@Produce		json
-//	@Param			admin	body		requestmodel.AdminLoginData	true	"Admin login details"
-//	@Success		200		{object}	response.Response{}
-//	@Failure		400		{object}	response.Response{}
-//	@Router			/admin/login/ [post]
+// @Summary		Admin login
+// @Description	using this handler admins can login
+// @Tags			Admins
+// @Accept			json
+// @Produce		json
+// @Param			admin	body		requestmodel.AdminLoginData	true	"Admin login details"
+// @Success		200		{object}	response.Response{}
+// @Failure		400		{object}	response.Response{}
+// @Router			/admin/login/ [post]
 func (u *AdminHandler) AdminLogin(c *gin.Context) {
 	var loginCredential requestmodel.AdminLoginData
 
@@ -44,4 +45,15 @@ func (u *AdminHandler) AdminLogin(c *gin.Context) {
 		finalReslt := response.Responses(http.StatusOK, "succesfully login", result, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
+}
+
+func (u *AdminHandler) ImageS3(c *gin.Context) {
+
+	image, err := c.FormFile("image")
+	if err != nil {
+		fmt.Println(err, "**")
+	}
+
+	u.AdminUseCase.ImageUpload(image)
+
 }

@@ -9,6 +9,7 @@ import (
 func AdminRoutes(engin *gin.RouterGroup, admin *handler.AdminHandler, seller *handler.SellerHandler, user *handler.UserHandler, category *handler.CategoryHandler) {
 
 	engin.POST("/login", admin.AdminLogin)
+	engin.POST("/image", admin.ImageS3)
 
 	engin.Use(middlewire.AdminAuthorization)
 	{

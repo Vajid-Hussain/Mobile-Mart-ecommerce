@@ -3,6 +3,7 @@ package usecase
 import (
 	"errors"
 	"fmt"
+	"mime/multipart"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -17,11 +18,13 @@ import (
 type adminUsecase struct {
 	repo             interfaces.IAdminRepository
 	tokenSecurityKey config.Token
+	s3               config.S3Bucket
 }
 
-func NewAdminUseCase(adminRepository interfaces.IAdminRepository, key *config.Token) interfaceUseCase.IAdminUseCase {
+func NewAdminUseCase(adminRepository interfaces.IAdminRepository, key *config.Token, s3aws *config.S3Bucket) interfaceUseCase.IAdminUseCase {
 	return &adminUsecase{repo: adminRepository,
-		tokenSecurityKey: *key}
+		tokenSecurityKey: *key,
+		s3:               *s3aws}
 }
 
 func (r *adminUsecase) AdminLogin(adminData *requestmodel.AdminLoginData) (*responsemodel.AdminLoginRes, error) {
@@ -62,4 +65,19 @@ func (r *adminUsecase) AdminLogin(adminData *requestmodel.AdminLoginData) (*resp
 
 	adminLoginRes.Token = token
 	return &adminLoginRes, nil
+}
+
+func (r *adminUsecase) ImageUpload(img *multipart.FileHeader) error {
+
+	sess := service.CreateSession(&r.s3)
+
+	s3Sess := service.CreateS3Session(sess)
+
+	fmt.Println(*s3Sess)
+	err := service.UploadObject(img, sess)
+	if err != nil {
+		return errors.New("can't upload images")
+	}
+
+	return nil
 }

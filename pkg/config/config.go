@@ -25,10 +25,18 @@ type OTP struct {
 	ServiceSid string `mapstructure:"Service_SID"`
 }
 
+type S3Bucket struct {
+	AccessKeyID     string `mapstructure:"AccessKeyID"`
+	AccessKeySecret string `mapstructure:"AccessKeySecret"`
+	Region          string `mapstructure:"Region"`
+	BucketName      string `mapstructure:"BucketName"`
+}
+
 type Config struct {
 	DB    DataBase
 	Token Token
 	Otp   OTP
+	S3aws S3Bucket
 }
 
 func LoadConfig() (*Config, error) {
@@ -36,6 +44,7 @@ func LoadConfig() (*Config, error) {
 	var db DataBase
 	var token Token
 	var otp OTP
+	var s3 S3Bucket
 
 	viper.AddConfigPath("./")
 	viper.SetConfigFile(".env")
@@ -58,7 +67,11 @@ func LoadConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = viper.Unmarshal(&s3)
+	if err != nil {
+		return nil, err
+	}
 
-	config := Config{DB: db, Token: token, Otp: otp}
+	config := Config{DB: db, Token: token, Otp: otp, S3aws: s3}
 	return &config, nil
 }
