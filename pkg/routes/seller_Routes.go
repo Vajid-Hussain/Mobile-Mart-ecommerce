@@ -18,6 +18,7 @@ func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, invento
 			inventorymanagement.POST("/", inventory.AddInventory)
 			inventorymanagement.GET("/", inventory.GetSellerInventory)
 			inventorymanagement.GET("/:inventoryid", inventory.GetAInventory)
+			inventorymanagement.PATCH("/", inventory.EditInventory)
 			inventorymanagement.DELETE("/:inventoryid", inventory.DeleteInventory)
 			inventorymanagement.PATCH("/:productid/block", inventory.BlockInventory)
 			inventorymanagement.PATCH("/:productid/unblock", inventory.UNBlockInventory)

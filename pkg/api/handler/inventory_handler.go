@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -126,7 +127,6 @@ func (u *InventotyHandler) GetAInventory(c *gin.Context) {
 		finalReslt := response.Responses(http.StatusOK, "", inverntory, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
-
 }
 
 func (u *InventotyHandler) GetSellerInventory(c *gin.Context) {
@@ -140,6 +140,30 @@ func (u *InventotyHandler) GetSellerInventory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
 		finalReslt := response.Responses(http.StatusOK, "", inverntories, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+
+}
+
+func (u *InventotyHandler) EditInventory(c *gin.Context) {
+
+	inventoryID := c.Query("invenoryid")
+	var edittedInventory requestmodel.EditInventory
+
+	if err := c.BindJSON(&edittedInventory); err != nil {
+		fmt.Println(err)
+		finalReslt := response.Responses(http.StatusBadRequest, "something wrong", nil, nil)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	updatedInverntory, err := u.userCase.EditInventory(&edittedInventory, inventoryID)
+
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", updatedInverntory, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 

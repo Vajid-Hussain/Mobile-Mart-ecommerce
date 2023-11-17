@@ -148,3 +148,62 @@ func (r *inventoryUseCase) GetSellerInventory(page string, limit string, sellerI
 
 	return inventories, nil
 }
+
+func (r *inventoryUseCase) EditInventory(editInventory *requestmodel.EditInventory, invetoryID string) (*responsemodel.InventoryRes, error) {
+	validate := validator.New(validator.WithRequiredStructEnabled())
+
+	inventory, err := r.repo.GetAInventory(invetoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	err = validate.Struct(editInventory)
+	for _, data := range *inventory {
+		if err != nil {
+			if ve, ok := err.(validator.ValidationErrors); ok {
+				for _, e := range ve {
+					fieldName := e.Field()
+					switch fieldName {
+					case "ID":
+						editInventory.ID = data.ID
+					case "Productname":
+						editInventory.Productname = data.Productname
+					case "Description":
+						editInventory.Description = data.Description
+					case "BrandID":
+						editInventory.BrandID = data.BrandID
+					case "CategoryID":
+						editInventory.CategoryID = data.CategoryID
+					case "SellerID":
+						editInventory.SellerID = data.SellerID
+					case "Mrp":
+						editInventory.Mrp = data.Mrp
+					case "Saleprice":
+						editInventory.Saleprice = data.Saleprice
+					case "Units":
+						editInventory.Units = data.Units
+					case "Os":
+						editInventory.Os = data.Os
+					case "CellularTechnology":
+						editInventory.CellularTechnology = data.CellularTechnology
+					case "Ram":
+						editInventory.Ram = data.Ram
+					case "Screensize":
+						editInventory.Screensize = data.Screensize
+					case "Batterycapacity":
+						editInventory.Batterycapacity = data.Batterycapacity
+					case "Processor":
+						editInventory.Processor = data.Processor
+					}
+				}
+			}
+		}
+	}
+
+	updatedData, err := r.repo.UpdateInventory(editInventory)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedData, nil
+}

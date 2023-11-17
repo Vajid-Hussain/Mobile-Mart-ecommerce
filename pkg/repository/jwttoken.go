@@ -27,10 +27,10 @@ func (d *jwtTokenRepository) GetSellerStatus(id string) (string, error) {
 
 func (d *jwtTokenRepository) GetUserStatus(id string) (string, error) {
 	var status string
-	query := "SELECT status FROM user_details WHERE id=?"
+	query := "SELECT status FROM users WHERE id=?"
 	err := d.DB.Raw(query, id).Row().Scan(&status)
 	if err != nil {
-		return "", errors.New("can't fetch data from database for crating access token")
+		return "", errors.New("can't fetch data from database for crating access token, or no user exist")
 	}
 	return status, nil
 }

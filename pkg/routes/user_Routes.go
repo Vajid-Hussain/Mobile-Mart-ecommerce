@@ -13,12 +13,12 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 		usermanagement.POST("/signup", user.UserSignup)
 		usermanagement.POST("/verifyOTP", user.VerifyOTP)
 		usermanagement.POST("/login", user.UserLogin)
+	}
 
-		engin.Use(middlewire.UserAuthorization)
-		{
-			engin.GET("/", inventory.GetInventory)
-			engin.GET("/:inventoryid", inventory.GetAInventory)
-		}
+	engin.Use(middlewire.UserAuthorization)
+	{
+		engin.GET("", inventory.GetInventory)
+		engin.GET(":inventoryid", inventory.GetAInventory)
 	}
 
 }

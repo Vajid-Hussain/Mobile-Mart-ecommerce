@@ -34,12 +34,12 @@ func SellerAuthorization(c *gin.Context) {
 		} else {
 			_, err := token.JwtTokenUseCase.GetDataForCreteAccessToken(id)
 			if err != nil {
-				c.JSON(http.StatusUnauthorized, err)
+				c.JSON(http.StatusUnauthorized, err.Error())
 				c.Abort()
 			} else {
 				token, err := service.GenerateAcessToken(token.securityKeys.SellerSecurityKey, id)
 				if err != nil {
-					c.JSON(http.StatusUnauthorized, err)
+					c.JSON(http.StatusUnauthorized, err.Error())
 					c.Abort()
 				} else {
 					c.JSON(http.StatusOK, gin.H{"token": token})
@@ -63,7 +63,6 @@ func UserAuthorization(c *gin.Context) {
 	refreshToken := c.Request.Header.Get("refreshtoken")
 
 	id, err := service.VerifyAcessToken(accessToken, token.securityKeys.UserSecurityKey)
-
 	if err != nil {
 		err := service.VerifyRefreshToken(refreshToken, token.securityKeys.UserSecurityKey)
 		if err != nil {
@@ -72,12 +71,12 @@ func UserAuthorization(c *gin.Context) {
 		} else {
 			_, err := token.JwtTokenUseCase.GetStatusOfUser(id)
 			if err != nil {
-				c.JSON(http.StatusUnauthorized, err)
+				c.JSON(http.StatusUnauthorized, err.Error())
 				c.Abort()
 			} else {
 				token, err := service.GenerateAcessToken(token.securityKeys.UserSecurityKey, id)
 				if err != nil {
-					c.JSON(http.StatusUnauthorized, err)
+					c.JSON(http.StatusUnauthorized, err.Error())
 					c.Abort()
 				} else {
 					c.JSON(http.StatusOK, gin.H{"token": token})

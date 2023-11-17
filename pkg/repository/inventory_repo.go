@@ -67,7 +67,7 @@ func (d *inventoryRepository) DeleteInventoryBySeller(SellerID string, productID
 func (d *inventoryRepository) GetInventory(offSet int, limit int) (*[]responsemodel.InventoryShowcase, error) {
 	var inventory []responsemodel.InventoryShowcase
 
-	query := "SELECT * FROM inventories ORDER BY id OFFSET ? LIMIT ?"
+	query := "SELECT * FROM inventories WHERE status = 'active' ORDER BY id OFFSET ? LIMIT ?"
 	err := d.DB.Raw(query, offSet, limit).Scan(&inventory).Error
 	if err != nil {
 		return nil, errors.New("can't get inventory data from db")
@@ -91,11 +91,37 @@ func (d *inventoryRepository) GetAInventory(id string) (*[]responsemodel.Invento
 func (d *inventoryRepository) GetSellerInventory(offSet int, limit int, sellerID string) (*[]responsemodel.InventoryShowcase, error) {
 	var inventory []responsemodel.InventoryShowcase
 
-	query := "SELECT * FROM inventories WHERE seller_id= ? ORDER BY id OFFSET ? LIMIT ?"
+	query := "SELECT * FROM inventories WHERE seller_id= ? AND status = 'active' ORDER BY id OFFSET ? LIMIT ?"
 	err := d.DB.Raw(query, sellerID, offSet, limit).Scan(&inventory).Error
 	if err != nil {
 		return nil, errors.New("can't get inventory data from db")
 	}
 
 	return &inventory, nil
+}
+
+func (d *inventoryRepository) UpdateInventory(inventory *requestmodel.EditInventory) (*responsemodel.InventoryRes, error) {
+	var updatedData responsemodel.InventoryRes
+
+	query := `UPDATE inventories 
+	SET productname = ?, description = ?, brand_id = ?, category_id = ?, 
+		mrp = ?, saleprice = ?, units = ?, os = ?, cellular_technology = ?, 
+		ram = ?, screensize = ?, batterycapacity = ?, processor = ?
+	WHERE id = ? RETURNING *;`
+
+	result := d.DB.Raw(query,
+		inventory.Productname, inventory.Description, inventory.BrandID, inventory.CategoryID,
+		inventory.Mrp, inventory.Saleprice, inventory.Units,
+		inventory.Os, inventory.CellularTechnology, inventory.Ram,
+		inventory.Screensize, inventory.Batterycapacity, inventory.Processor,
+		inventory.ID,
+	).Scan(&updatedData)
+
+	if result.Error != nil {
+		return nil, errors.New("inventory is not updated into database")
+	}
+	if result.RowsAffected == 0 {
+		return nil, errors.New("inventory is not updated in database , face some error")
+	}
+	return &updatedData, nil
 }

@@ -30,6 +30,9 @@ func (r *JwtTokenUseCase) GetDataForCreteAccessToken(id string) (string, error) 
 
 func (r *JwtTokenUseCase) GetStatusOfUser(id string) (string, error) {
 	status, err := r.repo.GetUserStatus(id)
+	if status == "" {
+		return "", errors.New("no user exist, do signup")
+	}
 	if err != nil {
 		return "", err
 	}
