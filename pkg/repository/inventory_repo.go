@@ -2,9 +2,11 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
+	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	"gorm.io/gorm"
 )
@@ -18,14 +20,15 @@ func NewInventoryRepository(db *gorm.DB) interfaces.IInventoryRepository {
 }
 
 func (d *inventoryRepository) CreateProduct(inventory *requestmodel.InventoryReq) (*responsemodel.InventoryRes, error) {
+
 	var insertedData responsemodel.InventoryRes
 
-	query := `INSERT INTO inventories (productname, description, brand_id, category_id, mrp, saleprice, units,os, cellular_technology, ram, screensize, Batterycapacity, processor, seller_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *;`
+	query := `INSERT INTO inventories (productname, description, brand_id, category_id, mrp, saleprice, units,os, cellular_technology, ram, screensize, Batterycapacity, processor, seller_id, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *;`
 	result := d.DB.Raw(query,
 		inventory.Productname, inventory.Description, inventory.BrandID, inventory.CategoryID,
 		inventory.Mrp, inventory.Saleprice, inventory.Units,
 		inventory.Os, inventory.CellularTechnology, inventory.Ram,
-		inventory.Screensize, inventory.Batterycapacity, inventory.Processor, inventory.SellerID,
+		inventory.Screensize, inventory.Batterycapacity, inventory.Processor, inventory.SellerID, inventory.ImageURL,
 	).Scan(&insertedData)
 
 	if result.Error != nil {
@@ -76,13 +79,17 @@ func (d *inventoryRepository) GetInventory(offSet int, limit int) (*[]responsemo
 	return &inventory, nil
 }
 
-func (d *inventoryRepository) GetAInventory(id string) (*[]responsemodel.InventoryRes, error) {
-	var inventory []responsemodel.InventoryRes
+func (d *inventoryRepository) GetAInventory(id string) (*responsemodel.InventoryRes, error) {
+	var inventory responsemodel.InventoryRes
 
 	query := "SELECT * FROM inventories WHERE id=? AND status='active'"
-	err := d.DB.Raw(query, id).Scan(&inventory).Error
-	if err != nil {
+	result := d.DB.Raw(query, id).Scan(&inventory)
+	if result.Error != nil {
 		return nil, errors.New("can't get inventory data from db or inventory is not active state")
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
 	}
 
 	return &inventory, nil
@@ -102,6 +109,8 @@ func (d *inventoryRepository) GetSellerInventory(offSet int, limit int, sellerID
 
 func (d *inventoryRepository) UpdateInventory(inventory *requestmodel.EditInventory) (*responsemodel.InventoryRes, error) {
 	var updatedData responsemodel.InventoryRes
+
+	fmt.Println(inventory)
 
 	query := `UPDATE inventories 
 	SET productname = ?, description = ?, brand_id = ?, category_id = ?, 

@@ -31,12 +31,12 @@ func CreateS3Session(sess *session.Session) *s3.S3 {
 	return s3Session
 }
 
-func UploadObject(file *multipart.FileHeader, sess *session.Session) error {
+func UploadImageToS3(file *multipart.FileHeader, sess *session.Session) (string, error) {
 
 	image, err := file.Open()
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return "", err
 	}
 	defer image.Close()
 
@@ -47,13 +47,11 @@ func UploadObject(file *multipart.FileHeader, sess *session.Session) error {
 		Body:   image,
 		ACL:    aws.String("public-read"),
 	})
-
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return "", err
 	}
-	fmt.Println(upload.Location, "-------")
-	return nil
+	return upload.Location, nil
 }
 
 // func DownloadObject(url string, sess *session.Session, cfg *config.S3Bucket) error {

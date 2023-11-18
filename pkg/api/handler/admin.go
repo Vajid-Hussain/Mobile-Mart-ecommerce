@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -53,15 +52,4 @@ func (u *AdminHandler) AdminLogin(c *gin.Context) {
 		finalReslt := response.Responses(http.StatusOK, "succesfully login", result, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
-}
-
-func (u *AdminHandler) ImageS3(c *gin.Context) {
-
-	image, err := c.FormFile("image")
-	if err != nil {
-		fmt.Println(err, "**")
-	}
-
-	u.AdminUseCase.ImageUpload(image)
-
 }

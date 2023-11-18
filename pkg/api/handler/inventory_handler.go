@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
@@ -21,7 +22,9 @@ func NewInventoryHandler(usercase interfaceUseCase.IInventoryUseCase) *Inventoty
 }
 
 func (u *InventotyHandler) AddInventory(c *gin.Context) {
+
 	var inventoryDetails requestmodel.InventoryReq
+
 	sellerid, exist := c.MustGet("SellerID").(string)
 	if !exist {
 		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.NotGetSellerIDinContexr, nil, nil)
@@ -29,13 +32,16 @@ func (u *InventotyHandler) AddInventory(c *gin.Context) {
 		return
 	}
 
-	inventoryDetails.SellerID = sellerid
+	sellerID, _ := strconv.ParseUint(sellerid, 8, 8)
+	inventoryDetails.SellerID = uint(sellerID)
 
-	if err := c.BindJSON(&inventoryDetails); err != nil {
+	if err := c.ShouldBind(&inventoryDetails); err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, nil)
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
+	// fmt.Println("_______", inventoryDetails)
+	// fmt.Println("******", inventoryDetails.ImageURL)
 
 	data, err := helper.Validation(inventoryDetails)
 	if err != nil {
@@ -44,9 +50,9 @@ func (u *InventotyHandler) AddInventory(c *gin.Context) {
 		return
 	}
 
-	result, product, err := u.userCase.AddInventory(&inventoryDetails)
+	product, err := u.userCase.AddInventory(&inventoryDetails)
 	if err != nil {
-		finalReslt := response.Responses(http.StatusBadRequest, "refine request", result, err.Error())
+		finalReslt := response.Responses(http.StatusBadRequest, "refine request", "", err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
 		finalReslt := response.Responses(http.StatusOK, "succesfully acomplish", product, nil)
@@ -160,20 +166,12 @@ func (u *InventotyHandler) EditInventory(c *gin.Context) {
 
 	if err := c.BindJSON(&edittedInventory); err != nil {
 		fmt.Println(err)
-		finalReslt := response.Responses(http.StatusBadRequest, "something wrong", nil, nil)
-		c.JSON(http.StatusBadRequest, finalReslt)
-		return
-	}
-
-	data, err := helper.Validation(edittedInventory)
-	if err != nil {
-		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, nil)
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
 
 	updatedInverntory, err := u.userCase.EditInventory(&edittedInventory, inventoryID)
-
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)

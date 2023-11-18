@@ -3,13 +3,12 @@ package usecase
 import (
 	"errors"
 	// "regexp"
-	"strconv"
+
 	// "strings"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
-	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
@@ -154,26 +153,10 @@ func (r *userUseCase) GetAllUsers(page string, limit string) (*[]responsemodel.U
 	go r.repo.UserCount(ch)
 	count := <-ch
 
-	pageNO, err := strconv.Atoi(page)
+	offSet, limits, err := helper.Pagination(page, limit)
 	if err != nil {
-		return nil, nil, resCustomError.ErrConversionOFPage
+		return nil, &count, err
 	}
-
-	limits, err := strconv.Atoi(limit)
-	if err != nil {
-		return nil, nil, resCustomError.ErrConversionOfLimit
-	}
-
-	if pageNO < 1 {
-		return nil, nil, resCustomError.ErrPagination
-	}
-
-	if limits <= 0 {
-		return nil, nil, resCustomError.ErrPageLimit
-	}
-
-	offSet := (pageNO * limits) - limits
-	limits = pageNO * limits
 
 	userDetails, err := r.repo.AllUsers(offSet, limits)
 	if err != nil {

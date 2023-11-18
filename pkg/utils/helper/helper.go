@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func PaginationError(page string, limit string) (int, int, error) {
+func Pagination(page string, limit string) (int, int, error) {
 
 	pageNO, err := strconv.Atoi(page)
 	if err != nil {
@@ -51,7 +51,7 @@ func Validation(data interface{}) (*[]responsemodel.Errors, error) {
 					err := fmt.Sprintf("%s is required", e.Field())
 					result = responsemodel.Errors{Err: err}
 				case "min":
-					err := fmt.Sprintf("%s should be at least %s characters", e.Field(), e.Param())
+					err := fmt.Sprintf("%s should be at least %s", e.Field(), e.Param())
 					result = responsemodel.Errors{Err: err}
 				case "max":
 					err := fmt.Sprintf("%s should be at most %s characters", e.Field(), e.Param())

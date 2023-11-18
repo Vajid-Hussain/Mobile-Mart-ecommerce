@@ -6,12 +6,12 @@ import (
 )
 
 type IInventoryUseCase interface {
-	AddInventory(*requestmodel.InventoryReq) (*[]responsemodel.Errors, *responsemodel.InventoryRes, error)
+	AddInventory(*requestmodel.InventoryReq) (*responsemodel.InventoryRes, error)
 	BlockInventory(string, string) error
 	UNBlockInventory(string, string) error
 	DeleteInventory(string, string) error
 	GetAllInventory(string, string) (*[]responsemodel.InventoryShowcase, error)
-	GetAInventory(string) (*[]responsemodel.InventoryRes, error)
+	GetAInventory(string) (*responsemodel.InventoryRes, error)
 	GetSellerInventory(string, string, string) (*[]responsemodel.InventoryShowcase, error)
 	EditInventory(*requestmodel.EditInventory, string) (*responsemodel.InventoryRes, error)
 }

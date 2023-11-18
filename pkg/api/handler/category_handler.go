@@ -38,6 +38,13 @@ func (u *CategoryHandler) NewCategory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, resCustomError.BindingConflict)
 	}
 
+	data, err := helper.Validation(categoryDetails)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
 	result, err := u.categoryUseCase.NewCategory(&categoryDetails)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", result, err.Error())
@@ -91,6 +98,13 @@ func (u *CategoryHandler) UpdateCategory(c *gin.Context) {
 
 	if err := c.BindJSON(&categoryData); err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	data, err := helper.Validation(categoryData)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
@@ -150,6 +164,13 @@ func (u *CategoryHandler) CreateBrand(c *gin.Context) {
 	err := c.ShouldBindJSON(&BrandDetails)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resCustomError.BindingConflict)
+		return
+	}
+
+	data, err := helper.Validation(BrandDetails)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
 

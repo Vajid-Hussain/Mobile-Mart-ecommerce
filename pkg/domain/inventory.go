@@ -19,5 +19,6 @@ type Inventories struct {
 	Screensize         float64
 	Batterycapacity    int
 	Processor          string
+	ImageURL           string
 	Status             status `gorm:"default:active"`
 }

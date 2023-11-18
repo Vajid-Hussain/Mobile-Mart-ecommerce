@@ -1,16 +1,14 @@
 package usecase
 
 import (
-	"errors"
 	"strconv"
-	"strings"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
-	"github.com/go-playground/validator/v10"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
 )
 
 type categoryUseCase struct {
@@ -22,23 +20,23 @@ func NewCategoryUseCase(repository interfaces.ICategoryRepository) interfaceUseC
 }
 
 func (r *categoryUseCase) NewCategory(categoryDetails *requestmodel.Category) (*responsemodel.Category, error) {
-	var resCategory responsemodel.Category
+	// var resCategory responsemodel.Category
 
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	err := validate.Struct(categoryDetails)
-	if err != nil {
-		if ve, ok := err.(validator.ValidationErrors); ok {
-			for _, e := range ve {
-				switch e.Field() {
-				case "Name":
-					resCategory.Name = "name is medetary"
-				}
-			}
-		}
-		return &resCategory, errors.New("don't fullfill the category requirement ")
-	}
+	// validate := validator.New(validator.WithRequiredStructEnabled())
+	// err := validate.Struct(categoryDetails)
+	// if err != nil {
+	// 	if ve, ok := err.(validator.ValidationErrors); ok {
+	// 		for _, e := range ve {
+	// 			switch e.Field() {
+	// 			case "Name":
+	// 				resCategory.Name = "name is medetary"
+	// 			}
+	// 		}
+	// 	}
+	// 	return &resCategory, errors.New("don't fullfill the category requirement ")
+	// }
 
-	err = r.repo.InsertCategory(categoryDetails)
+	err := r.repo.InsertCategory(categoryDetails)
 	if err != nil {
 		return nil, err
 	}
@@ -48,26 +46,10 @@ func (r *categoryUseCase) NewCategory(categoryDetails *requestmodel.Category) (*
 
 func (r *categoryUseCase) GetAllCategory(page string, limit string) (*[]responsemodel.CategoryDetails, error) {
 
-	pageNO, err := strconv.Atoi(page)
+	offSet, limits, err := helper.Pagination(page, limit)
 	if err != nil {
-		return nil, resCustomError.ErrConversionOFPage
+		return nil, err
 	}
-
-	limits, err := strconv.Atoi(limit)
-	if err != nil {
-		return nil, resCustomError.ErrConversionOfLimit
-	}
-
-	if pageNO < 1 {
-		return nil, resCustomError.ErrPagination
-	}
-
-	if limits <= 0 {
-		return nil, resCustomError.ErrPageLimit
-	}
-
-	offSet := (pageNO * limits) - limits
-	limits = pageNO * limits
 
 	categoryDetails, err := r.repo.GetAllCategory(offSet, limits)
 	if err != nil {
@@ -78,27 +60,27 @@ func (r *categoryUseCase) GetAllCategory(page string, limit string) (*[]response
 }
 
 func (r *categoryUseCase) EditCategory(categoryData *requestmodel.CategoryDetails) (*responsemodel.CategoryDetails, error) {
-	var categoryRes responsemodel.CategoryDetails
+	// var categoryRes responsemodel.CategoryDetails
 
-	categoryData.ID = strings.TrimSpace(categoryData.ID)
+	// categoryData.ID = strings.TrimSpace(categoryData.ID)
 
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	err := validate.Struct(categoryData)
-	if err != nil {
-		if ve, ok := err.(validator.ValidationErrors); ok {
-			for _, e := range ve {
-				switch e.Field() {
-				case "Name":
-					categoryRes.Name = "name is medetary"
-				case "ID":
-					categoryRes.ID = "id is required,as query"
-				}
-			}
-		}
-		return &categoryRes, errors.New("don't fullfill the category requirement ")
-	}
+	// validate := validator.New(validator.WithRequiredStructEnabled())
+	// err := validate.Struct(categoryData)
+	// if err != nil {
+	// 	if ve, ok := err.(validator.ValidationErrors); ok {
+	// 		for _, e := range ve {
+	// 			switch e.Field() {
+	// 			case "Name":
+	// 				categoryRes.Name = "name is medetary"
+	// 			case "ID":
+	// 				categoryRes.ID = "id is required,as query"
+	// 			}
+	// 		}
+	// 	}
+	// 	return &categoryRes, errors.New("don't fullfill the category requirement ")
+	// }
 
-	err = r.repo.EditCategoryName(categoryData)
+	err := r.repo.EditCategoryName(categoryData)
 	if err != nil {
 		return nil, err
 	}
@@ -130,23 +112,23 @@ func (r *categoryUseCase) DeleteCategory(id string) error {
 
 // Brand
 func (r *categoryUseCase) CreateBrand(brandDetails *requestmodel.Brand) (*responsemodel.BrandRes, error) {
-	var resBrand responsemodel.BrandRes
+	// var resBrand responsemodel.BrandRes
 
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	err := validate.Struct(brandDetails)
-	if err != nil {
-		if ve, ok := err.(validator.ValidationErrors); ok {
-			for _, e := range ve {
-				switch e.Field() {
-				case "Name":
-					resBrand.Name = "name is medetary"
-				}
-			}
-		}
-		return &resBrand, errors.New("don't fullfill the brand requirement ")
-	}
+	// validate := validator.New(validator.WithRequiredStructEnabled())
+	// err := validate.Struct(brandDetails)
+	// if err != nil {
+	// 	if ve, ok := err.(validator.ValidationErrors); ok {
+	// 		for _, e := range ve {
+	// 			switch e.Field() {
+	// 			case "Name":
+	// 				resBrand.Name = "name is medetary"
+	// 			}
+	// 		}
+	// 	}
+	// 	return &resBrand, errors.New("don't fullfill the brand requirement ")
+	// }
 
-	err = r.repo.InsertBrand(brandDetails)
+	err := r.repo.InsertBrand(brandDetails)
 	if err != nil {
 		return nil, err
 	}
@@ -156,26 +138,10 @@ func (r *categoryUseCase) CreateBrand(brandDetails *requestmodel.Brand) (*respon
 
 func (r *categoryUseCase) GetAllBrand(page string, limit string) (*[]responsemodel.BrandRes, error) {
 
-	pageNO, err := strconv.Atoi(page)
+	offSet, limits, err := helper.Pagination(page, limit)
 	if err != nil {
-		return nil, resCustomError.ErrConversionOFPage
+		return nil, err
 	}
-
-	limits, err := strconv.Atoi(limit)
-	if err != nil {
-		return nil, resCustomError.ErrConversionOfLimit
-	}
-
-	if pageNO < 1 {
-		return nil, resCustomError.ErrPagination
-	}
-
-	if limits <= 0 {
-		return nil, resCustomError.ErrPageLimit
-	}
-
-	offSet := (pageNO * limits) - limits
-	limits = pageNO * limits
 
 	brandDetails, err := r.repo.GetAllBrand(offSet, limits)
 	if err != nil {
@@ -186,27 +152,27 @@ func (r *categoryUseCase) GetAllBrand(page string, limit string) (*[]responsemod
 }
 
 func (r *categoryUseCase) EditBrand(brandData *requestmodel.BrandDetails) (*responsemodel.BrandRes, error) {
-	var brandRes responsemodel.BrandRes
+	// var brandRes responsemodel.BrandRes
 
-	brandData.ID = strings.TrimSpace(brandData.ID)
+	// brandData.ID = strings.TrimSpace(brandData.ID)
 
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	err := validate.Struct(brandData)
-	if err != nil {
-		if ve, ok := err.(validator.ValidationErrors); ok {
-			for _, e := range ve {
-				switch e.Field() {
-				case "Name":
-					brandRes.Name = "name is medetary"
-				case "ID":
-					brandRes.ID = "id is required,as query"
-				}
-			}
-		}
-		return &brandRes, errors.New("don't fullfill the brand requirement ")
-	}
+	// validate := validator.New(validator.WithRequiredStructEnabled())
+	// err := validate.Struct(brandData)
+	// if err != nil {
+	// 	if ve, ok := err.(validator.ValidationErrors); ok {
+	// 		for _, e := range ve {
+	// 			switch e.Field() {
+	// 			case "Name":
+	// 				brandRes.Name = "name is medetary"
+	// 			case "ID":
+	// 				brandRes.ID = "id is required,as query"
+	// 			}
+	// 		}
+	// 	}
+	// 	return &brandRes, errors.New("don't fullfill the brand requirement ")
+	// }
 
-	err = r.repo.EditBrandName(brandData)
+	err := r.repo.EditBrandName(brandData)
 	if err != nil {
 		return nil, err
 	}

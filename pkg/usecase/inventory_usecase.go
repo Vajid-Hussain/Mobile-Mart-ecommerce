@@ -1,56 +1,45 @@
 package usecase
 
 import (
-	"strconv"
+	"fmt"
 
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
-	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
 	"github.com/go-playground/validator/v10"
 )
 
 type inventoryUseCase struct {
 	repo interfaces.IInventoryRepository
+	s3   config.S3Bucket
 }
 
-func NewInventoryUseCase(repository interfaces.IInventoryRepository) interfaceUseCase.IInventoryUseCase {
-	return &inventoryUseCase{repo: repository}
+func NewInventoryUseCase(repository interfaces.IInventoryRepository, s3aws *config.S3Bucket) interfaceUseCase.IInventoryUseCase {
+	return &inventoryUseCase{repo: repository,
+		s3: *s3aws}
 }
 
-func (d *inventoryUseCase) AddInventory(inventory *requestmodel.InventoryReq) (*[]responsemodel.Errors, *responsemodel.InventoryRes, error) {
-	var afterErrorCorection []responsemodel.Errors
-	// var result responsemodel.Errors
-	// validate := validator.New()
+func (d *inventoryUseCase) AddInventory(inventory *requestmodel.InventoryReq) (*responsemodel.InventoryRes, error) {
 
-	// err := validate.Struct(inventory)
-	// if err != nil {
-	// 	if ve, ok := err.(validator.ValidationErrors); ok {
-	// 		for _, e := range ve {
-	// 			switch e.Tag() {
-	// 			case "required":
-	// 				err := fmt.Sprintf("%s is required", e.Field())
-	// 				result = responsemodel.Errors{Err: err}
-	// 			case "min":
-	// 				err := fmt.Sprintf("%s should be at least %s characters", e.Field(), e.Param())
-	// 				result = responsemodel.Errors{Err: err}
-	// 			case "max":
-	// 				err := fmt.Sprintf("%s should be at most %s characters", e.Field(), e.Param())
-	// 				result = responsemodel.Errors{Err: err}
-	// 			}
-	// 			afterErrorCorection = append(afterErrorCorection, result)
-	// 		}
-	// 	}
-	// 	return &afterErrorCorection, nil, errors.New("doesn't fulfill the inventory requirements")
-	// }
+	sess := service.CreateSession(&d.s3)
+
+	ImageURL, err := service.UploadImageToS3(inventory.Image, sess)
+	if err != nil {
+		return nil, err
+	}
+
+	inventory.ImageURL = ImageURL
 
 	product, err := d.repo.CreateProduct(inventory)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return &afterErrorCorection, product, nil
+	return product, nil
 }
 
 func (r *inventoryUseCase) BlockInventory(sellerID string, productID string) error {
@@ -79,26 +68,10 @@ func (r *inventoryUseCase) DeleteInventory(sellerID string, productID string) er
 
 func (r *inventoryUseCase) GetAllInventory(page string, limit string) (*[]responsemodel.InventoryShowcase, error) {
 
-	pageNO, err := strconv.Atoi(page)
+	offSet, limits, err := helper.Pagination(page, limit)
 	if err != nil {
-		return nil, resCustomError.ErrConversionOFPage
+		return nil, err
 	}
-
-	limits, err := strconv.Atoi(limit)
-	if err != nil {
-		return nil, resCustomError.ErrConversionOfLimit
-	}
-
-	if pageNO < 1 {
-		return nil, resCustomError.ErrPagination
-	}
-
-	if limits <= 0 {
-		return nil, resCustomError.ErrPageLimit
-	}
-
-	offSet := (pageNO * limits) - limits
-	limits = pageNO * limits
 
 	inventories, err := r.repo.GetInventory(offSet, limits)
 	if err != nil {
@@ -108,7 +81,7 @@ func (r *inventoryUseCase) GetAllInventory(page string, limit string) (*[]respon
 	return inventories, nil
 }
 
-func (r *inventoryUseCase) GetAInventory(productID string) (*[]responsemodel.InventoryRes, error) {
+func (r *inventoryUseCase) GetAInventory(productID string) (*responsemodel.InventoryRes, error) {
 	inventory, err := r.repo.GetAInventory(productID)
 	if err != nil {
 		return nil, err
@@ -118,26 +91,10 @@ func (r *inventoryUseCase) GetAInventory(productID string) (*[]responsemodel.Inv
 
 func (r *inventoryUseCase) GetSellerInventory(page string, limit string, sellerID string) (*[]responsemodel.InventoryShowcase, error) {
 
-	pageNO, err := strconv.Atoi(page)
+	offSet, limits, err := helper.Pagination(page, limit)
 	if err != nil {
-		return nil, resCustomError.ErrConversionOFPage
+		return nil, err
 	}
-
-	limits, err := strconv.Atoi(limit)
-	if err != nil {
-		return nil, resCustomError.ErrConversionOfLimit
-	}
-
-	if pageNO < 1 {
-		return nil, resCustomError.ErrPagination
-	}
-
-	if limits <= 0 {
-		return nil, resCustomError.ErrPageLimit
-	}
-
-	offSet := (pageNO * limits) - limits
-	limits = pageNO * limits
 
 	inventories, err := r.repo.GetSellerInventory(offSet, limits, sellerID)
 	if err != nil {
@@ -149,55 +106,55 @@ func (r *inventoryUseCase) GetSellerInventory(page string, limit string, sellerI
 
 func (r *inventoryUseCase) EditInventory(editInventory *requestmodel.EditInventory, invetoryID string) (*responsemodel.InventoryRes, error) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
-
 	inventory, err := r.repo.GetAInventory(invetoryID)
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Println(inventory, "$$$$$$$")
+
 	err = validate.Struct(editInventory)
-	for _, data := range *inventory {
-		if err != nil {
-			if ve, ok := err.(validator.ValidationErrors); ok {
-				for _, e := range ve {
-					fieldName := e.Field()
-					switch fieldName {
-					case "ID":
-						editInventory.ID = data.ID
-					case "Productname":
-						editInventory.Productname = data.Productname
-					case "Description":
-						editInventory.Description = data.Description
-					case "BrandID":
-						editInventory.BrandID = data.BrandID
-					case "CategoryID":
-						editInventory.CategoryID = data.CategoryID
-					case "SellerID":
-						editInventory.SellerID = data.SellerID
-					case "Mrp":
-						editInventory.Mrp = data.Mrp
-					case "Saleprice":
-						editInventory.Saleprice = data.Saleprice
-					case "Units":
-						editInventory.Units = data.Units
-					case "Os":
-						editInventory.Os = data.Os
-					case "CellularTechnology":
-						editInventory.CellularTechnology = data.CellularTechnology
-					case "Ram":
-						editInventory.Ram = data.Ram
-					case "Screensize":
-						editInventory.Screensize = data.Screensize
-					case "Batterycapacity":
-						editInventory.Batterycapacity = data.Batterycapacity
-					case "Processor":
-						editInventory.Processor = data.Processor
-					}
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				fieldName := e.Field()
+				switch fieldName {
+				case "ID":
+					editInventory.ID = inventory.ID
+				case "Productname":
+					editInventory.Productname = inventory.Productname
+				case "Description":
+					editInventory.Description = inventory.Description
+				case "BrandID":
+					editInventory.BrandID = inventory.BrandID
+				case "CategoryID":
+					editInventory.CategoryID = inventory.CategoryID
+				case "SellerID":
+					editInventory.SellerID = inventory.SellerID
+				case "Mrp":
+					editInventory.Mrp = inventory.Mrp
+				case "Saleprice":
+					editInventory.Saleprice = inventory.Saleprice
+				case "Units":
+					editInventory.Units = inventory.Units
+				case "Os":
+					editInventory.Os = inventory.Os
+				case "CellularTechnology":
+					editInventory.CellularTechnology = inventory.CellularTechnology
+				case "Ram":
+					editInventory.Ram = inventory.Ram
+				case "Screensize":
+					editInventory.Screensize = inventory.Screensize
+				case "Batterycapacity":
+					editInventory.Batterycapacity = inventory.Batterycapacity
+				case "Processor":
+					editInventory.Processor = inventory.Processor
 				}
 			}
 		}
 	}
 
+	fmt.Println("******", editInventory)
 	updatedData, err := r.repo.UpdateInventory(editInventory)
 	if err != nil {
 		return nil, err

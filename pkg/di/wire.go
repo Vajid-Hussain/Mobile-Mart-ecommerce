@@ -32,7 +32,7 @@ func InitializeAPI(config config.Config) (*server.ServerHttp, error) {
 	sellerHandler := handler.NewSellerHandler(sellerUseCase)
 
 	adminRepository := repository.NewAdminRepository(DB)
-	adminUseCase := usecase.NewAdminUseCase(adminRepository, &config.Token, &config.S3aws)
+	adminUseCase := usecase.NewAdminUseCase(adminRepository, &config.Token)
 	adminHandler := handler.NewAdminHandler(adminUseCase)
 
 	categoryRepository := repository.NewCategoryRepository(DB)
@@ -40,7 +40,7 @@ func InitializeAPI(config config.Config) (*server.ServerHttp, error) {
 	categoryHandler := handler.NewCategoryHandler(categoryUseCase)
 
 	inventoryRepository := repository.NewInventoryRepository(DB)
-	inventoryUseCase := usecase.NewInventoryUseCase(inventoryRepository)
+	inventoryUseCase := usecase.NewInventoryUseCase(inventoryRepository, &config.S3aws)
 	inventoryHandler := handler.NewInventoryHandler(inventoryUseCase)
 
 	serverHttp := server.NewServerHttp(userHandler, sellerHandler, adminHandler, categoryHandler, inventoryHandler)

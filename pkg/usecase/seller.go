@@ -2,12 +2,10 @@ package usecase
 
 import (
 	"errors"
-	"strconv"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
-	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
@@ -92,26 +90,10 @@ func (r *sellerUseCase) GetAllSellers(page string, limit string) (*[]responsemod
 	go r.repo.SellerCount(ch)
 	count := <-ch
 
-	pageNO, err := strconv.Atoi(page)
+	offSet, limits, err := helper.Pagination(page, limit)
 	if err != nil {
-		return nil, nil, resCustomError.ErrConversionOFPage
+		return nil, &count, err
 	}
-
-	limits, err := strconv.Atoi(limit)
-	if err != nil {
-		return nil, nil, resCustomError.ErrConversionOfLimit
-	}
-
-	if pageNO < 1 {
-		return nil, nil, resCustomError.ErrPagination
-	}
-
-	if limits <= 0 {
-		return nil, nil, resCustomError.ErrPageLimit
-	}
-
-	offSet := (pageNO * limits) - limits
-	limits = pageNO * limits
 
 	SellerDetails, err := r.repo.AllSellers(offSet, limits)
 	if err != nil {
@@ -147,26 +129,10 @@ func (r *sellerUseCase) ActiveSeller(id string) error {
 
 func (r *sellerUseCase) GetAllPendingSellers(page string, limit string) (*[]responsemodel.SellerDetails, error) {
 
-	pageNO, err := strconv.Atoi(page)
+	offSet, limits, err := helper.Pagination(page, limit)
 	if err != nil {
-		return nil, resCustomError.ErrConversionOFPage
+		return nil, err
 	}
-
-	if pageNO < 1 {
-		return nil, resCustomError.ErrPagination
-	}
-
-	limits, err := strconv.Atoi(limit)
-	if err != nil {
-		return nil, resCustomError.ErrConversionOfLimit
-	}
-
-	if limits <= 0 {
-		return nil, resCustomError.ErrPageLimit
-	}
-
-	offSet := (pageNO * limits) - limits
-	limits = pageNO * limits
 
 	SellerDetails, err := r.repo.GetPendingSellers(offSet, limits)
 	if err != nil {
