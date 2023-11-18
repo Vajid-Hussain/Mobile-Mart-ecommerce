@@ -45,6 +45,7 @@ func UploadObject(file *multipart.FileHeader, sess *session.Session) error {
 		Bucket: aws.String("mobile-mart-image"),
 		Key:    aws.String(file.Filename),
 		Body:   image,
+		ACL:    aws.String("public-read"),
 	})
 
 	if err != nil {

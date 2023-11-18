@@ -22,7 +22,7 @@ func NewServerHttp(user *handler.UserHandler, seller *handler.SellerHandler, adm
 	// use ginSwagger middleware to serve the API docs
 	engin.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	routes.UserRoutes(engin.Group("/"), user, inventory)
+	routes.UserRoutes(engin.Group(""), user, inventory)
 	routes.SellerRoutes(engin.Group("/seller"), seller, inventory)
 	routes.AdminRoutes(engin.Group("/admin"), admin, seller, user, category)
 

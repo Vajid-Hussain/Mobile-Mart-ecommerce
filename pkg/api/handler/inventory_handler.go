@@ -8,6 +8,7 @@ import (
 	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/response"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,6 +33,13 @@ func (u *InventotyHandler) AddInventory(c *gin.Context) {
 
 	if err := c.BindJSON(&inventoryDetails); err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, nil)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	data, err := helper.Validation(inventoryDetails)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
@@ -153,6 +161,13 @@ func (u *InventotyHandler) EditInventory(c *gin.Context) {
 	if err := c.BindJSON(&edittedInventory); err != nil {
 		fmt.Println(err)
 		finalReslt := response.Responses(http.StatusBadRequest, "something wrong", nil, nil)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	data, err := helper.Validation(edittedInventory)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}

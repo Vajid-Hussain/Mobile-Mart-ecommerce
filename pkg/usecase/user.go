@@ -2,9 +2,9 @@ package usecase
 
 import (
 	"errors"
-	"regexp"
+	// "regexp"
 	"strconv"
-	"strings"
+	// "strings"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -14,8 +14,8 @@ import (
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
-	"github.com/go-playground/validator/v10"
-	validaters "gopkg.in/validator.v2"
+	// "github.com/go-playground/validator/v10"
+	// validaters "gopkg.in/validator.v2"
 )
 
 type userUseCase struct {
@@ -35,54 +35,10 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) (responsemo
 
 	var resSignup responsemodel.SignupData
 
-	ValidateEmailStructure := func(email string) string {
-		pattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
-
-		match, _ := regexp.MatchString(pattern, email)
-
-		domain := strings.Split(email, "@")
-		if len(domain) == 2 && domain[1] == "gmail.com" && match {
-			return ""
-		} else {
-			return "Email is wrong"
-		}
-	}
-
-	if err := validaters.Validate(userData); err != nil {
-
-		for key := range err.(validaters.ErrorMap) {
-			switch key {
-			case "Name":
-				resSignup.Name = "Field is empty"
-			case "Phone":
-				resSignup.Phone = "must contain 10 numbers"
-			case "Password":
-				resSignup.Password = "password need more than 4 digit "
-			}
-		}
-
-		isValid := ValidateEmailStructure(userData.Email)
-		resSignup.Email = isValid
-		if userData.ConfirmPassword != userData.Password {
-			resSignup.ConfirmPassword = "ConfirmPassword is not correct , cross check"
-		}
-		return resSignup, errors.New("not satisfying user credentials")
-	}
-
-	isValid := ValidateEmailStructure(userData.Email)
-	if isValid != "" || userData.ConfirmPassword != userData.Password {
-		resSignup.Email = isValid
-		if userData.ConfirmPassword != userData.Password {
-			resSignup.ConfirmPassword = "ConfirmPassword is not match , cross check"
-		}
-		return resSignup, errors.New("not satisfying user credentials")
-	}
-
 	if isExist := u.repo.IsUserExist(userData.Phone); isExist >= 1 {
 		resSignup.IsUserExist = "User Exist ,change phone number"
 		return resSignup, errors.New("user is exist try again , with another phone number")
 	} else {
-		// userData.Id = helper.GenerateUUID()
 		service.TwilioSetup()
 		_, err := service.SendOtp(userData.Phone)
 		if err != nil {
@@ -92,7 +48,9 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) (responsemo
 
 		HashedPassword := helper.HashPassword(userData.Password)
 		userData.Password = HashedPassword
+
 		u.repo.CreateUser(userData)
+
 		token, err := service.TemperveryTokenForOtpVerification(u.token.TemperveryKey, userData.Phone)
 		if err != nil {
 			resSignup.Token = "error of create a token"
@@ -107,20 +65,7 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) (responsemo
 func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification, token string) (responsemodel.OtpValidation, error) {
 
 	var otpResponse responsemodel.OtpValidation
-	validate := validator.New(validator.WithRequiredStructEnabled())
 
-	err := validate.Struct(otpConstrain)
-	if err != nil {
-		if ve, ok := err.(validator.ValidationErrors); ok {
-			for _, e := range ve {
-				switch e.Field() {
-				case "otp":
-					otpResponse.Otp = "otp should 6 numbers"
-				}
-			}
-		}
-		return otpResponse, nil
-	}
 	phone, err := service.FetchPhoneFromToken(token, u.token.TemperveryKey)
 	if err != nil {
 		otpResponse.Token = "invalid token"
@@ -160,27 +105,12 @@ func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification, token
 	otpResponse.AccessToken = accessToken
 	otpResponse.RefreshToken = refreshToken
 	otpResponse.Result = "success"
+
 	return otpResponse, nil
 }
 
 func (u *userUseCase) UserLogin(loginCredential requestmodel.UserLogin) (responsemodel.UserLogin, error) {
 	var resUserLogin responsemodel.UserLogin
-	validate := validator.New(validator.WithRequiredStructEnabled())
-
-	err := validate.Struct(loginCredential)
-	if err != nil {
-		if ve, ok := err.(validator.ValidationErrors); ok {
-			for _, e := range ve {
-				switch e.Field() {
-				case "Phone":
-					resUserLogin.Phone = "phone number should be 10"
-				case "Password":
-					resUserLogin.Password = "Password atleast 4 digit"
-				}
-			}
-		}
-		return resUserLogin, errors.New("login credential not obey")
-	}
 
 	password, err := u.repo.FetchPasswordUsingPhone(loginCredential.Phone)
 	if err != nil {
@@ -213,6 +143,7 @@ func (u *userUseCase) UserLogin(loginCredential requestmodel.UserLogin) (respons
 
 	resUserLogin.AccessToken = accessToken
 	resUserLogin.RefreshToken = refreshToken
+
 	return resUserLogin, nil
 }
 

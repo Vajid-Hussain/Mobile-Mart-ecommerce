@@ -9,6 +9,7 @@ import (
 	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/response"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,18 +33,28 @@ func NewUserHandler(userUseCase interfaceUseCase.IuserUseCase) *UserHandler {
 // @Failure		400		{object}	response.Response{}
 // @Router			/user/signup/ [post]
 func (u *UserHandler) UserSignup(c *gin.Context) {
+
 	var userSignupData requestmodel.UserDetails
+
 	if err := c.BindJSON(&userSignupData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	data, err := helper.Validation(userSignupData)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	resSignup, err := u.userUseCase.UserSignup(&userSignupData)
+	if err != nil {
+		response := response.Responses(http.StatusBadRequest, err.Error(), resSignup, nil)
+		c.JSON(http.StatusBadRequest, response)
 	} else {
-		resSignup, err := u.userUseCase.UserSignup(&userSignupData)
-		if err != nil {
-			response := response.Responses(http.StatusBadRequest, err.Error(), resSignup, nil)
-			c.JSON(http.StatusBadRequest, response)
-		} else {
-			response := response.Responses(http.StatusOK, "", resSignup, nil)
-			c.JSON(http.StatusOK, response)
-		}
+		response := response.Responses(http.StatusOK, "", resSignup, nil)
+		c.JSON(http.StatusOK, response)
 	}
 }
 
@@ -59,10 +70,18 @@ func (u *UserHandler) UserSignup(c *gin.Context) {
 func (u *UserHandler) VerifyOTP(c *gin.Context) {
 
 	var otpData requestmodel.OtpVerification
+
 	token := c.Request.Header.Get("Authorization")
 
 	if err := c.BindJSON(&otpData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	data, err := helper.Validation(otpData)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
 	}
 
 	result, err := u.userUseCase.VerifyOtp(otpData, token)
@@ -88,6 +107,13 @@ func (u *UserHandler) UserLogin(c *gin.Context) {
 	var loginCredential requestmodel.UserLogin
 	if err := c.BindJSON(&loginCredential); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	data, err := helper.Validation(loginCredential)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
 	}
 
 	result, err := u.userUseCase.UserLogin(loginCredential)

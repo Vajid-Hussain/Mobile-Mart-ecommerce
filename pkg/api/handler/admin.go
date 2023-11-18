@@ -7,6 +7,7 @@ import (
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/response"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
 	"github.com/gin-gonic/gin"
 )
 
@@ -34,6 +35,13 @@ func (u *AdminHandler) AdminLogin(c *gin.Context) {
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "json is wrong can't bind", nil, err)
 		c.JSON(http.StatusUnauthorized, finalReslt)
+		return
+	}
+
+	data, err := helper.Validation(loginCredential)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
 

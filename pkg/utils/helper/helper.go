@@ -37,7 +37,7 @@ func PaginationError(page string, limit string) (int, int, error) {
 	return offSet, limits, nil
 }
 
-func validation(data interface{}) (*[]responsemodel.Errors, error) {
+func Validation(data interface{}) (*[]responsemodel.Errors, error) {
 	var afterErrorCorection []responsemodel.Errors
 	var result responsemodel.Errors
 	validate := validator.New()
@@ -56,11 +56,27 @@ func validation(data interface{}) (*[]responsemodel.Errors, error) {
 				case "max":
 					err := fmt.Sprintf("%s should be at most %s characters", e.Field(), e.Param())
 					result = responsemodel.Errors{Err: err}
+				case "email":
+					err := fmt.Sprintf("%s should be email structure %s ", e.Field(), e.Param())
+					result = responsemodel.Errors{Err: err}
+				case "eqfield":
+					err := fmt.Sprintf("%s should be equal with %s ", e.Field(), e.Param())
+					result = responsemodel.Errors{Err: err}
+				case "len":
+					err := fmt.Sprintf("%s should be have  %s ", e.Field(), e.Param())
+					result = responsemodel.Errors{Err: err}
+				case "alpha":
+					err := fmt.Sprintf("%s should be Alphabet ", e.Field())
+					result = responsemodel.Errors{Err: err}
+				case "number":
+					err := fmt.Sprintf("%s should be numeric %s ", e.Field(), e.Param())
+					result = responsemodel.Errors{Err: err}
 				}
+
 				afterErrorCorection = append(afterErrorCorection, result)
 			}
 		}
-		return &afterErrorCorection, errors.New("doesn't fulfill the inventory requirements")
+		return &afterErrorCorection, errors.New("doesn't fulfill the requirements")
 	}
 	return &afterErrorCorection, nil
 }

@@ -13,7 +13,6 @@ import (
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
-	"github.com/go-playground/validator/v10"
 )
 
 type sellerUseCase struct {
@@ -28,37 +27,6 @@ func NewSellerUseCase(sellerRepo interfaces.ISellerRepo, token *config.Token) in
 
 func (r *sellerUseCase) SellerSignup(sellerSignupData *requestmodel.SellerSignup) (*responsemodel.SellerSignupRes, error) {
 	var SellerSignupRes responsemodel.SellerSignupRes
-
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	err := validate.Struct(sellerSignupData)
-	if err != nil {
-		if ve, ok := err.(validator.ValidationErrors); ok {
-			for _, e := range ve {
-				switch e.Field() {
-				case "Name":
-					SellerSignupRes.Name = "don't empty fill with a name"
-				case "Password":
-					SellerSignupRes.Password = "Password atleast 4 digit"
-				case "GST_NO":
-					SellerSignupRes.GST_NO = "Must have fifteen digit number"
-				case "Description":
-					SellerSignupRes.Description = "Must discribe about your company"
-				}
-
-			}
-			if sellerSignupData.ConfirmPassword != sellerSignupData.Password {
-
-				SellerSignupRes.ConfirmPassword = "ConfirmPassword is not correct , cross check"
-				return &SellerSignupRes, errors.New("login credential not obey")
-			}
-		}
-
-		return &SellerSignupRes, errors.New("login credential not obey")
-	}
-	if sellerSignupData.ConfirmPassword != sellerSignupData.Password {
-		SellerSignupRes.ConfirmPassword = "ConfirmPassword is not correct , cross check"
-		return &SellerSignupRes, errors.New("login credential not obey")
-	}
 
 	count, err := r.repo.IsSellerExist(sellerSignupData.Email)
 	if err != nil {
@@ -83,22 +51,6 @@ func (r *sellerUseCase) SellerSignup(sellerSignupData *requestmodel.SellerSignup
 
 func (r *sellerUseCase) SellerLogin(loginData *requestmodel.SellerLogin) (*responsemodel.SellerLoginRes, error) {
 	var loginResponse responsemodel.SellerLoginRes
-
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	err := validate.Struct(loginData)
-	if err != nil {
-		if ve, ok := err.(validator.ValidationErrors); ok {
-			for _, e := range ve {
-				switch e.Field() {
-				case "Email":
-					loginResponse.Email = "email id is wrong "
-				case "Password":
-					loginResponse.Password = "password have four or more digit"
-				}
-			}
-		}
-		return &loginResponse, errors.New("don't fullfill the login requirement ")
-	}
 
 	hashedPassword, sellerID, status, err := r.repo.GetHashPassAndStatus(loginData.Email)
 	if err != nil {

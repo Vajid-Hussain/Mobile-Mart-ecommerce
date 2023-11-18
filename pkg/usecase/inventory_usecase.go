@@ -1,8 +1,6 @@
 package usecase
 
 import (
-	"errors"
-	"fmt"
 	"strconv"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -23,29 +21,29 @@ func NewInventoryUseCase(repository interfaces.IInventoryRepository) interfaceUs
 
 func (d *inventoryUseCase) AddInventory(inventory *requestmodel.InventoryReq) (*[]responsemodel.Errors, *responsemodel.InventoryRes, error) {
 	var afterErrorCorection []responsemodel.Errors
-	var result responsemodel.Errors
-	validate := validator.New()
+	// var result responsemodel.Errors
+	// validate := validator.New()
 
-	err := validate.Struct(inventory)
-	if err != nil {
-		if ve, ok := err.(validator.ValidationErrors); ok {
-			for _, e := range ve {
-				switch e.Tag() {
-				case "required":
-					err := fmt.Sprintf("%s is required", e.Field())
-					result = responsemodel.Errors{Err: err}
-				case "min":
-					err := fmt.Sprintf("%s should be at least %s characters", e.Field(), e.Param())
-					result = responsemodel.Errors{Err: err}
-				case "max":
-					err := fmt.Sprintf("%s should be at most %s characters", e.Field(), e.Param())
-					result = responsemodel.Errors{Err: err}
-				}
-				afterErrorCorection = append(afterErrorCorection, result)
-			}
-		}
-		return &afterErrorCorection, nil, errors.New("doesn't fulfill the inventory requirements")
-	}
+	// err := validate.Struct(inventory)
+	// if err != nil {
+	// 	if ve, ok := err.(validator.ValidationErrors); ok {
+	// 		for _, e := range ve {
+	// 			switch e.Tag() {
+	// 			case "required":
+	// 				err := fmt.Sprintf("%s is required", e.Field())
+	// 				result = responsemodel.Errors{Err: err}
+	// 			case "min":
+	// 				err := fmt.Sprintf("%s should be at least %s characters", e.Field(), e.Param())
+	// 				result = responsemodel.Errors{Err: err}
+	// 			case "max":
+	// 				err := fmt.Sprintf("%s should be at most %s characters", e.Field(), e.Param())
+	// 				result = responsemodel.Errors{Err: err}
+	// 			}
+	// 			afterErrorCorection = append(afterErrorCorection, result)
+	// 		}
+	// 	}
+	// 	return &afterErrorCorection, nil, errors.New("doesn't fulfill the inventory requirements")
+	// }
 
 	product, err := d.repo.CreateProduct(inventory)
 	if err != nil {

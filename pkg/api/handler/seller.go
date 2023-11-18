@@ -9,6 +9,7 @@ import (
 	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/response"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
 	"github.com/gin-gonic/gin"
 )
 
@@ -36,6 +37,13 @@ func (u *SellerHandler) SellerSignup(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "can't bind json with struct")
 	}
 
+	data, err := helper.Validation(sellerDetails)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
 	result, err := u.usecase.SellerSignup(&sellerDetails)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", result, err.Error())
@@ -60,6 +68,13 @@ func (u *SellerHandler) SellerLogin(c *gin.Context) {
 	var loginData requestmodel.SellerLogin
 	if err := c.BindJSON(&loginData); err != nil {
 		c.JSON(http.StatusBadRequest, "can't bind json with struct")
+	}
+
+	data, err := helper.Validation(loginData)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
 	}
 
 	result, err := u.usecase.SellerLogin(&loginData)
