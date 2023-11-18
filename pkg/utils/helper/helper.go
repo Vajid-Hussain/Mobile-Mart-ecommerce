@@ -54,7 +54,7 @@ func Validation(data interface{}) (*[]responsemodel.Errors, error) {
 					err := fmt.Sprintf("%s should be at least %s", e.Field(), e.Param())
 					result = responsemodel.Errors{Err: err}
 				case "max":
-					err := fmt.Sprintf("%s should be at most %s characters", e.Field(), e.Param())
+					err := fmt.Sprintf("%s should be at most %s", e.Field(), e.Param())
 					result = responsemodel.Errors{Err: err}
 				case "email":
 					err := fmt.Sprintf("%s should be email structure %s ", e.Field(), e.Param())
@@ -86,4 +86,13 @@ func GenerateUUID() string {
 
 	uuidString := newUUID.String()
 	return uuidString
+}
+
+func StringToIntConvertion(id string) (int, error) {
+
+	result, err := strconv.Atoi(id)
+	if err != nil {
+		return 0, errors.New("converition lead to error")
+	}
+	return result, nil
 }

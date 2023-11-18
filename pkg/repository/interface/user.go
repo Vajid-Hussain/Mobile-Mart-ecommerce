@@ -15,4 +15,6 @@ type IUserRepo interface {
 	UserCount(chan int)
 	BlockUser(string) error
 	UnblockUser(string) error
+
+	CreateAddress(*requestmodel.Address) (*requestmodel.Address, error)
 }

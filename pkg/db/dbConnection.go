@@ -27,13 +27,13 @@ func ConnectDatabase(config config.DataBase) (*gorm.DB, error) {
 	if err := DB.AutoMigrate(&domain.Admin{}); err != nil {
 		return DB, err
 	}
-	if err := DB.AutoMigrate(&domain.Category{}); err != nil {
-		return DB, err
-	}
-	if err := DB.AutoMigrate(&domain.Brand{}); err != nil {
+	if err := DB.AutoMigrate(&domain.Category{}, &domain.Brand{}); err != nil {
 		return DB, err
 	}
 	if err := DB.AutoMigrate(&domain.Inventories{}); err != nil {
+		return DB, err
+	}
+	if err := DB.AutoMigrate(&domain.Address{}); err != nil {
 		return DB, err
 	}
 

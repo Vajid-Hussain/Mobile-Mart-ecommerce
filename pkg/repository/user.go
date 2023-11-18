@@ -127,3 +127,23 @@ func (d *userRepository) UnblockUser(id string) error {
 	}
 	return nil
 }
+
+func (d *userRepository) CreateAddress(address *requestmodel.Address) (*requestmodel.Address, error) {
+
+	query := `INSERT INTO addresses ( userid, first_name, last_name, street, city, state, pincode, land_mark, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *;`
+
+	result := d.DB.Raw(query,
+		address.UserID, address.FirstName, address.LastName,
+		address.Street, address.City, address.State, address.Pincode,
+		address.LandMark, address.PhoneNumber,
+	).Scan(&address)
+
+	if result.Error != nil {
+		return nil, errors.New("face some issue while address insertion ")
+	}
+	if result.RowsAffected == 0 {
+		return nil, errors.New("no operation is occure in database")
+	}
+
+	return address, nil
+}

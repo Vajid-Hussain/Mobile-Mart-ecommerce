@@ -209,3 +209,47 @@ func (u *UserHandler) UnblockUser(c *gin.Context) {
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
+
+// Address
+func (u *UserHandler) NewAddress(c *gin.Context) {
+
+	var Address requestmodel.Address
+
+	userID, exist := c.MustGet("UserID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.NotGetUserIdInContexr, nil, nil)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	id, err := helper.StringToIntConvertion(userID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", "", err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	Address.UserID = uint(id)
+
+	if err := c.ShouldBind(&Address); err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	data, err := helper.Validation(Address)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	userAddress, err := u.userUseCase.AddAddress(&Address)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", userAddress, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}

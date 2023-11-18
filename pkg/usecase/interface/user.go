@@ -12,4 +12,6 @@ type IuserUseCase interface {
 	GetAllUsers(string, string) (*[]responsemodel.UserDetails, *int, error)
 	BlcokUser(string) error
 	UnblockUser(string) error
+
+	AddAddress(*requestmodel.Address) (*requestmodel.Address, error)
 }

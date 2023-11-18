@@ -2,9 +2,6 @@ package usecase
 
 import (
 	"errors"
-	// "regexp"
-
-	// "strings"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -13,8 +10,6 @@ import (
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
-	// "github.com/go-playground/validator/v10"
-	// validaters "gopkg.in/validator.v2"
 )
 
 type userUseCase struct {
@@ -180,4 +175,16 @@ func (r *userUseCase) UnblockUser(id string) error {
 		return err
 	}
 	return nil
+}
+
+// Address
+
+func (r *userUseCase) AddAddress(address *requestmodel.Address) (*requestmodel.Address, error) {
+
+	add, err := r.repo.CreateAddress(address)
+	if err != nil {
+		return nil, err
+	}
+
+	return add, nil
 }

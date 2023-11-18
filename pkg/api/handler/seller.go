@@ -67,7 +67,7 @@ func (u *SellerHandler) SellerSignup(c *gin.Context) {
 func (u *SellerHandler) SellerLogin(c *gin.Context) {
 	var loginData requestmodel.SellerLogin
 	if err := c.BindJSON(&loginData); err != nil {
-		c.JSON(http.StatusBadRequest, "can't bind json with struct")
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	data, err := helper.Validation(loginData)

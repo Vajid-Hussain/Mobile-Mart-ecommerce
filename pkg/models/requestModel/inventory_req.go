@@ -2,24 +2,6 @@ package requestmodel
 
 import "mime/multipart"
 
-// type InventoryReq struct {
-// 	Productname        string  `json:"productname" validate:"required,min=3,max=100"`
-// 	Description        string  `json:"description" validate:"required,min=5"`
-// 	BrandID            uint    `json:"brandID" validate:"required,number"`
-// 	CategoryID         uint    `json:"categoryID" validate:"required,number"`
-// 	SellerID           uint    `json:"cellerID" validate:"required,number"`
-// 	Mrp                uint    `json:"mrp" validate:"required,min=0,number"`
-// 	Saleprice          uint    `json:"saleprice" validate:"required,min=0,number"`
-// 	Units              uint64  `json:"units" validate:"required,min=0,number"`
-// 	Os                 string  `json:"os" validate:"required"`
-// 	CellularTechnology string  `json:"cellularTechnology" validate:"required"`
-// 	Ram                uint    `json:"ram" validate:"required,min=1"`
-// 	Screensize         float64 `json:"screensize" validate:"required,min2"`
-// 	Batterycapacity    uint    `json:"batterycapacity" validate:"required,min=500"`
-// 	Processor          string  `json:"processor" validate:"required"`
-// 	Image
-// }
-
 type InventoryReq struct {
 	Productname        string                `form:"productname" validate:"required,min=3,max=100"`
 	Description        string                `form:"description" validate:"required,min=5"`

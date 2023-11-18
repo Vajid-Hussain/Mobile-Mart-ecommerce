@@ -1,7 +1,7 @@
 package requestmodel
 
 type SellerSignup struct {
-	ID              string
+	ID              uint
 	Name            string `json:"name"            validate:"required"`
 	Email           string `json:"email"           validate:"email"`
 	Password        string `json:"password"        validate:"min=4"`

@@ -36,12 +36,10 @@ func (u *InventotyHandler) AddInventory(c *gin.Context) {
 	inventoryDetails.SellerID = uint(sellerID)
 
 	if err := c.ShouldBind(&inventoryDetails); err != nil {
-		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, nil)
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
-	// fmt.Println("_______", inventoryDetails)
-	// fmt.Println("******", inventoryDetails.ImageURL)
 
 	data, err := helper.Validation(inventoryDetails)
 	if err != nil {

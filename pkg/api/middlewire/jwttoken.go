@@ -22,6 +22,15 @@ func NewJwtTokenMiddleWire(jwtUseCase interfaceUseCase.IJwtTokenUseCase, keys co
 }
 
 func SellerAuthorization(c *gin.Context) {
+
+	defer func() (string, error, error) {
+		if r := recover(); r != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "token fully tamperd , can't decople id from token,for further process login"})
+			c.Abort()
+		}
+		return "", nil, nil
+	}()
+
 	accessToken := c.Request.Header.Get("authorization")
 	refreshToken := c.Request.Header.Get("refreshtoken")
 
@@ -59,6 +68,15 @@ func SellerAuthorization(c *gin.Context) {
 }
 
 func UserAuthorization(c *gin.Context) {
+
+	defer func() (string, error, error) {
+		if r := recover(); r != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "token fully tamperd , can't decople id from token,for further process login"})
+			c.Abort()
+		}
+		return "", nil, nil
+	}()
+
 	accessToken := c.Request.Header.Get("authorization")
 	refreshToken := c.Request.Header.Get("refreshtoken")
 
@@ -80,12 +98,14 @@ func UserAuthorization(c *gin.Context) {
 					c.Abort()
 				} else {
 					c.JSON(http.StatusOK, gin.H{"token": token})
+					c.Set("UserID", id)
 					c.Next()
 				}
 			}
 		}
 	} else {
 		c.JSON(http.StatusOK, "all perfect, your access token is uptodate")
+		c.Set("UserID", id)
 		fmt.Println("access token is upto date")
 	}
 	c.Next()

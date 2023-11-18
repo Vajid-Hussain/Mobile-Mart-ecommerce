@@ -1,8 +1,6 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
@@ -106,12 +104,11 @@ func (r *inventoryUseCase) GetSellerInventory(page string, limit string, sellerI
 
 func (r *inventoryUseCase) EditInventory(editInventory *requestmodel.EditInventory, invetoryID string) (*responsemodel.InventoryRes, error) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
+
 	inventory, err := r.repo.GetAInventory(invetoryID)
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println(inventory, "$$$$$$$")
 
 	err = validate.Struct(editInventory)
 	if err != nil {
@@ -154,7 +151,6 @@ func (r *inventoryUseCase) EditInventory(editInventory *requestmodel.EditInvento
 		}
 	}
 
-	fmt.Println("******", editInventory)
 	updatedData, err := r.repo.UpdateInventory(editInventory)
 	if err != nil {
 		return nil, err
