@@ -20,6 +20,9 @@ type IUserRepo interface {
 	CreateAddress(*models.Address) (*models.Address, error)
 	GetAddress(string, int, int) (*[]models.Address, error)
 	UpdateAddress(*models.EditAddress) (*models.EditAddress, error)
-	GetAAddress(uint) (*models.Address, error)
+	GetAAddress(string) (*models.Address, error)
 	DeleteAddress(string, string) error
+
+	GetProfile(string) (*models.UserDetails, error)
+	UpdateProfile(*models.UserDetails) (*models.UserDetails, error)
 }

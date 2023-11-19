@@ -211,7 +211,7 @@ func (u *UserHandler) UnblockUser(c *gin.Context) {
 	}
 }
 
-// Address
+// ------------------------------------------user Address------------------------------------\\
 func (u *UserHandler) NewAddress(c *gin.Context) {
 
 	var Address models.Address
@@ -223,14 +223,7 @@ func (u *UserHandler) NewAddress(c *gin.Context) {
 		return
 	}
 
-	id, err := helper.StringToUintConvertion(userID)
-	if err != nil {
-		finalReslt := response.Responses(http.StatusBadRequest, "", "", err.Error())
-		c.JSON(http.StatusBadRequest, finalReslt)
-		return
-	}
-
-	Address.Userid = id
+	Address.Userid = userID
 
 	if err := c.ShouldBind(&Address); err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
@@ -288,14 +281,7 @@ func (u *UserHandler) EditAddress(c *gin.Context) {
 		return
 	}
 
-	id, err := helper.StringToUintConvertion(userID)
-	if err != nil {
-		finalReslt := response.Responses(http.StatusBadRequest, "", "", err.Error())
-		c.JSON(http.StatusBadRequest, finalReslt)
-		return
-	}
-
-	Address.Userid = id
+	Address.Userid = userID
 
 	if err := c.ShouldBind(&Address); err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
@@ -337,6 +323,56 @@ func (u *UserHandler) DeleteAddress(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
 		finalReslt := response.Responses(http.StatusOK, "Succesfully Deleted", "", nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+// ------------------------------------------user Profile------------------------------------\\
+
+func (u *UserHandler) GetProfile(c *gin.Context) {
+
+	userID, exist := c.MustGet("UserID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	UserProfile, err := u.userUseCase.GetProfile(userID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", UserProfile, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *UserHandler) EditProfile(c *gin.Context) {
+
+	var profile models.UserEditProfile
+
+	userID, exist := c.MustGet("UserID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	profile.Id = userID
+
+	if err := c.ShouldBind(&profile); err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	userProfile, err := u.userUseCase.UpdateProfile(&profile)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "Succesfully Edited", userProfile, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }

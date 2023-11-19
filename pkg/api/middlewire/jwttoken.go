@@ -1,10 +1,10 @@
 package middlewire
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/response"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 	"github.com/gin-gonic/gin"
@@ -25,7 +25,8 @@ func SellerAuthorization(c *gin.Context) {
 
 	defer func() (string, error, error) {
 		if r := recover(); r != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "token fully tamperd , can't decople id from token,for further process login"})
+			finalReslt := response.Responses(http.StatusUnauthorized, "", "", "token fully tamperd , can't decople id from token,for further process login")
+			c.JSON(http.StatusUnauthorized, finalReslt)
 			c.Abort()
 		}
 		return "", nil, nil
@@ -60,7 +61,6 @@ func SellerAuthorization(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, "all perfect, your access token is uptodate")
 		c.Set("SellerID", id)
-		fmt.Println("access token is upto date")
 		c.Next()
 	}
 	c.Set("SellerID", id)
@@ -71,7 +71,8 @@ func UserAuthorization(c *gin.Context) {
 
 	defer func() (string, error, error) {
 		if r := recover(); r != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "token fully tamperd , can't decople id from token,for further process login"})
+			finalReslt := response.Responses(http.StatusUnauthorized, "", "", "token fully tamperd , can't decople id from token,for further process login")
+			c.JSON(http.StatusUnauthorized, finalReslt)
 			c.Abort()
 		}
 		return "", nil, nil
@@ -106,7 +107,6 @@ func UserAuthorization(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, "all perfect, your access token is uptodate")
 		c.Set("UserID", id)
-		fmt.Println("access token is upto date")
 	}
 	c.Next()
 }

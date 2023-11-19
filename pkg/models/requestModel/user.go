@@ -1,7 +1,7 @@
 package requestmodel
 
 type UserDetails struct {
-	Id              uint
+	Id              uint   `json:"id"`
 	Name            string `json:"name"           validate:"required"`
 	Email           string `json:"email"          validate:"email"`
 	Phone           string `json:"phone"          validate:"len=10"`

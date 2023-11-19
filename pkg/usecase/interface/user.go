@@ -18,4 +18,7 @@ type IuserUseCase interface {
 	GetAddress(string, string, string) (*[]models.Address, error)
 	EditAddress(*models.EditAddress) (*models.EditAddress, error)
 	DeleteAddress(string, string) error
+
+	GetProfile(string) (*models.UserDetails, error)
+	UpdateProfile(*models.UserEditProfile) (*models.UserDetails, error)
 }

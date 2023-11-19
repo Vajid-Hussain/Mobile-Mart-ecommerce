@@ -21,5 +21,9 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 		engin.GET("/address", user.GetAddress)
 		engin.PATCH("/address", user.EditAddress)
 		engin.DELETE("/address", user.DeleteAddress)
+
+		engin.GET("/profile", user.GetProfile)
+		engin.PATCH("/profile", user.EditProfile)
+
 	}
 }

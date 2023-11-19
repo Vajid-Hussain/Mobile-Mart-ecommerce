@@ -43,7 +43,6 @@ func (d *userRepository) ChangeUserStatusActive(phone string) error {
 	fmt.Println(phone)
 	query := "UPDATE users SET status = 'active' WHERE phone = ?"
 	result := d.DB.Exec(query, phone)
-	// count:=result.RowsAffected
 
 	if result.Error != nil {
 		return errors.New("no user Exist , phone number is wrong")
@@ -130,9 +129,9 @@ func (d *userRepository) UnblockUser(id string) error {
 	return nil
 }
 
-// Addresses
+// ------------------------------------------user Address------------------------------------\\
+
 func (d *userRepository) CreateAddress(address *models.Address) (*models.Address, error) {
-	fmt.Println("**********", address)
 	query := `INSERT INTO addresses ( userid, first_name, last_name, street, city, state, pincode, land_mark, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *;`
 
 	result := d.DB.Raw(query,
@@ -170,7 +169,6 @@ func (d *userRepository) GetAddress(userID string, offset int, limit int) (*[]mo
 func (d *userRepository) UpdateAddress(address *models.EditAddress) (*models.EditAddress, error) {
 
 	query := "UPDATE addresses SET first_name=?, last_name=?, street=?, city=?, state=?, pincode=?, land_mark=?, phone_number=? WHERE id=? AND userid= ? RETURNING *;"
-	fmt.Println("******", address)
 	result := d.DB.Raw(query,
 		address.FirstName, address.LastName,
 		address.Street, address.City, address.State, address.Pincode,
@@ -188,7 +186,7 @@ func (d *userRepository) UpdateAddress(address *models.EditAddress) (*models.Edi
 	return address, nil
 }
 
-func (d *userRepository) GetAAddress(addressID uint) (*models.Address, error) {
+func (d *userRepository) GetAAddress(addressID string) (*models.Address, error) {
 
 	var address models.Address
 
@@ -205,7 +203,6 @@ func (d *userRepository) GetAAddress(addressID uint) (*models.Address, error) {
 
 func (d *userRepository) DeleteAddress(addressID string, userID string) error {
 
-	fmt.Println("*******", addressID, userID)
 	query := "DELETE FROM addresses WHERE id= ? AND userid= ?"
 	result := d.DB.Exec(query, addressID, userID)
 	if result.Error != nil {
@@ -215,4 +212,36 @@ func (d *userRepository) DeleteAddress(addressID string, userID string) error {
 		return resCustomError.ErrNoRowAffected
 	}
 	return nil
+}
+
+// ------------------------------------------user Profile------------------------------------\\
+
+func (d *userRepository) GetProfile(userID string) (*models.UserDetails, error) {
+
+	var userDetails models.UserDetails
+
+	query := "SELECT id, name , email, phone, password FROM users WHERE id= ?"
+	result := d.DB.Raw(query, userID).Scan(&userDetails)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while get user profile ")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &userDetails, nil
+}
+
+func (d *userRepository) UpdateProfile(editedProfile *models.UserDetails) (*models.UserDetails, error) {
+
+	var profile models.UserDetails
+
+	query := "UPDATE users SET name=?, email=?, password=? WHERE id= ? RETURNING *;"
+	result := d.DB.Raw(query, editedProfile.Name, editedProfile.Email, editedProfile.Password, editedProfile.Id).Scan(&profile)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while update profile")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &profile, nil
 }

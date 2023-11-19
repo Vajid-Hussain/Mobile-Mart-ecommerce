@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
@@ -179,7 +180,7 @@ func (r *userUseCase) UnblockUser(id string) error {
 	return nil
 }
 
-// Address
+// ------------------------------------------user Address------------------------------------\\
 
 func (r *userUseCase) AddAddress(address *models.Address) (*models.Address, error) {
 
@@ -257,4 +258,60 @@ func (r *userUseCase) DeleteAddress(addressID string, userID string) error {
 		return err
 	}
 	return nil
+}
+
+// ------------------------------------------user Profile------------------------------------\\
+
+func (r *userUseCase) GetProfile(userID string) (*models.UserDetails, error) {
+	userDetails, err := r.repo.GetProfile(userID)
+	if err != nil {
+		return nil, err
+	}
+	return userDetails, nil
+}
+
+func (r *userUseCase) UpdateProfile(editedProfile *models.UserEditProfile) (*models.UserDetails, error) {
+
+	if editedProfile.Password != editedProfile.ConfirmPassword {
+		return nil, errors.New("password and confirmpassword is not match")
+	}
+
+	if editedProfile.Password != "" {
+		editedProfile.Password = helper.HashPassword(editedProfile.Password)
+	}
+
+	userProfile, err := r.repo.GetProfile(editedProfile.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err = validate.Struct(editedProfile)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				fieldName := e.Field()
+				switch fieldName {
+				case "Id":
+					editedProfile.Id = userProfile.Id
+				case "Name":
+					editedProfile.Name = userProfile.Name
+				case "Email":
+					editedProfile.Email = userProfile.Email
+				case "Password":
+					editedProfile.Password = userProfile.Password
+				}
+			}
+		}
+
+	}
+
+	userProfile, err = r.repo.UpdateProfile((*models.UserDetails)(editedProfile))
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("-----", editedProfile)
+
+	return userProfile, nil
+
 }
