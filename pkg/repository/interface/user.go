@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 )
@@ -16,5 +17,9 @@ type IUserRepo interface {
 	BlockUser(string) error
 	UnblockUser(string) error
 
-	CreateAddress(*requestmodel.Address) (*requestmodel.Address, error)
+	CreateAddress(*models.Address) (*models.Address, error)
+	GetAddress(string, int, int) (*[]models.Address, error)
+	UpdateAddress(*models.EditAddress) (*models.EditAddress, error)
+	GetAAddress(uint) (*models.Address, error)
+	DeleteAddress(string, string) error
 }

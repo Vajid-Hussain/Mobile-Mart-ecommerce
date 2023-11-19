@@ -27,7 +27,7 @@ type Address struct {
 	Street      string
 	City        string
 	State       string
-	Pincode     uint
+	Pincode     string
 	LandMark    string
 	PhoneNumber string
 	Status      status `gorm:"default:active"`

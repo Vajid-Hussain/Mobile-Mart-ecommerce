@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/response"
@@ -213,23 +214,23 @@ func (u *UserHandler) UnblockUser(c *gin.Context) {
 // Address
 func (u *UserHandler) NewAddress(c *gin.Context) {
 
-	var Address requestmodel.Address
+	var Address models.Address
 
 	userID, exist := c.MustGet("UserID").(string)
 	if !exist {
-		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.NotGetUserIdInContexr, nil, nil)
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
 
-	id, err := helper.StringToIntConvertion(userID)
+	id, err := helper.StringToUintConvertion(userID)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", "", err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
 
-	Address.UserID = uint(id)
+	Address.Userid = id
 
 	if err := c.ShouldBind(&Address); err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
@@ -250,6 +251,92 @@ func (u *UserHandler) NewAddress(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
 		finalReslt := response.Responses(http.StatusOK, "", userAddress, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *UserHandler) GetAddress(c *gin.Context) {
+
+	userID, exist := c.MustGet("UserID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	page := c.DefaultQuery("page", "1")
+	limit := c.DefaultQuery("limit", "1")
+
+	userAddress, err := u.userUseCase.GetAddress(userID, page, limit)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", userAddress, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *UserHandler) EditAddress(c *gin.Context) {
+
+	var Address models.EditAddress
+
+	userID, exist := c.MustGet("UserID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	id, err := helper.StringToUintConvertion(userID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", "", err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	Address.Userid = id
+
+	if err := c.ShouldBind(&Address); err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	userAddress, err := u.userUseCase.EditAddress(&Address)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "Succesfully Edited", userAddress, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *UserHandler) DeleteAddress(c *gin.Context) {
+
+	addressID := c.Query("id")
+	id := strings.TrimSpace(addressID)
+
+	if len(id) == 0 {
+		finalReslt := response.Responses(http.StatusBadRequest, "", "", resCustomError.IDParamsEmpty)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	userID, exist := c.MustGet("UserID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	err := u.userUseCase.DeleteAddress(id, userID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "Succesfully Deleted", "", nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }

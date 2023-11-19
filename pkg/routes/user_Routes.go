@@ -8,18 +8,18 @@ import (
 
 func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *handler.InventotyHandler) {
 
-	usermanagement := engin.Group("/")
-	{
-		usermanagement.POST("/signup", user.UserSignup)
-		usermanagement.POST("/verifyOTP", user.VerifyOTP)
-		usermanagement.POST("/login", user.UserLogin)
-	}
+	engin.GET("/", inventory.GetInventory)
+	engin.POST("/signup", user.UserSignup)
+	engin.POST("/verifyOTP", user.VerifyOTP)
+	engin.POST("/login", user.UserLogin)
 
 	engin.Use(middlewire.UserAuthorization)
 	{
-		engin.GET("/", inventory.GetInventory)
 		engin.GET("/:inventoryid", inventory.GetAInventory)
-		engin.POST("/address", user.NewAddress)
-	}
 
+		engin.POST("/address", user.NewAddress)
+		engin.GET("/address", user.GetAddress)
+		engin.PATCH("/address", user.EditAddress)
+		engin.DELETE("/address", user.DeleteAddress)
+	}
 }

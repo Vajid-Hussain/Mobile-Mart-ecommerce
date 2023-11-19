@@ -4,12 +4,14 @@ import (
 	"errors"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
+	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
+	"github.com/go-playground/validator/v10"
 )
 
 type userUseCase struct {
@@ -179,12 +181,80 @@ func (r *userUseCase) UnblockUser(id string) error {
 
 // Address
 
-func (r *userUseCase) AddAddress(address *requestmodel.Address) (*requestmodel.Address, error) {
+func (r *userUseCase) AddAddress(address *models.Address) (*models.Address, error) {
 
 	add, err := r.repo.CreateAddress(address)
 	if err != nil {
 		return nil, err
 	}
-
 	return add, nil
+}
+
+func (r *userUseCase) GetAddress(userID string, page string, limit string) (*[]models.Address, error) {
+
+	offset, limits, err := helper.Pagination(page, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	address, err := r.repo.GetAddress(userID, offset, limits)
+	if err != nil {
+		return nil, err
+	}
+	return address, nil
+}
+
+func (r *userUseCase) EditAddress(address *models.EditAddress) (*models.EditAddress, error) {
+
+	add, err := r.repo.GetAAddress(address.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err = validate.Struct(address)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				fieldName := e.Field()
+				switch fieldName {
+				case "ID":
+					address.ID = add.ID
+				case "Userid":
+					address.Userid = add.Userid
+				case "FirstName":
+					address.FirstName = add.FirstName
+				case "LastName":
+					address.LastName = add.LastName
+				case "Street":
+					address.Street = add.Street
+				case "City":
+					address.City = add.City
+				case "State":
+					address.State = add.State
+				case "Pincode":
+					address.Pincode = add.Pincode
+				case "LandMark":
+					address.LandMark = add.LandMark
+				case "PhoneNumber":
+					address.PhoneNumber = add.PhoneNumber
+				}
+			}
+		}
+
+	}
+
+	editedAddress, err := r.repo.UpdateAddress(address)
+	if err != nil {
+		return nil, err
+	}
+	return editedAddress, nil
+}
+
+func (r *userUseCase) DeleteAddress(addressID string, userID string) error {
+	err := r.repo.DeleteAddress(addressID, userID)
+	if err != nil {
+		return err
+	}
+	return nil
 }

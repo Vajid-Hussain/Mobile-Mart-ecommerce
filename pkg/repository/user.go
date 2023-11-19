@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 
+	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
+	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	"gorm.io/gorm"
 )
@@ -128,12 +130,13 @@ func (d *userRepository) UnblockUser(id string) error {
 	return nil
 }
 
-func (d *userRepository) CreateAddress(address *requestmodel.Address) (*requestmodel.Address, error) {
-
+// Addresses
+func (d *userRepository) CreateAddress(address *models.Address) (*models.Address, error) {
+	fmt.Println("**********", address)
 	query := `INSERT INTO addresses ( userid, first_name, last_name, street, city, state, pincode, land_mark, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *;`
 
 	result := d.DB.Raw(query,
-		address.UserID, address.FirstName, address.LastName,
+		address.Userid, address.FirstName, address.LastName,
 		address.Street, address.City, address.State, address.Pincode,
 		address.LandMark, address.PhoneNumber,
 	).Scan(&address)
@@ -142,8 +145,74 @@ func (d *userRepository) CreateAddress(address *requestmodel.Address) (*requestm
 		return nil, errors.New("face some issue while address insertion ")
 	}
 	if result.RowsAffected == 0 {
-		return nil, errors.New("no operation is occure in database")
+		return nil, resCustomError.ErrNoRowAffected
 	}
 
 	return address, nil
+}
+
+func (d *userRepository) GetAddress(userID string, offset int, limit int) (*[]models.Address, error) {
+
+	var address *[]models.Address
+
+	query := "SELECT * FROM addresses WHERE userid=? AND status='active' ORDER BY id OFFSET ? LIMIT ?"
+	result := d.DB.Raw(query, userID, offset, limit).Scan(&address)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while address fetch")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+
+	return address, nil
+}
+
+func (d *userRepository) UpdateAddress(address *models.EditAddress) (*models.EditAddress, error) {
+
+	query := "UPDATE addresses SET first_name=?, last_name=?, street=?, city=?, state=?, pincode=?, land_mark=?, phone_number=? WHERE id=? AND userid= ? RETURNING *;"
+	fmt.Println("******", address)
+	result := d.DB.Raw(query,
+		address.FirstName, address.LastName,
+		address.Street, address.City, address.State, address.Pincode,
+		address.LandMark, address.PhoneNumber,
+		address.ID, address.Userid,
+	).Scan(&address)
+
+	if result.Error != nil {
+		return nil, errors.New("face some issue while update address ")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+
+	return address, nil
+}
+
+func (d *userRepository) GetAAddress(addressID uint) (*models.Address, error) {
+
+	var address models.Address
+
+	query := "SELECT * FROM addresses WHERE id=?"
+	result := d.DB.Raw(query, addressID).Scan(&address)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while address fetch")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &address, nil
+}
+
+func (d *userRepository) DeleteAddress(addressID string, userID string) error {
+
+	fmt.Println("*******", addressID, userID)
+	query := "DELETE FROM addresses WHERE id= ? AND userid= ?"
+	result := d.DB.Exec(query, addressID, userID)
+	if result.Error != nil {
+		return errors.New("face some issue while deleting address ")
+	}
+	if result.RowsAffected == 0 {
+		return resCustomError.ErrNoRowAffected
+	}
+	return nil
 }

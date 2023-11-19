@@ -88,11 +88,11 @@ func GenerateUUID() string {
 	return uuidString
 }
 
-func StringToIntConvertion(id string) (int, error) {
+func StringToUintConvertion(id string) (uint, error) {
 
 	result, err := strconv.Atoi(id)
 	if err != nil {
 		return 0, errors.New("converition lead to error")
 	}
-	return result, nil
+	return uint(result), nil
 }
