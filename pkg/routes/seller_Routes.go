@@ -13,6 +13,9 @@ func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, invento
 
 	engin.Use(middlewire.SellerAuthorization)
 	{
+		engin.GET("/profile", seller.GetSellerProfile)
+		engin.PATCH("/profile", seller.EditSellerProfile)
+
 		inventorymanagement := engin.Group("/inventory")
 		{
 			inventorymanagement.POST("/", inventory.AddInventory)

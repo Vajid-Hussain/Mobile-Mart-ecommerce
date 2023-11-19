@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/response"
@@ -253,6 +254,56 @@ func (u *SellerHandler) VerifySeller(c *gin.Context) {
 		c.JSON(http.StatusNotFound, finalReslt)
 	} else {
 		finalReslt := response.Responses(http.StatusOK, "Verification Success", "", nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+// ------------------------------------------user Profile------------------------------------\\
+
+func (u *SellerHandler) GetSellerProfile(c *gin.Context) {
+
+	userID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	sellerProfile, err := u.usecase.GetSellerProfile(userID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", sellerProfile, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *SellerHandler) EditSellerProfile(c *gin.Context) {
+
+	var profile models.SellerEditProfile
+
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	profile.ID = sellerID
+
+	if err := c.ShouldBind(&profile); err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	userProfile, err := u.usecase.UpdateSellerProfile(&profile)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "Succesfully Edited", userProfile, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }

@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 )
@@ -18,4 +19,7 @@ type ISellerRepo interface {
 	GetSingleSeller(string) (*responsemodel.SellerDetails, error)
 	BlockInventoryOfSeller(string) error
 	ActiveInventoryOfSeller(string) error
+
+	GetSellerProfile(string) (*models.SellerProfile, error)
+	UpdateSellerProfile(*models.SellerEditProfile) (*models.SellerProfile, error)
 }

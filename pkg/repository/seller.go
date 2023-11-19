@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 
+	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
+	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	"gorm.io/gorm"
 )
@@ -151,4 +153,36 @@ func (d *sellerRepository) ActiveInventoryOfSeller(id string) error {
 		return errors.New("blocking product of active seller can't achive to change")
 	}
 	return nil
+}
+
+// ------------------------------------------Seller Profile------------------------------------\\
+
+func (d *sellerRepository) GetSellerProfile(userID string) (*models.SellerProfile, error) {
+
+	var sellerProfile models.SellerProfile
+
+	query := "SELECT * FROM sellers WHERE id= ?"
+	result := d.DB.Raw(query, userID).Scan(&sellerProfile)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while get user profile ")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &sellerProfile, nil
+}
+
+func (d *sellerRepository) UpdateSellerProfile(editedProfile *models.SellerEditProfile) (*models.SellerProfile, error) {
+
+	var profile models.SellerProfile
+
+	query := "UPDATE sellers SET name=?, email=?, password=?, description=? WHERE id= ? RETURNING *;"
+	result := d.DB.Raw(query, editedProfile.Name, editedProfile.Email, editedProfile.Password, editedProfile.Description, editedProfile.ID).Scan(&profile)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while update profile")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &profile, nil
 }
