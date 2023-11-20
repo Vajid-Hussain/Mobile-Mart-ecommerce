@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"

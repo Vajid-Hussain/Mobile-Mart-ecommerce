@@ -1,5 +1,6 @@
 package models
 
+// User Credential
 type UserDetails struct {
 	Id              string `json:"userid"`
 	Name            string `json:"name"           validate:"required"`
@@ -18,6 +19,7 @@ type UserEditProfile struct {
 	ConfirmPassword string `json:"confirmpassword,omitempty" validate:"required,eqfield=Password"`
 }
 
+// Address
 type Address struct {
 	ID          string
 	Userid      string
@@ -43,3 +45,18 @@ type EditAddress struct {
 	LandMark    string `json:"landmark" validate:"required"`
 	PhoneNumber string `json:"phoneNumber" validate:"required,len=10,number"`
 }
+
+// Otp
+type SendOtp struct {
+	Phone string `josn:"phone" validate:"len=10,number"`
+}
+
+type ForgotPassword struct {
+	Otp             string `json:"otp"   validate:"len=6"`
+	Password        string `json:"password"       validate:"min=4"`
+	ConfirmPassword string `json:"confirmpassword" validate:"eqfield=Password"`
+}
+
+// type Cart struct {
+// 	ID
+// }

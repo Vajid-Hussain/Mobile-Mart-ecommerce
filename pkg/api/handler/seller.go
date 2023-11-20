@@ -258,7 +258,7 @@ func (u *SellerHandler) VerifySeller(c *gin.Context) {
 	}
 }
 
-// ------------------------------------------user Profile------------------------------------\\
+// ------------------------------------------Seller Profile------------------------------------\\
 
 func (u *SellerHandler) GetSellerProfile(c *gin.Context) {
 

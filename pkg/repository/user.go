@@ -39,6 +39,19 @@ func (d *userRepository) IsUserExist(phone string) int {
 	return userCount
 }
 
+func (d *userRepository) UpdatePassword(phone string, password string) error {
+
+	query := "UPDATE users SET password=? WHERE phone=? AND status= 'active'"
+	result := d.DB.Exec(query, password, phone)
+	if result.Error != nil {
+		return errors.New("face some issue while update password ")
+	}
+	if result.RowsAffected == 0 {
+		return resCustomError.ErrNoRowAffected
+	}
+	return nil
+}
+
 func (d *userRepository) ChangeUserStatusActive(phone string) error {
 	fmt.Println(phone)
 	query := "UPDATE users SET status = 'active' WHERE phone = ?"
@@ -245,3 +258,5 @@ func (d *userRepository) UpdateProfile(editedProfile *models.UserDetails) (*mode
 	}
 	return &profile, nil
 }
+
+// ------------------------------------------User Forgot Password------------------------------------\\

@@ -12,6 +12,8 @@ type IUserRepo interface {
 	ChangeUserStatusActive(string) error
 	FetchUserID(string) (string, error)
 	FetchPasswordUsingPhone(string) (string, error)
+	UpdatePassword(string, string) error
+
 	AllUsers(int, int) (*[]responsemodel.UserDetails, error)
 	UserCount(chan int)
 	BlockUser(string) error

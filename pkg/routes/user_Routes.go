@@ -11,7 +11,9 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 	engin.GET("/", inventory.GetInventory)
 	engin.POST("/signup", user.UserSignup)
 	engin.POST("/verifyOTP", user.VerifyOTP)
+	engin.POST("/sendotp", user.SendOtp)
 	engin.POST("/login", user.UserLogin)
+	engin.POST("/forgotpassword", user.ForgotPassword)
 
 	engin.Use(middlewire.UserAuthorization)
 	{

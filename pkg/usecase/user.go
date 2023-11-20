@@ -106,6 +106,19 @@ func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification, token
 	return otpResponse, nil
 }
 
+func (r *userUseCase) SendOtp(phone *models.SendOtp) (*string, error) {
+	service.TwilioSetup()
+	_, err := service.SendOtp(phone.Phone)
+	if err != nil {
+		return nil, err
+	}
+	tempToken, err := service.TemperveryTokenForOtpVerification(r.token.UserSecurityKey, phone.Phone)
+	if err != nil {
+		return nil, err
+	}
+	return &tempToken, nil
+}
+
 func (u *userUseCase) UserLogin(loginCredential requestmodel.UserLogin) (responsemodel.UserLogin, error) {
 	var resUserLogin responsemodel.UserLogin
 
@@ -314,4 +327,30 @@ func (r *userUseCase) UpdateProfile(editedProfile *models.UserEditProfile) (*mod
 
 	return userProfile, nil
 
+}
+
+// ------------------------------------------User Forgot Password------------------------------------\\
+
+func (r *userUseCase) ForgotPassword(newPassword *models.ForgotPassword, token string) error {
+
+	phone, err := service.FetchPhoneFromToken(token, r.token.UserSecurityKey)
+	if err != nil {
+		return err
+	}
+
+	err = service.VerifyOtp(phone, newPassword.Otp)
+	if err != nil {
+		return err
+	}
+
+	hashPassword := helper.HashPassword(newPassword.Password)
+	if err != nil {
+		return err
+	}
+
+	err = r.repo.UpdatePassword(phone, hashPassword)
+	if err != nil {
+		return err
+	}
+	return nil
 }

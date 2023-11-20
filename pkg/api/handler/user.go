@@ -51,7 +51,7 @@ func (u *UserHandler) UserSignup(c *gin.Context) {
 
 	resSignup, err := u.userUseCase.UserSignup(&userSignupData)
 	if err != nil {
-		response := response.Responses(http.StatusBadRequest, err.Error(), resSignup, nil)
+		response := response.Responses(http.StatusBadRequest, "", resSignup, err.Error())
 		c.JSON(http.StatusBadRequest, response)
 	} else {
 		response := response.Responses(http.StatusOK, "", resSignup, nil)
@@ -87,10 +87,37 @@ func (u *UserHandler) VerifyOTP(c *gin.Context) {
 
 	result, err := u.userUseCase.VerifyOtp(otpData, token)
 	if err != nil {
-		response := response.Responses(http.StatusBadRequest, err.Error(), result, nil)
+		response := response.Responses(http.StatusBadRequest, "", result, err.Error())
 		c.JSON(http.StatusBadRequest, response)
 	} else {
 		response := response.Responses(http.StatusOK, "Succesfully verified", result, nil)
+		c.JSON(http.StatusOK, response)
+	}
+}
+
+func (u *UserHandler) SendOtp(c *gin.Context) {
+
+	var sendOtp models.SendOtp
+
+	if err := c.BindJSON(&sendOtp); err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	data, err := helper.Validation(sendOtp)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	tempToken, err := u.userUseCase.SendOtp(&sendOtp)
+	if err != nil {
+		response := response.Responses(http.StatusBadRequest, "", "", err.Error())
+		c.JSON(http.StatusBadRequest, response)
+	} else {
+		response := response.Responses(http.StatusOK, "Succesfully otp send", tempToken, nil)
 		c.JSON(http.StatusOK, response)
 	}
 }
@@ -375,4 +402,35 @@ func (u *UserHandler) EditProfile(c *gin.Context) {
 		finalReslt := response.Responses(http.StatusOK, "Succesfully Edited", userProfile, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
+}
+
+// ------------------------------------------User Forgot Password------------------------------------\\
+
+func (u *UserHandler) ForgotPassword(c *gin.Context) {
+	var ForgotPassword models.ForgotPassword
+
+	if err := c.BindJSON(&ForgotPassword); err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	token := c.Request.Header.Get("Authorization")
+
+	data, err := helper.Validation(ForgotPassword)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	err = u.userUseCase.ForgotPassword(&ForgotPassword, token)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "Succesfully Edited", "", nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+
 }
