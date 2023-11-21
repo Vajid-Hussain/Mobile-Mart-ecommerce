@@ -2,8 +2,10 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
+	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 )
@@ -92,4 +94,22 @@ func (r *cartUseCase) QuantityDecrease(inventoryID string, userID string) (*requ
 		return nil, err
 	}
 	return singleInventory, nil
+}
+
+func (r *cartUseCase) ShowCart(userID string) (*responsemodel.UserCart, error) {
+
+	cart, err := r.repo.GetCartCriteria(userID)
+	if err != nil {
+		return cart, err
+	}
+	fmt.Println("&&%%%%%%%%&", cart)
+
+	// cartInventories, err := r.repo.GetCart(userID)
+	// if err != nil {
+	// 	return cart, err
+	// }
+	// fmt.Println("&$$$$$$&", cart)
+
+	// cart.Cart = *cartInventories
+	return cart, nil
 }

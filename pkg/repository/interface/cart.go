@@ -1,6 +1,9 @@
 package interfaces
 
-import requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
+import (
+	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
+	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
+)
 
 type ICartRepository interface {
 	InsertToCart(*requestmodel.Cart) (*requestmodel.Cart, error)
@@ -9,4 +12,6 @@ type ICartRepository interface {
 	DeleteInventoryFromCart(string, string) error
 	GetSingleInverntory(string, string) (*requestmodel.Cart, error)
 	UpdateQuantityAndPrice(*requestmodel.Cart) (*requestmodel.Cart, error)
+	GetCart(string) (*[]responsemodel.CartInventory, error)
+	GetCartCriteria(string) (*responsemodel.UserCart, error)
 }

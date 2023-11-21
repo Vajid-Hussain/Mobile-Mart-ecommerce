@@ -39,6 +39,8 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 			cartmanagement.DELETE("/", cart.DeleteInventoryFromCart)
 			cartmanagement.PATCH("/", cart.IncrementQuantityCart)
 			cartmanagement.PATCH("/:inventoryid", cart.DecrementQuantityCart)
+			cartmanagement.GET("/", cart.ShowCart)
+
 		}
 	}
 }
