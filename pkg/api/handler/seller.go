@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strings"
 
-	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/response"
@@ -281,7 +280,7 @@ func (u *SellerHandler) GetSellerProfile(c *gin.Context) {
 
 func (u *SellerHandler) EditSellerProfile(c *gin.Context) {
 
-	var profile models.SellerEditProfile
+	var profile requestmodel.SellerEditProfile
 
 	sellerID, exist := c.MustGet("SellerID").(string)
 	if !exist {

@@ -27,3 +27,13 @@ type SellerDetails struct {
 	Description string `json:"description,omitempty"`
 	Status      string `json:"status,omitempty"`
 }
+
+type SellerProfile struct {
+	ID              string `json:"id,omitempty"              validate:"required"`
+	Name            string `json:"name,omitempty"            validate:"required"`
+	Email           string `json:"email,omitempty"           validate:"email"`
+	Password        string `json:"-"        validate:"min=4"`
+	ConfirmPassword string `json:"-"                         validate:"eqfield=Password"`
+	GST_NO          string `json:"gstno,omitempty"           validate:"len=15"`
+	Description     string `json:"description,omitempty"     validate:"required"`
+}

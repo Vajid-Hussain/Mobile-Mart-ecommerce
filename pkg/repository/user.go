@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
@@ -144,7 +143,7 @@ func (d *userRepository) UnblockUser(id string) error {
 
 // ------------------------------------------user Address------------------------------------\\
 
-func (d *userRepository) CreateAddress(address *models.Address) (*models.Address, error) {
+func (d *userRepository) CreateAddress(address *requestmodel.Address) (*requestmodel.Address, error) {
 	query := `INSERT INTO addresses ( userid, first_name, last_name, street, city, state, pincode, land_mark, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *;`
 
 	result := d.DB.Raw(query,
@@ -163,9 +162,9 @@ func (d *userRepository) CreateAddress(address *models.Address) (*models.Address
 	return address, nil
 }
 
-func (d *userRepository) GetAddress(userID string, offset int, limit int) (*[]models.Address, error) {
+func (d *userRepository) GetAddress(userID string, offset int, limit int) (*[]requestmodel.Address, error) {
 
-	var address *[]models.Address
+	var address *[]requestmodel.Address
 
 	query := "SELECT * FROM addresses WHERE userid=? AND status='active' ORDER BY id OFFSET ? LIMIT ?"
 	result := d.DB.Raw(query, userID, offset, limit).Scan(&address)
@@ -179,7 +178,7 @@ func (d *userRepository) GetAddress(userID string, offset int, limit int) (*[]mo
 	return address, nil
 }
 
-func (d *userRepository) UpdateAddress(address *models.EditAddress) (*models.EditAddress, error) {
+func (d *userRepository) UpdateAddress(address *requestmodel.EditAddress) (*requestmodel.EditAddress, error) {
 
 	query := "UPDATE addresses SET first_name=?, last_name=?, street=?, city=?, state=?, pincode=?, land_mark=?, phone_number=? WHERE id=? AND userid= ? RETURNING *;"
 	result := d.DB.Raw(query,
@@ -199,9 +198,9 @@ func (d *userRepository) UpdateAddress(address *models.EditAddress) (*models.Edi
 	return address, nil
 }
 
-func (d *userRepository) GetAAddress(addressID string) (*models.Address, error) {
+func (d *userRepository) GetAAddress(addressID string) (*requestmodel.Address, error) {
 
-	var address models.Address
+	var address requestmodel.Address
 
 	query := "SELECT * FROM addresses WHERE id=?"
 	result := d.DB.Raw(query, addressID).Scan(&address)
@@ -229,9 +228,9 @@ func (d *userRepository) DeleteAddress(addressID string, userID string) error {
 
 // ------------------------------------------user Profile------------------------------------\\
 
-func (d *userRepository) GetProfile(userID string) (*models.UserDetails, error) {
+func (d *userRepository) GetProfile(userID string) (*requestmodel.UserDetails, error) {
 
-	var userDetails models.UserDetails
+	var userDetails requestmodel.UserDetails
 
 	query := "SELECT id, name , email, phone, password FROM users WHERE id= ?"
 	result := d.DB.Raw(query, userID).Scan(&userDetails)
@@ -244,9 +243,9 @@ func (d *userRepository) GetProfile(userID string) (*models.UserDetails, error) 
 	return &userDetails, nil
 }
 
-func (d *userRepository) UpdateProfile(editedProfile *models.UserDetails) (*models.UserDetails, error) {
+func (d *userRepository) UpdateProfile(editedProfile *requestmodel.UserDetails) (*requestmodel.UserDetails, error) {
 
-	var profile models.UserDetails
+	var profile requestmodel.UserDetails
 
 	query := "UPDATE users SET name=?, email=?, password=? WHERE id= ? RETURNING *;"
 	result := d.DB.Raw(query, editedProfile.Name, editedProfile.Email, editedProfile.Password, editedProfile.Id).Scan(&profile)
@@ -258,5 +257,3 @@ func (d *userRepository) UpdateProfile(editedProfile *models.UserDetails) (*mode
 	}
 	return &profile, nil
 }
-
-// ------------------------------------------User Forgot Password------------------------------------\\

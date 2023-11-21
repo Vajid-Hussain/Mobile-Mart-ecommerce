@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
-	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
@@ -106,7 +105,7 @@ func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification, token
 	return otpResponse, nil
 }
 
-func (r *userUseCase) SendOtp(phone *models.SendOtp) (*string, error) {
+func (r *userUseCase) SendOtp(phone *requestmodel.SendOtp) (*string, error) {
 	service.TwilioSetup()
 	_, err := service.SendOtp(phone.Phone)
 	if err != nil {
@@ -195,7 +194,7 @@ func (r *userUseCase) UnblockUser(id string) error {
 
 // ------------------------------------------user Address------------------------------------\\
 
-func (r *userUseCase) AddAddress(address *models.Address) (*models.Address, error) {
+func (r *userUseCase) AddAddress(address *requestmodel.Address) (*requestmodel.Address, error) {
 
 	add, err := r.repo.CreateAddress(address)
 	if err != nil {
@@ -204,7 +203,7 @@ func (r *userUseCase) AddAddress(address *models.Address) (*models.Address, erro
 	return add, nil
 }
 
-func (r *userUseCase) GetAddress(userID string, page string, limit string) (*[]models.Address, error) {
+func (r *userUseCase) GetAddress(userID string, page string, limit string) (*[]requestmodel.Address, error) {
 
 	offset, limits, err := helper.Pagination(page, limit)
 	if err != nil {
@@ -218,7 +217,7 @@ func (r *userUseCase) GetAddress(userID string, page string, limit string) (*[]m
 	return address, nil
 }
 
-func (r *userUseCase) EditAddress(address *models.EditAddress) (*models.EditAddress, error) {
+func (r *userUseCase) EditAddress(address *requestmodel.EditAddress) (*requestmodel.EditAddress, error) {
 
 	add, err := r.repo.GetAAddress(address.ID)
 	if err != nil {
@@ -275,7 +274,7 @@ func (r *userUseCase) DeleteAddress(addressID string, userID string) error {
 
 // ------------------------------------------user Profile------------------------------------\\
 
-func (r *userUseCase) GetProfile(userID string) (*models.UserDetails, error) {
+func (r *userUseCase) GetProfile(userID string) (*requestmodel.UserDetails, error) {
 	userDetails, err := r.repo.GetProfile(userID)
 	if err != nil {
 		return nil, err
@@ -283,10 +282,10 @@ func (r *userUseCase) GetProfile(userID string) (*models.UserDetails, error) {
 	return userDetails, nil
 }
 
-func (r *userUseCase) UpdateProfile(editedProfile *models.UserEditProfile) (*models.UserDetails, error) {
+func (r *userUseCase) UpdateProfile(editedProfile *requestmodel.UserEditProfile) (*requestmodel.UserDetails, error) {
 
-	if editedProfile.Password != editedProfile.ConfirmPassword {
-		return nil, errors.New("password and confirmpassword is not match")
+	if editedProfile.Password != editedProfile.ConfirmPassword || len(editedProfile.Password) < 4 {
+		return nil, errors.New("password and confirmpassword is not match, password must graterthan four")
 	}
 
 	if editedProfile.Password != "" {
@@ -319,19 +318,18 @@ func (r *userUseCase) UpdateProfile(editedProfile *models.UserEditProfile) (*mod
 
 	}
 
-	userProfile, err = r.repo.UpdateProfile((*models.UserDetails)(editedProfile))
+	userProfile, err = r.repo.UpdateProfile((*requestmodel.UserDetails)(editedProfile))
 	if err != nil {
 		return nil, err
 	}
 	fmt.Println("-----", editedProfile)
 
 	return userProfile, nil
-
 }
 
 // ------------------------------------------User Forgot Password------------------------------------\\
 
-func (r *userUseCase) ForgotPassword(newPassword *models.ForgotPassword, token string) error {
+func (r *userUseCase) ForgotPassword(newPassword *requestmodel.ForgotPassword, token string) error {
 
 	phone, err := service.FetchPhoneFromToken(token, r.token.UserSecurityKey)
 	if err != nil {

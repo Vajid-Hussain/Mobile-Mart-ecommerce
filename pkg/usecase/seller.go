@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
-	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
@@ -152,9 +151,9 @@ func (r *sellerUseCase) FetchSingleVender(id string) (*responsemodel.SellerDetai
 	return sellerData, nil
 }
 
-// ------------------------------------------user Profile------------------------------------\\
+// ------------------------------------------Seller Profile------------------------------------\\
 
-func (r *sellerUseCase) GetSellerProfile(userID string) (*models.SellerProfile, error) {
+func (r *sellerUseCase) GetSellerProfile(userID string) (*responsemodel.SellerProfile, error) {
 	sellerDetails, err := r.repo.GetSellerProfile(userID)
 	if err != nil {
 		return nil, err
@@ -162,7 +161,7 @@ func (r *sellerUseCase) GetSellerProfile(userID string) (*models.SellerProfile, 
 	return sellerDetails, nil
 }
 
-func (r *sellerUseCase) UpdateSellerProfile(editedProfile *models.SellerEditProfile) (*models.SellerProfile, error) {
+func (r *sellerUseCase) UpdateSellerProfile(editedProfile *requestmodel.SellerEditProfile) (*responsemodel.SellerProfile, error) {
 
 	exist, err := r.repo.IsSellerExist(editedProfile.Email)
 	if err != nil {

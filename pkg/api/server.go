@@ -15,14 +15,14 @@ type ServerHttp struct {
 	engin *gin.Engine
 }
 
-func NewServerHttp(user *handler.UserHandler, seller *handler.SellerHandler, admin *handler.AdminHandler, category *handler.CategoryHandler, inventory *handler.InventotyHandler) *ServerHttp {
+func NewServerHttp(user *handler.UserHandler, seller *handler.SellerHandler, admin *handler.AdminHandler, category *handler.CategoryHandler, inventory *handler.InventotyHandler, cart *handler.CartHandler) *ServerHttp {
 	engin := gin.New()
 	engin.Use(gin.Logger())
 
 	// use ginSwagger middleware to serve the API docs
 	engin.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	routes.UserRoutes(engin.Group("/"), user, inventory)
+	routes.UserRoutes(engin.Group("/"), user, inventory, cart)
 	routes.SellerRoutes(engin.Group("/seller"), seller, inventory)
 	routes.AdminRoutes(engin.Group("/admin"), admin, seller, user, category)
 

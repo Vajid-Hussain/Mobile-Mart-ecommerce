@@ -32,10 +32,3 @@ type Address struct {
 	PhoneNumber string
 	Status      status `gorm:"default:active"`
 }
-
-// type Cart struct {
-// 	ID
-// 	Inventories
-// 	Quantity uint
-// 	Price    uint
-// }

@@ -32,14 +32,14 @@ func (u *InventotyHandler) AddInventory(c *gin.Context) {
 		return
 	}
 
-	sellerID, _ := strconv.ParseUint(sellerid, 8, 8)
-	inventoryDetails.SellerID = uint(sellerID)
-
 	if err := c.ShouldBind(&inventoryDetails); err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
+	sellerID, _ := strconv.ParseUint(sellerid, 16, 16)
+	inventoryDetails.SellerID = uint(sellerID)
+	fmt.Println("****", sellerID)
 
 	data, err := helper.Validation(inventoryDetails)
 	if err != nil {
@@ -154,7 +154,6 @@ func (u *InventotyHandler) GetSellerInventory(c *gin.Context) {
 		finalReslt := response.Responses(http.StatusOK, "", inverntories, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
-
 }
 
 func (u *InventotyHandler) EditInventory(c *gin.Context) {

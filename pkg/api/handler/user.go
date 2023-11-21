@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strings"
 
-	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/response"
@@ -97,7 +96,7 @@ func (u *UserHandler) VerifyOTP(c *gin.Context) {
 
 func (u *UserHandler) SendOtp(c *gin.Context) {
 
-	var sendOtp models.SendOtp
+	var sendOtp requestmodel.SendOtp
 
 	if err := c.BindJSON(&sendOtp); err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
@@ -241,7 +240,7 @@ func (u *UserHandler) UnblockUser(c *gin.Context) {
 // ------------------------------------------user Address------------------------------------\\
 func (u *UserHandler) NewAddress(c *gin.Context) {
 
-	var Address models.Address
+	var Address requestmodel.Address
 
 	userID, exist := c.MustGet("UserID").(string)
 	if !exist {
@@ -299,7 +298,7 @@ func (u *UserHandler) GetAddress(c *gin.Context) {
 
 func (u *UserHandler) EditAddress(c *gin.Context) {
 
-	var Address models.EditAddress
+	var Address requestmodel.EditAddress
 
 	userID, exist := c.MustGet("UserID").(string)
 	if !exist {
@@ -377,7 +376,7 @@ func (u *UserHandler) GetProfile(c *gin.Context) {
 
 func (u *UserHandler) EditProfile(c *gin.Context) {
 
-	var profile models.UserEditProfile
+	var profile requestmodel.UserEditProfile
 
 	userID, exist := c.MustGet("UserID").(string)
 	if !exist {
@@ -407,7 +406,7 @@ func (u *UserHandler) EditProfile(c *gin.Context) {
 // ------------------------------------------User Forgot Password------------------------------------\\
 
 func (u *UserHandler) ForgotPassword(c *gin.Context) {
-	var ForgotPassword models.ForgotPassword
+	var ForgotPassword requestmodel.ForgotPassword
 
 	if err := c.BindJSON(&ForgotPassword); err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())

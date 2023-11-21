@@ -2,9 +2,7 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 
-	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
@@ -48,7 +46,6 @@ func (d *sellerRepository) GetHashPassAndStatus(email string) (string, string, s
 	query := "SELECT password, id, status FROM sellers WHERE email=? AND status!='delete'"
 	err := d.DB.Raw(query, email).Row().Scan(&password, &sellerID, &status)
 	if err != nil {
-		fmt.Println("&&&&&&&&", err)
 		return "", "", "", errors.New("feching password and status, can't make action in database")
 	}
 	return password, sellerID, status, nil
@@ -157,9 +154,9 @@ func (d *sellerRepository) ActiveInventoryOfSeller(id string) error {
 
 // ------------------------------------------Seller Profile------------------------------------\\
 
-func (d *sellerRepository) GetSellerProfile(userID string) (*models.SellerProfile, error) {
+func (d *sellerRepository) GetSellerProfile(userID string) (*responsemodel.SellerProfile, error) {
 
-	var sellerProfile models.SellerProfile
+	var sellerProfile responsemodel.SellerProfile
 
 	query := "SELECT * FROM sellers WHERE id= ?"
 	result := d.DB.Raw(query, userID).Scan(&sellerProfile)
@@ -172,9 +169,9 @@ func (d *sellerRepository) GetSellerProfile(userID string) (*models.SellerProfil
 	return &sellerProfile, nil
 }
 
-func (d *sellerRepository) UpdateSellerProfile(editedProfile *models.SellerEditProfile) (*models.SellerProfile, error) {
+func (d *sellerRepository) UpdateSellerProfile(editedProfile *requestmodel.SellerEditProfile) (*responsemodel.SellerProfile, error) {
 
-	var profile models.SellerProfile
+	var profile responsemodel.SellerProfile
 
 	query := "UPDATE sellers SET name=?, email=?, password=?, description=? WHERE id= ? RETURNING *;"
 	result := d.DB.Raw(query, editedProfile.Name, editedProfile.Email, editedProfile.Password, editedProfile.Description, editedProfile.ID).Scan(&profile)

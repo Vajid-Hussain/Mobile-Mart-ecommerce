@@ -69,13 +69,12 @@ func SellerAuthorization(c *gin.Context) {
 
 func UserAuthorization(c *gin.Context) {
 
-	defer func() (string, error, error) {
+	defer func() {
 		if r := recover(); r != nil {
-			finalReslt := response.Responses(http.StatusUnauthorized, "", "", "token fully tamperd , can't decople id from token,for further process login")
+			finalReslt := response.Responses(http.StatusUnauthorized, "", "", "Token fully tamperd , can't decople id from token,for further process login")
 			c.JSON(http.StatusUnauthorized, finalReslt)
 			c.Abort()
 		}
-		return "", nil, nil
 	}()
 
 	accessToken := c.Request.Header.Get("authorization")
@@ -108,6 +107,7 @@ func UserAuthorization(c *gin.Context) {
 		c.JSON(http.StatusOK, "all perfect, your access token is uptodate")
 		c.Set("UserID", id)
 	}
+	c.Set("UserID", id)
 	c.Next()
 }
 

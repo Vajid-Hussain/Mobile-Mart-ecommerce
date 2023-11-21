@@ -22,7 +22,7 @@ func (r *JwtTokenUseCase) GetDataForCreteAccessToken(id string) (string, error) 
 	}
 
 	if status != "active" {
-		return "", errors.New("not a active user")
+		return "", errors.New("you are not a 'active' seller")
 	}
 
 	return status, nil
@@ -38,7 +38,7 @@ func (r *JwtTokenUseCase) GetStatusOfUser(id string) (string, error) {
 	}
 
 	if status != "active" {
-		return "", errors.New("not a active user")
+		return "", errors.New("you are not a 'active' user")
 	}
 
 	return status, nil

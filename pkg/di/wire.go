@@ -43,7 +43,11 @@ func InitializeAPI(config config.Config) (*server.ServerHttp, error) {
 	inventoryUseCase := usecase.NewInventoryUseCase(inventoryRepository, &config.S3aws)
 	inventoryHandler := handler.NewInventoryHandler(inventoryUseCase)
 
-	serverHttp := server.NewServerHttp(userHandler, sellerHandler, adminHandler, categoryHandler, inventoryHandler)
+	cartRepository := repository.NewCartRepository(DB)
+	cartUseCase := usecase.NewCartUseCase(cartRepository)
+	cartHanlder := handler.NewCartHandler(cartUseCase)
+
+	serverHttp := server.NewServerHttp(userHandler, sellerHandler, adminHandler, categoryHandler, inventoryHandler, cartHanlder)
 
 	return serverHttp, nil
 }

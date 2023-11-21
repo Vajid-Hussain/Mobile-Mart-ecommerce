@@ -6,9 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *handler.InventotyHandler) {
+func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *handler.InventotyHandler, cart *handler.CartHandler) {
 
 	engin.GET("/", inventory.GetInventory)
+	engin.GET("/:inventoryid", inventory.GetAInventory)
+
 	engin.POST("/signup", user.UserSignup)
 	engin.POST("/verifyOTP", user.VerifyOTP)
 	engin.POST("/sendotp", user.SendOtp)
@@ -17,15 +19,26 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 
 	engin.Use(middlewire.UserAuthorization)
 	{
-		engin.GET("/:inventoryid", inventory.GetAInventory)
+		addressmanagement := engin.Group("/address")
+		{
+			addressmanagement.POST("/", user.NewAddress)
+			addressmanagement.GET("/", user.GetAddress)
+			addressmanagement.PATCH("/", user.EditAddress)
+			addressmanagement.DELETE("/", user.DeleteAddress)
+		}
 
-		engin.POST("/address", user.NewAddress)
-		engin.GET("/address", user.GetAddress)
-		engin.PATCH("/address", user.EditAddress)
-		engin.DELETE("/address", user.DeleteAddress)
+		profilemanagement := engin.Group("/profile")
+		{
+			profilemanagement.GET("/", user.GetProfile)
+			profilemanagement.PATCH("/", user.EditProfile)
+		}
 
-		engin.GET("/profile", user.GetProfile)
-		engin.PATCH("/profile", user.EditProfile)
-
+		cartmanagement := engin.Group("/cart")
+		{
+			cartmanagement.POST("/", cart.CreateCart)
+			cartmanagement.DELETE("/", cart.DeleteInventoryFromCart)
+			cartmanagement.PATCH("/", cart.IncrementQuantityCart)
+			cartmanagement.PATCH("/:inventoryid", cart.DecrementQuantityCart)
+		}
 	}
 }

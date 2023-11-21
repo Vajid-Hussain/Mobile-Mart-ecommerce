@@ -6,7 +6,7 @@ type InventoryRes struct {
 	Description        string  `json:"description" validate:"required,min=5"`
 	BrandID            uint    `json:"brandID" validate:"required"`
 	CategoryID         uint    `json:"categoryID" validate:"required"`
-	SellerID           string  `json:"cellerID" validate:"required"`
+	SellerID           string  `json:"sellerID" validate:"required"`
 	Mrp                uint    `json:"mrp" validate:"required,min=0"`
 	Saleprice          uint    `json:"saleprice" validate:"required,min=0"`
 	Units              uint64  `json:"units" validate:"required,min=0"`
@@ -25,7 +25,8 @@ type Errors struct {
 
 type InventoryShowcase struct {
 	ID          uint   `json:"inventoryID"`
-	Productname string `json:"productname" validate:"required,min=3,max=100"`
-	Mrp         int    `json:"mrp" validate:"required,min=0"`
-	Saleprice   int    `json:"saleprice" validate:"required,min=0"`
+	Productname string `json:"productname"`
+	Mrp         int    `json:"mrp" `
+	Saleprice   int    `json:"saleprice" `
+	SellerID    string `json:"sellerID" `
 }

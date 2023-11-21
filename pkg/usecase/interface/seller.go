@@ -1,7 +1,6 @@
 package interfaceUseCase
 
 import (
-	models "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/model"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 )
@@ -15,6 +14,6 @@ type ISellerUseCase interface {
 	GetAllPendingSellers(string, string) (*[]responsemodel.SellerDetails, error)
 	FetchSingleVender(string) (*responsemodel.SellerDetails, error)
 
-	GetSellerProfile(string) (*models.SellerProfile, error)
-	UpdateSellerProfile(*models.SellerEditProfile) (*models.SellerProfile, error)
+	GetSellerProfile(string) (*responsemodel.SellerProfile, error)
+	UpdateSellerProfile(*requestmodel.SellerEditProfile) (*responsemodel.SellerProfile, error)
 }

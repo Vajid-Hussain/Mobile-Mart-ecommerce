@@ -60,9 +60,12 @@ func (d *inventoryRepository) UNBlockSingleInventoryBySeller(SellerID string, pr
 
 func (d *inventoryRepository) DeleteInventoryBySeller(SellerID string, productID string) error {
 	query := "UPDATE inventories SET status='delete' WHERE id= $1"
-	err := d.DB.Exec(query, productID).Error
-	if err != nil {
+	result := d.DB.Exec(query, productID)
+	if result.Error != nil {
 		return errors.New("can't change the status of product in inverntories")
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("no inventory exist in table for deletion")
 	}
 	return nil
 }
