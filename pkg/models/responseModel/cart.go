@@ -3,6 +3,7 @@ package responsemodel
 type CartInventory struct {
 	Productname string `form:"productname" validate:"required,min=3,max=100"`
 	InventoryID string `json:"inventoryid" validate:"required,number"`
+	SellerID    string `json:"sellerID" validate:"required"`
 	Quantity    uint   `json:"quantity"`
 	Saleprice   uint   `form:"saleprice" validate:"required,min=0,number"`
 	Price       uint   `json:"total-amout"`
@@ -11,8 +12,8 @@ type CartInventory struct {
 }
 
 type UserCart struct {
-	UserID         string          `json:"user_id" validate:""`
-	Price          uint            `json:"tatalprice"`
-	InventoryCount uint            `json:"inventorycount"`
-	Cart           []CartInventory `json:"cart"`
+	UserID         string          `json:"user_id" validate:"" gorm:"-"`
+	TotalPrice     uint            `json:"total_price"`
+	InventoryCount uint            `json:"inventory_count"`
+	Cart           []CartInventory `json:"cart" gorm:"-"`
 }
