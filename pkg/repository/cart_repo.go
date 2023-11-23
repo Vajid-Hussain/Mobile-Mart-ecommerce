@@ -31,8 +31,8 @@ func (d *cartRepository) IsInventoryExistInCart(inventoryID string, userID strin
 
 func (d *cartRepository) InsertToCart(cart *requestmodel.Cart) (*requestmodel.Cart, error) {
 
-	query := "INSERT INTO carts (user_id, inventory_id, quantity, price) VALUES (?, ?, ?, ?)   RETURNING *;"
-	result := d.DB.Raw(query, cart.UserID, cart.InventoryID, cart.Quantity, cart.Price).Scan(&cart)
+	query := "INSERT INTO carts (user_id, inventory_id, quantity) VALUES (?, ?,  ?)   RETURNING *;"
+	result := d.DB.Raw(query, cart.UserID, cart.InventoryID, cart.Quantity).Scan(&cart)
 
 	if result.Error != nil {
 		return nil, errors.New("face some issue while inventory insert to cart ")
@@ -84,11 +84,11 @@ func (d *cartRepository) GetSingleInverntory(inventoryID string, userID string) 
 	return singleInventory, nil
 }
 
-func (d *cartRepository) UpdateQuantityAndPrice(cart *requestmodel.Cart) (*requestmodel.Cart, error) {
+func (d *cartRepository) UpdateQuantity(cart *requestmodel.Cart) (*requestmodel.Cart, error) {
 
 	var singleInventory *requestmodel.Cart
-	query := "UPDATE carts SET quantity= ? , price= ? WHERE user_id=? AND inventory_id= ? AND status='active' RETURNING* ;"
-	result := d.DB.Raw(query, cart.Quantity, cart.Price, cart.UserID, cart.InventoryID).Scan(&singleInventory)
+	query := "UPDATE carts SET quantity= ? WHERE user_id=? AND inventory_id= ? AND status='active' RETURNING* ;"
+	result := d.DB.Raw(query, cart.Quantity, cart.UserID, cart.InventoryID).Scan(&singleInventory)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while quantity updating cart")
 	}
@@ -111,17 +111,31 @@ func (d *cartRepository) GetCart(userID string) (*[]responsemodel.CartInventory,
 	return cartView, nil
 }
 
-func (d *cartRepository) GetCartCriteria(userID string) (uint, uint, error) {
+func (d *cartRepository) GetNetAmoutOfCart(userID string) (uint, error) {
 
-	var count, sum uint
-	query := "SELECT SUM(quantity) , SUM(price) FROM carts WHERE user_id=? AND status='active'"
-	result := d.DB.Raw(query, userID)
-	result.Row().Scan(&count, &sum)
+	var NetCart uint
+	query := "SELECT SUM(saleprice) FROM carts INNER JOIN inventories ON id=inventory_id WHERE carts.user_id=? AND carts.status='active'"
+	result := d.DB.Raw(query, userID).Scan(&NetCart)
 	if result.Error != nil {
-		return 0, 0, errors.New("face some issue while  get cart")
+		return 0, errors.New("face some issue while  get cart worth cart")
 	}
 	if result.RowsAffected == 0 {
-		return 0, 0, resCustomError.ErrNoRowAffected
+		return 0, errors.New("user have no cart")
 	}
-	return count, sum, nil
+	return NetCart, nil
+}
+
+func (d *cartRepository) GetCartCriteria(userID string) (uint, error) {
+
+	var count uint
+	query := "SELECT SUM(quantity) FROM carts WHERE user_id=? AND status='active'"
+	result := d.DB.Raw(query, userID)
+	result.Row().Scan(&count)
+	if result.Error != nil {
+		return 0, errors.New("face some issue while  get cart")
+	}
+	if result.RowsAffected == 0 {
+		return 0, resCustomError.ErrNoRowAffected
+	}
+	return count, nil
 }

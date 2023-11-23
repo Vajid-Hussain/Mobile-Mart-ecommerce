@@ -50,7 +50,7 @@ func (u *CartHandler) CreateCart(c *gin.Context) {
 
 func (u *CartHandler) DeleteInventoryFromCart(c *gin.Context) {
 
-	inventoryID := c.Query("id")
+	inventoryID := c.Query("inventoryID")
 	id := strings.TrimSpace(inventoryID)
 
 	if len(id) == 0 {
@@ -79,7 +79,7 @@ func (u *CartHandler) DeleteInventoryFromCart(c *gin.Context) {
 
 func (u *CartHandler) IncrementQuantityCart(c *gin.Context) {
 
-	inventoryID := c.Query("id")
+	inventoryID := c.Query("inventoryid")
 	id := strings.TrimSpace(inventoryID)
 
 	if len(id) == 0 {

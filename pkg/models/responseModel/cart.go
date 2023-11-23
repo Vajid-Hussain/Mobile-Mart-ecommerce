@@ -6,8 +6,8 @@ type CartInventory struct {
 	SellerID    string `json:"sellerID" validate:"required"`
 	Quantity    uint   `json:"quantity"`
 	Saleprice   uint   `form:"saleprice" validate:"required,min=0,number"`
-	Price       uint   `json:"total-amout"`
-	Units       uint64 `json:"units" validate:"required,min=0,number"`
+	Price       uint   `json:"mrp" gorm:"column:mrp"`
+	Units       uint64 `json:"available units" validate:"required,min=0,number"`
 	ImageURL    string `json:"imageURL"`
 }
 

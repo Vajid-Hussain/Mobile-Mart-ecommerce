@@ -29,4 +29,5 @@ type InventoryShowcase struct {
 	Mrp         int    `json:"mrp" `
 	Saleprice   int    `json:"saleprice" `
 	SellerID    string `json:"sellerID" `
+	Units       uint   `json:"units"`
 }

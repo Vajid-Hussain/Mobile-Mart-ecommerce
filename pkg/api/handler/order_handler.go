@@ -65,3 +65,24 @@ func (u *OrderHandler) ShowAbstractOrders(c *gin.Context) {
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
+
+func (u *OrderHandler) SingleOrderDetails(c *gin.Context) {
+
+	orderID, _ := c.Params.Get("orderID")
+
+	userID, exist := c.MustGet("UserID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	orderDetais, err := u.useCase.SingleOrder(orderID, userID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", orderDetais, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}

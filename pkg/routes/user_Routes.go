@@ -47,6 +47,7 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 		{
 			ordermanagement.POST("", order.NewOrder)
 			ordermanagement.GET("", order.ShowAbstractOrders)
+			ordermanagement.GET(":orderID", order.SingleOrderDetails)
 		}
 	}
 }

@@ -28,12 +28,12 @@ func (r *cartUseCase) CreateCart(cart *requestmodel.Cart) (*requestmodel.Cart, e
 		return nil, errors.New("inverntory alrady exist in cart now you can purchase")
 	}
 
-	productPrice, err := r.repo.GetInventoryPrice(cart.InventoryID)
-	if err != nil {
-		return nil, err
-	}
+	// productPrice, err := r.repo.GetInventoryPrice(cart.InventoryID)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	cart.Price = productPrice
+	// cart.Price = productPrice
 	cart.Quantity = 1
 
 	inserCart, err := r.repo.InsertToCart(cart)
@@ -58,13 +58,13 @@ func (r *cartUseCase) QuantityIncriment(inventoryID string, userID string) (*req
 		return nil, err
 	}
 
-	price := singleInventory.Price / singleInventory.Quantity
-	currentQuantity := singleInventory.Quantity
+	// price := singleInventory.Price / singleInventory.Quantity
+	// currentQuantity := singleInventory.Quantity
 
-	singleInventory.Quantity = currentQuantity + 1
-	singleInventory.Price = singleInventory.Quantity * price
+	singleInventory.Quantity += 1
+	// singleInventory.Price = singleInventory.Quantity * price
 
-	singleInventory, err = r.repo.UpdateQuantityAndPrice(singleInventory)
+	singleInventory, err = r.repo.UpdateQuantity(singleInventory)
 	if err != nil {
 		return nil, err
 	}
@@ -82,13 +82,13 @@ func (r *cartUseCase) QuantityDecrease(inventoryID string, userID string) (*requ
 		return singleInventory, errors.New("reach the maximum limit")
 	}
 
-	price := singleInventory.Price / singleInventory.Quantity
-	currentQuantity := singleInventory.Quantity
+	// price := singleInventory.Price / singleInventory.Quantity
+	// currentQuantity := singleInventory.Quantity
 
-	singleInventory.Quantity = currentQuantity - 1
-	singleInventory.Price = singleInventory.Quantity * price
+	singleInventory.Quantity -= 1
+	// singleInventory.Price = singleInventory.Quantity * price
 
-	singleInventory, err = r.repo.UpdateQuantityAndPrice(singleInventory)
+	singleInventory, err = r.repo.UpdateQuantity(singleInventory)
 	if err != nil {
 		return nil, err
 	}
@@ -99,19 +99,24 @@ func (r *cartUseCase) ShowCart(userID string) (*responsemodel.UserCart, error) {
 
 	cart := &responsemodel.UserCart{}
 
-	quantity, price, err := r.repo.GetCartCriteria(userID)
+	quantity, err := r.repo.GetCartCriteria(userID)
 	if err != nil {
-		return cart, err
+		return nil, err
 	}
 
 	cart.InventoryCount = quantity
-	cart.TotalPrice = price
 	cart.UserID = userID
+
+	totalPrice, err := r.repo.GetNetAmoutOfCart(userID)
+	if err != nil {
+		return cart, err
+	}
 
 	cartInventories, err := r.repo.GetCart(userID)
 	if err != nil {
 		return cart, err
 	}
+	cart.TotalPrice = totalPrice
 	cart.Cart = *cartInventories
 	return cart, nil
 }

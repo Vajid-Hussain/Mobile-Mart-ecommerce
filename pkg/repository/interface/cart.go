@@ -11,7 +11,8 @@ type ICartRepository interface {
 	IsInventoryExistInCart(string, string) (int, error)
 	DeleteInventoryFromCart(string, string) error
 	GetSingleInverntory(string, string) (*requestmodel.Cart, error)
-	UpdateQuantityAndPrice(*requestmodel.Cart) (*requestmodel.Cart, error)
+	UpdateQuantity(*requestmodel.Cart) (*requestmodel.Cart, error)
 	GetCart(string) (*[]responsemodel.CartInventory, error)
-	GetCartCriteria(string) (uint, uint, error)
+	GetNetAmoutOfCart(string) (uint, error)
+	GetCartCriteria(string) (uint, error)
 }
