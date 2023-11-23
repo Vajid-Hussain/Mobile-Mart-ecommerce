@@ -7,8 +7,8 @@ type CartInventory struct {
 	Quantity    uint   `json:"quantity"`
 	Saleprice   uint   `form:"saleprice" validate:"required,min=0,number"`
 	Price       uint   `json:"total-amout"`
-	Units       uint64 `form:"units" validate:"required,min=0,number"`
-	ImageURL    string
+	Units       uint64 `json:"units" validate:"required,min=0,number"`
+	ImageURL    string `json:"imageURL"`
 }
 
 type UserCart struct {

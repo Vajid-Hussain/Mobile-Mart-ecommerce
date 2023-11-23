@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *handler.InventotyHandler, cart *handler.CartHandler) {
+func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *handler.InventotyHandler, cart *handler.CartHandler, order *handler.OrderHandler) {
 
 	engin.GET("/", inventory.GetInventory)
 	engin.GET("/:inventoryid", inventory.GetAInventory)
@@ -37,10 +37,16 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 		{
 			cartmanagement.POST("/", cart.CreateCart)
 			cartmanagement.DELETE("/", cart.DeleteInventoryFromCart)
-			cartmanagement.PATCH("/", cart.IncrementQuantityCart)
-			cartmanagement.PATCH("/:inventoryid", cart.DecrementQuantityCart)
+			cartmanagement.PATCH("/increment", cart.IncrementQuantityCart)
+			cartmanagement.PATCH("/decrement/:inventoryid", cart.DecrementQuantityCart)
 			cartmanagement.GET("/", cart.ShowCart)
 
+		}
+
+		ordermanagement := engin.Group("/order")
+		{
+			ordermanagement.POST("", order.NewOrder)
+			ordermanagement.GET("", order.ShowAbstractOrders)
 		}
 	}
 }

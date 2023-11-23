@@ -47,7 +47,18 @@ func InitializeAPI(config config.Config) (*server.ServerHttp, error) {
 	cartUseCase := usecase.NewCartUseCase(cartRepository)
 	cartHanlder := handler.NewCartHandler(cartUseCase)
 
-	serverHttp := server.NewServerHttp(userHandler, sellerHandler, adminHandler, categoryHandler, inventoryHandler, cartHanlder)
+	orderRepository := repository.NewOrderRepository(DB)
+	orderUseCase := usecase.NewOrderUseCase(orderRepository, cartRepository)
+	orderHandler := handler.NewOrderHandler(orderUseCase)
+
+	serverHttp := server.NewServerHttp(userHandler,
+		sellerHandler,
+		adminHandler,
+		categoryHandler,
+		inventoryHandler,
+		cartHanlder,
+		orderHandler,
+	)
 
 	return serverHttp, nil
 }

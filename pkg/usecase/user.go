@@ -279,6 +279,7 @@ func (r *userUseCase) GetProfile(userID string) (*requestmodel.UserDetails, erro
 	if err != nil {
 		return nil, err
 	}
+	userDetails.Password = ""
 	return userDetails, nil
 }
 
