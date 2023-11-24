@@ -29,7 +29,7 @@ func NewServerHttp(user *handler.UserHandler,
 	engin.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	routes.UserRoutes(engin.Group("/"), user, inventory, cart, order)
-	routes.SellerRoutes(engin.Group("/seller"), seller, inventory)
+	routes.SellerRoutes(engin.Group("/seller"), seller, inventory, order)
 	routes.AdminRoutes(engin.Group("/admin"), admin, seller, user, category)
 
 	return &ServerHttp{engin: engin}

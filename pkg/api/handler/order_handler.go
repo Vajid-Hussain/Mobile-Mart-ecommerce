@@ -86,3 +86,82 @@ func (u *OrderHandler) SingleOrderDetails(c *gin.Context) {
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
+
+// ------------------------------------------Seller Control Orders------------------------------------\\
+
+func (u *OrderHandler) GetSellerOrders(c *gin.Context) {
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	remainingQuery := " IN ('processing','delivered')"
+	orderDetais, err := u.useCase.GetSellerOrders(sellerID, remainingQuery)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", orderDetais, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *OrderHandler) GetSellerOrdersProcessing(c *gin.Context) {
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	remainingQuery := " IN ('processing')"
+	orderDetais, err := u.useCase.GetSellerOrders(sellerID, remainingQuery)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", orderDetais, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *OrderHandler) GetSellerOrdersDeliverd(c *gin.Context) {
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	remainingQuery := " IN ('delivered')"
+	orderDetais, err := u.useCase.GetSellerOrders(sellerID, remainingQuery)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", orderDetais, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *OrderHandler) ConfirmDeliverd(c *gin.Context) {
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	orderID := c.Query("orderID")
+
+	orderDetais, err := u.useCase.ConfirmDeliverd(sellerID, orderID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", orderDetais, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}

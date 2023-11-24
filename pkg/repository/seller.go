@@ -183,3 +183,31 @@ func (d *sellerRepository) UpdateSellerProfile(editedProfile *requestmodel.Selle
 	}
 	return &profile, nil
 }
+
+// ------------------------------------------Seller Money Menagment------------------------------------\\
+
+func (d *sellerRepository) UpdateSellerCredit(sellerID string, credit uint) error {
+	query := "UPDATE sellers SET seller_credit = ? WHERE id=?"
+	result := d.DB.Exec(query, credit, sellerID)
+	if result.Error != nil {
+		return errors.New("face some issue while updating seller credits")
+	}
+	if result.RowsAffected == 0 {
+
+		return resCustomError.ErrNoRowAffected
+	}
+	return nil
+}
+
+func (d *sellerRepository) GetSellerCredit(sellerID string) (uint, error) {
+	var credit uint
+	query := "SELECT seller_credit FROM sellers WHERE id= ?"
+	result := d.DB.Raw(query, sellerID).Scan(&credit)
+	if result.Error != nil {
+		return 0, errors.New("face some issue while get credit from seller table")
+	}
+	if result.RowsAffected == 0 {
+		return 0, resCustomError.ErrNoRowAffected
+	}
+	return credit, nil
+}

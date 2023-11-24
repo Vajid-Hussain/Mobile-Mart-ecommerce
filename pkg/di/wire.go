@@ -48,7 +48,7 @@ func InitializeAPI(config config.Config) (*server.ServerHttp, error) {
 	cartHanlder := handler.NewCartHandler(cartUseCase)
 
 	orderRepository := repository.NewOrderRepository(DB)
-	orderUseCase := usecase.NewOrderUseCase(orderRepository, cartRepository)
+	orderUseCase := usecase.NewOrderUseCase(orderRepository, cartRepository, sellerRepository)
 	orderHandler := handler.NewOrderHandler(orderUseCase)
 
 	serverHttp := server.NewServerHttp(userHandler,

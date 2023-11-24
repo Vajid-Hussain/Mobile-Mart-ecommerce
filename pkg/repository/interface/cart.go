@@ -13,6 +13,6 @@ type ICartRepository interface {
 	GetSingleInverntory(string, string) (*requestmodel.Cart, error)
 	UpdateQuantity(*requestmodel.Cart) (*requestmodel.Cart, error)
 	GetCart(string) (*[]responsemodel.CartInventory, error)
-	GetNetAmoutOfCart(string) (uint, error)
+	GetNetAmoutOfCart(string, string) (uint, error)
 	GetCartCriteria(string) (uint, error)
 }

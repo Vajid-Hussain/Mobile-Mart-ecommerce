@@ -111,13 +111,13 @@ func (d *cartRepository) GetCart(userID string) (*[]responsemodel.CartInventory,
 	return cartView, nil
 }
 
-func (d *cartRepository) GetNetAmoutOfCart(userID string) (uint, error) {
+func (d *cartRepository) GetNetAmoutOfCart(userID string, inventoryID string) (uint, error) {
 
 	var NetCart uint
-	query := "SELECT SUM(saleprice) FROM carts INNER JOIN inventories ON id=inventory_id WHERE carts.user_id=? AND carts.status='active'"
-	result := d.DB.Raw(query, userID).Scan(&NetCart)
+	query := "SELECT saleprice FROM carts INNER JOIN inventories ON id=inventory_id WHERE carts.user_id=? AND id= ? AND carts.status='active'"
+	result := d.DB.Raw(query, userID, inventoryID).Scan(&NetCart)
 	if result.Error != nil {
-		return 0, errors.New("face some issue while  get cart worth cart")
+		return 0, errors.New("user have no Cart")
 	}
 	if result.RowsAffected == 0 {
 		return 0, errors.New("user have no cart")

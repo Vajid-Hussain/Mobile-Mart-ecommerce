@@ -25,6 +25,7 @@ type SellerDetails struct {
 	Email       string `json:"email,omitempty"`
 	GST_NO      string `json:"gstno,omitempty"`
 	Description string `json:"description,omitempty"`
+	AdminCrdit  uint   `json:"credit"`
 	Status      string `json:"status,omitempty"`
 }
 

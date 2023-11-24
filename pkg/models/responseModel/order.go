@@ -3,12 +3,13 @@ package responsemodel
 type OrderShowcase struct {
 	Productname string `json:"productname" validate:"required,min=3,max=100"`
 	ID          string `gorm:"column:id" json:"orderID" validate:"required,number"`
+	SellerID    string `json:"seller id" gorm:"column:seller_id"`
 	Price       uint   `json:"total-amout"`
 	Quantity    uint   `json:"quantity"`
 	ImageURL    string `json:"imageURL"`
 }
 
-type OrderSuccess struct {
+type OrderDetails struct {
 	ID          string `gorm:"id" json:"orderid"`
 	UserID      string `gorm:"column:user_id" json:"userid"`
 	Address     string `gorm:"column:address_id" json:"address_id"`
@@ -21,7 +22,8 @@ type OrderSuccess struct {
 type SingleOrder struct {
 	Productname  string `json:"productname" validate:"required,min=3,max=100"`
 	ID           string `gorm:"column:id" json:"orderID" validate:"required,number"`
-	Price        uint   `json:"total-amout"`
+	SingleUnit   uint   `json:"Price of a unit" gorm:"column:saleprice"`
+	Price        uint   `json:"total-amout" `
 	Quantity     uint   `json:"quantity"`
 	OrderDate    string `json:"orderdate"`
 	DeliveryDate string `json:"delivary_date,omitempty"`
@@ -35,4 +37,12 @@ type SingleOrder struct {
 	Pincode      string `json:"pincode" validate:"min=6"`
 	LandMark     string `json:"landmark" validate:"required"`
 	PhoneNumber  string `json:"phoneNumber" validate:"required,len=10,number"`
+}
+
+type OrderSuccess struct {
+	UserID     string `gorm:"column:user_id" json:"userid"`
+	Address    string `gorm:"column:address_id" json:"address_id"`
+	Payment    string `gorm:"column:payment_method" json:"payment"`
+	TotalWorth uint   `json:"payable_amount"`
+	Orders     []OrderDetails
 }

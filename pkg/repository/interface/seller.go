@@ -21,4 +21,7 @@ type ISellerRepo interface {
 
 	GetSellerProfile(string) (*responsemodel.SellerProfile, error)
 	UpdateSellerProfile(*requestmodel.SellerEditProfile) (*responsemodel.SellerProfile, error)
+
+	UpdateSellerCredit(string, uint) error
+	GetSellerCredit(string) (uint, error)
 }

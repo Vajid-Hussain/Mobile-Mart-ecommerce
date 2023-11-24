@@ -20,25 +20,19 @@ func NewOrderRepository(db *gorm.DB) interfaces.IOrderRepository {
 	return &orderRepository{DB: db}
 }
 
-func (d *orderRepository) CreateOrder(order *requestmodel.Order) (*[]responsemodel.OrderSuccess, error) {
+func (d *orderRepository) CreateOrder(order *requestmodel.Order) (*responsemodel.OrderSuccess, error) {
 
 	today := time.Now().Format("2006-01-02 15:04:05")
-	var orderSucess *[]responsemodel.OrderSuccess
+	var orderSucess = &responsemodel.OrderSuccess{}
+	var orderData responsemodel.OrderDetails
 	var result *gorm.DB
 
-	// var paymentStatus string
-	// if order.Payment == "COD" {
-	// 	paymentStatus = "active"
-	// } else {
-	// 	paymentStatus = "pending"
-	// }
-
 	for _, data := range order.Cart {
-		fmt.Println("$$$$$", data, data.Saleprice, data.Price)
 		query := `INSERT INTO orders (user_id, address_id, payment_method, inventory_id, seller_id, price, quantity,  order_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING*`
-		result = d.DB.Raw(query, order.UserID, order.Address, order.Payment, data.InventoryID, data.SellerID, data.Price, data.Quantity, today).Scan(&orderSucess)
+		result = d.DB.Raw(query, order.UserID, order.Address, order.Payment, data.InventoryID, data.SellerID, data.Price, data.Quantity, today).Scan(&orderData)
+		orderSucess.TotalWorth += orderData.Price
+		orderSucess.Orders = append(orderSucess.Orders, orderData)
 	}
-
 	if result.Error != nil {
 		return nil, errors.New("face some issue while creating order")
 	}
@@ -106,3 +100,64 @@ func (d *orderRepository) UpdateInventoryUnits(inventoryID string, units uint) e
 	}
 	return nil
 }
+
+func (d *orderRepository) GetOrderPrice(orderID string) (uint, error) {
+	fmt.Println("&&77", orderID)
+	var price uint
+	query := "SELECT price FROM orders WHERE id =?"
+	result := d.DB.Raw(query, orderID).Scan(&price)
+	if result.Error != nil {
+		return 0, errors.New("face some issue while get credit from seller table")
+	}
+	if result.RowsAffected == 0 {
+		return 0, resCustomError.ErrNoRowAffected
+	}
+	return price, nil
+}
+
+// ------------------------------------------Seller Control Orders------------------------------------\\
+
+func (d *orderRepository) GetSellerOrders(sellerID string, remainingQuery string) (*[]responsemodel.OrderDetails, error) {
+
+	var orderList *[]responsemodel.OrderDetails
+	query := "SELECT * FROM orders WHERE seller_id=? AND order_status" + remainingQuery
+	result := d.DB.Raw(query, sellerID).Scan(&orderList)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while get user orders")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return orderList, nil
+}
+
+func (d *orderRepository) UpdateDeliveryTime(sellerID string, orderID string) error {
+
+	delivaryTime := time.Now().Format("2006-01-02 15:04:05")
+
+	query := "UPDATE orders SET delivery_date= ? WHERE seller_id= ? AND id = ?"
+	result := d.DB.Exec(query, delivaryTime, sellerID, orderID)
+	if result.Error != nil {
+		return errors.New("face some issue while updating delivary time")
+	}
+	if result.RowsAffected == 0 {
+		return resCustomError.ErrNoRowAffected
+	}
+	return nil
+
+}
+
+func (d *orderRepository) UpdateOrderDelivered(sellerID string, orderID string) (*responsemodel.OrderDetails, error) {
+	var deliveryDetails responsemodel.OrderDetails
+	query := "UPDATE orders SET order_status = 'delivered' WHERE seller_id= ? AND id= ? AND order_status='processing' RETURNING*"
+	result := d.DB.Raw(query, sellerID, orderID).Scan(&deliveryDetails)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while order is delevered")
+	}
+	if result.RowsAffected == 0 {
+		return nil, errors.New("product is alrady deliverd")
+	}
+	return &deliveryDetails, nil
+}
+
+// func (d *orderRepository) Upda
