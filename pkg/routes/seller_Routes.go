@@ -16,13 +16,13 @@ func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, invento
 		engin.GET("/profile", seller.GetSellerProfile)
 		engin.PATCH("/profile", seller.EditSellerProfile)
 
-		inventorymanagement := engin.Group("/inventory")
+		inventorymanagement := engin.Group("/products")
 		{
 			inventorymanagement.POST("/", inventory.AddInventory)
 			inventorymanagement.GET("/", inventory.GetSellerInventory)
-			inventorymanagement.GET("/:inventoryid", inventory.GetAInventory)
+			inventorymanagement.GET("/:productid", inventory.GetAInventory)
 			inventorymanagement.PATCH("/", inventory.EditInventory)
-			inventorymanagement.DELETE("/:inventoryid", inventory.DeleteInventory)
+			inventorymanagement.DELETE("/:productid", inventory.DeleteInventory)
 			inventorymanagement.PATCH("/:productid/block", inventory.BlockInventory)
 			inventorymanagement.PATCH("/:productid/unblock", inventory.UNBlockInventory)
 		}

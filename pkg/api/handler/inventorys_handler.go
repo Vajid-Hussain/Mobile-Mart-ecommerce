@@ -21,6 +21,17 @@ func NewInventoryHandler(usercase interfaceUseCase.IInventoryUseCase) *Inventoty
 	return &InventotyHandler{userCase: usercase}
 }
 
+// @Summary Add Product
+// // @Description Add a new product from the seller.
+// // @Tags Seller Products
+// // @Accept json
+// // @Produce json
+// // @Security BearerTokenAuth
+// // @Security Refreshtoken
+// // @Param product formData AddProductRequest true "Product details for adding"
+// // @Success 201 {object} response.Response "Successfully added the product"
+// // @Failure 400 {object} response.Response "Bad request"
+// // @Router /seller/products [post]
 func (u *InventotyHandler) AddInventory(c *gin.Context) {
 
 	var inventoryDetails requestmodel.InventoryReq
@@ -58,6 +69,17 @@ func (u *InventotyHandler) AddInventory(c *gin.Context) {
 	}
 }
 
+// @Summary Block Product
+// @Description Block a product from being displayed.
+// @Tags Seller Products
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param id path string true "Product ID in the URL path"
+// @Success 200 {object} response.Response "Successfully blocked the product"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /seller/products/{id}/block [patch]
 func (u *InventotyHandler) BlockInventory(c *gin.Context) {
 	sellerid, exist := c.MustGet("SellerID").(string)
 	if !exist {
@@ -77,6 +99,17 @@ func (u *InventotyHandler) BlockInventory(c *gin.Context) {
 	}
 }
 
+// @Summary Unblock Product
+// @Description Unblock a product for display.
+// @Tags Seller Products
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param id path string true "Product ID in the URL path"
+// @Success 200 {object} response.Response "Successfully unblocked the product"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /seller/products/{id}/unblock [patch]
 func (u *InventotyHandler) UNBlockInventory(c *gin.Context) {
 	sellerid, exist := c.MustGet("SellerID").(string)
 	if !exist {
@@ -96,15 +129,26 @@ func (u *InventotyHandler) UNBlockInventory(c *gin.Context) {
 	}
 }
 
+// @Summary Delete Product
+// @Description Delete a product by ID.
+// @Tags Seller Products
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param id path string true "Product ID in the URL path"
+// @Success 200 {object} response.Response "Successfully deleted the product"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /seller/products/{id} [delete]
 func (u *InventotyHandler) DeleteInventory(c *gin.Context) {
-	sellerid, exist := c.MustGet("SellerID").(string)
+	sellerid, exist := c.MustGet("Sellerid").(string)
 	if !exist {
 		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.NotGetSellerIDinContexr, nil, nil)
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
 
-	productID := c.Param("inventoryid")
+	productID := c.Param("productid")
 	err := u.userCase.DeleteInventory(sellerid, productID)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusNotFound, "", "", err.Error())
@@ -115,6 +159,16 @@ func (u *InventotyHandler) DeleteInventory(c *gin.Context) {
 	}
 }
 
+// @Summary Get Seller Products
+// @Description Retrieve a list of products.
+// @Tags Home Page
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Number of items per page" default(5)
+// @Success 200 {object} []response.Response "Successfully retrieved products"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /seller/products [get]
 func (u *InventotyHandler) GetInventory(c *gin.Context) {
 	page := c.Query("page")
 	limit := c.DefaultQuery("limit", "1")
@@ -128,8 +182,19 @@ func (u *InventotyHandler) GetInventory(c *gin.Context) {
 	}
 }
 
+// @Summary Get Seller Product
+// @Description Retrieve details of a single seller product.
+// @Tags Seller Products
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param id path string true "Product ID in the URL path"
+// @Success 200 {object} response.Response "Successfully retrieved the seller product"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /seller/products/{id} [get]
 func (u *InventotyHandler) GetAInventory(c *gin.Context) {
-	id := c.Param("inventoryid")
+	id := c.Param("productid")
 
 	inverntory, err := u.userCase.GetAInventory(id)
 	if err != nil {
@@ -141,6 +206,18 @@ func (u *InventotyHandler) GetAInventory(c *gin.Context) {
 	}
 }
 
+// @Summary Get Seller Products
+// @Description Retrieve a list of seller products.
+// @Tags Seller Products
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Number of items per page" default(5)
+// @Success 200 {object} []response.Response "Successfully retrieved seller products"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /seller/products [get]
 func (u *InventotyHandler) GetSellerInventory(c *gin.Context) {
 	page := c.Query("page")
 	limit := c.DefaultQuery("limit", "1")
@@ -156,9 +233,21 @@ func (u *InventotyHandler) GetSellerInventory(c *gin.Context) {
 	}
 }
 
+// @Summary Edit Seller Product
+// @Description Edit details of a seller product.
+// @Tags Seller Products
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param productid query string true "Product ID in the query parameter"
+// @Param product body requestmodel.EditInventory true "Updated product details"
+// @Success 200 {object} response.Response "Successfully edited the seller product"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /seller/products [patch]
 func (u *InventotyHandler) EditInventory(c *gin.Context) {
 
-	inventoryID := c.Query("invenoryid")
+	inventoryID := c.Query("productid")
 	var edittedInventory requestmodel.EditInventory
 
 	if err := c.BindJSON(&edittedInventory); err != nil {

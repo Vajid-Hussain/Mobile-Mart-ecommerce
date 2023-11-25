@@ -9,7 +9,7 @@ import (
 func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *handler.InventotyHandler, cart *handler.CartHandler, order *handler.OrderHandler) {
 
 	engin.GET("/", inventory.GetInventory)
-	engin.GET("/:inventoryid", inventory.GetAInventory)
+	engin.GET("/:productid", inventory.GetAInventory)
 
 	engin.POST("/signup", user.UserSignup)
 	engin.POST("/verifyOTP", user.VerifyOTP)
@@ -38,7 +38,7 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 			cartmanagement.POST("/", cart.CreateCart)
 			cartmanagement.DELETE("/", cart.DeleteInventoryFromCart)
 			cartmanagement.PATCH("/increment", cart.IncrementQuantityCart)
-			cartmanagement.PATCH("/decrement/:inventoryid", cart.DecrementQuantityCart)
+			cartmanagement.PATCH("/decrement/:productID", cart.DecrementQuantityCart)
 			cartmanagement.GET("/", cart.ShowCart)
 
 		}

@@ -1038,6 +1038,225 @@
                 }
             }
         },
+        "/cart": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve all items in the user's cart.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserCart"
+                ],
+                "summary": "Get User Cart",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved user cart items",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Create a user's cart.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserCart"
+                ],
+                "summary": "Create User Cart",
+                "parameters": [
+                    {
+                        "description": "Cart details for creating",
+                        "name": "cart",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.Cart"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User cart created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Delete a product from the user's cart.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserCart"
+                ],
+                "summary": "Delete Item from User Cart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID to delete from the cart",
+                        "name": "productID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product deleted from the cart successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/cart/decrement/{productID}": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Decrease the count of a product in the user's cart.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserCart"
+                ],
+                "summary": "Decrement Product Count in User Cart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID to decrement in the cart",
+                        "name": "productID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product count decremented in the cart successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/cart/increment": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Increase the count of a product in the user's cart.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserCart"
+                ],
+                "summary": "Increment Product Count in User Cart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Inventory ID of the product to increment in the cart",
+                        "name": "inventoryid",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product count incremented in the cart successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/forgotpassword": {
             "post": {
                 "description": "Initiate the process for resetting the password.",
@@ -1078,6 +1297,179 @@
                 }
             }
         },
+        "/order": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve all orders for the user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserOrders"
+                ],
+                "summary": "Get User Orders",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved user orders",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Create a new order by the user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserOrders"
+                ],
+                "summary": "Create User Order",
+                "parameters": [
+                    {
+                        "description": "Order details for creating",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.Order"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Order created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Cancel an order for the user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserOrders"
+                ],
+                "summary": "Cancel User Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID in the query parameter",
+                        "name": "orderID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order canceled successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/{orderID}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve details about a specific user order.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserOrders"
+                ],
+                "summary": "Get User Order Details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID in the URL path",
+                        "name": "orderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved user order details",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/profile": {
             "get": {
                 "security": [
@@ -1098,7 +1490,7 @@
                 "tags": [
                     "User Profile"
                 ],
-                "summary": "Get User Profile",
+                "summary": "Get User",
                 "responses": {
                     "200": {
                         "description": "Successfully retrieved the user's profile",
@@ -1131,7 +1523,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "User Profile"
                 ],
                 "summary": "Update User Profile",
                 "parameters": [
@@ -1194,6 +1586,581 @@
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/order": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve a single order for the seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SellerOrders"
+                ],
+                "summary": "Get Seller Order",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the seller order",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Confirm an order for the seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SellerOrders"
+                ],
+                "summary": "Confirm Seller Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID in the query parameter",
+                        "name": "orderID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order confirmed successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/order/delivered": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve delivered orders for the seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SellerOrders"
+                ],
+                "summary": "Get Seller Delivered Orders",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved seller delivered orders",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/order/processing": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve still ongoing orders for the seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SellerOrders"
+                ],
+                "summary": "Get Seller Processing Orders",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved seller processing orders",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/order/{orderID}/cancel": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Cancel an order for the seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SellerOrders"
+                ],
+                "summary": "Cancel Seller Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID in the URL path",
+                        "name": "orderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order canceled successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/products": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve a list of seller products.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Products"
+                ],
+                "summary": "Get Seller Products",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 5,
+                        "description": "Number of items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved seller products",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.Response"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Edit details of a seller product.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Products"
+                ],
+                "summary": "Edit Seller Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID in the query parameter",
+                        "name": "productid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated product details",
+                        "name": "product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.EditInventory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully edited the seller product",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/products/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve details of a single seller product.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Products"
+                ],
+                "summary": "Get Seller Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID in the URL path",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the seller product",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Delete a product by ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Products"
+                ],
+                "summary": "Delete Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID in the URL path",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted the product",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/products/{id}/block": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Block a product from being displayed.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Products"
+                ],
+                "summary": "Block Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID in the URL path",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully blocked the product",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/products/{id}/unblock": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Unblock a product for display.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Products"
+                ],
+                "summary": "Unblock Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID in the URL path",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully unblocked the product",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve details of the seller's profile.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Profile"
+                ],
+                "summary": "Get Seller Profile",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the seller's profile",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Update the seller's profile.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Profile"
+                ],
+                "summary": "Update Seller Profile",
+                "parameters": [
+                    {
+                        "description": "Seller profile details for updating",
+                        "name": "profile",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.SellerEditProfile"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated the seller's profile",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -1459,6 +2426,26 @@
                 }
             }
         },
+        "requestmodel.Cart": {
+            "type": "object",
+            "required": [
+                "inventoryid"
+            ],
+            "properties": {
+                "cartid userid": {
+                    "type": "string"
+                },
+                "inventoryid": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
         "requestmodel.EditAddress": {
             "type": "object",
             "required": [
@@ -1507,6 +2494,82 @@
                 }
             }
         },
+        "requestmodel.EditInventory": {
+            "type": "object",
+            "required": [
+                "batterycapacity",
+                "brandID",
+                "categoryID",
+                "cellerID",
+                "cellularTechnology",
+                "description",
+                "id",
+                "mrp",
+                "os",
+                "processor",
+                "productname",
+                "ram",
+                "saleprice",
+                "screensize",
+                "units"
+            ],
+            "properties": {
+                "batterycapacity": {
+                    "type": "integer",
+                    "minimum": 500
+                },
+                "brandID": {
+                    "type": "integer"
+                },
+                "categoryID": {
+                    "type": "integer"
+                },
+                "cellerID": {
+                    "type": "string"
+                },
+                "cellularTechnology": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string",
+                    "minLength": 5
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mrp": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "os": {
+                    "type": "string"
+                },
+                "processor": {
+                    "type": "string"
+                },
+                "productname": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 3
+                },
+                "ram": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "saleprice": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "screensize": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "units": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
         "requestmodel.ForgotPassword": {
             "type": "object",
             "properties": {
@@ -1522,11 +2585,66 @@
                 }
             }
         },
+        "requestmodel.Order": {
+            "type": "object",
+            "required": [
+                "address",
+                "payment",
+                "userid"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "payment": {
+                    "type": "string"
+                },
+                "userid": {
+                    "type": "string"
+                }
+            }
+        },
         "requestmodel.OtpVerification": {
             "type": "object",
             "properties": {
                 "otp": {
                     "type": "string"
+                }
+            }
+        },
+        "requestmodel.SellerEditProfile": {
+            "type": "object",
+            "required": [
+                "confirmpassword",
+                "description",
+                "email",
+                "gstno",
+                "id",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "confirmpassword": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "gstno": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 4
                 }
             }
         },

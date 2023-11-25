@@ -440,7 +440,7 @@ func (u *UserHandler) GetProfile(c *gin.Context) {
 
 // @Summary Update User Profile
 // @Description Update the user's profile.
-// @Tags User
+// @Tags User Profile
 // @Accept json
 // @Produce json
 // @Security BearerTokenAuth
