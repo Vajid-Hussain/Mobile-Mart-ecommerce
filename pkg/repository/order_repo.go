@@ -46,7 +46,7 @@ func (d *orderRepository) CreateOrder(order *requestmodel.Order) (*responsemodel
 func (d *orderRepository) GetOrderShowcase(userID string) (*[]responsemodel.OrderShowcase, error) {
 
 	var OrderShowcase []responsemodel.OrderShowcase
-	query := "SELECT * FROM inventories INNER JOIN  orders ON orders.inventory_id= inventories.id WHERE orders.user_id= ?"
+	query := "SELECT * FROM inventories INNER JOIN  orders ON orders.inventory_id= inventories.id WHERE orders.user_id= ? ORDER BY orders.id DESC"
 	result := d.DB.Raw(query, userID).Scan(&OrderShowcase)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while order showcase")
@@ -115,6 +115,35 @@ func (d *orderRepository) GetOrderPrice(orderID string) (uint, error) {
 	return price, nil
 }
 
+func (d *orderRepository) UpdateUserOrderCancel(orderID string, userID string) (*responsemodel.OrderDetails, error) {
+
+	var cancelOrder responsemodel.OrderDetails
+	query := "UPDATE orders SET order_status= 'cancel' WHERE id=? AND user_id= ? AND order_status='processing' RETURNING*"
+	result := d.DB.Raw(query, orderID, userID).Scan(&cancelOrder)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while order is cancel")
+	}
+	if result.RowsAffected == 0 {
+		return nil, errors.New("product is alrady cancel, or user have not this order")
+	}
+	return &cancelOrder, nil
+}
+
+func (d *orderRepository) UpdateDeliveryTimeByUser(userID string, orderID string) error {
+
+	delivaryTime := time.Now().Format("2006-01-02 15:04:05")
+
+	query := "UPDATE orders SET delivery_date= ? WHERE user_id= ? AND id = ?"
+	result := d.DB.Exec(query, delivaryTime, userID, orderID)
+	if result.Error != nil {
+		return errors.New("face some issue while updating delivary time")
+	}
+	if result.RowsAffected == 0 {
+		return resCustomError.ErrNoRowAffected
+	}
+	return nil
+}
+
 // ------------------------------------------Seller Control Orders------------------------------------\\
 
 func (d *orderRepository) GetSellerOrders(sellerID string, remainingQuery string) (*[]responsemodel.OrderDetails, error) {
@@ -144,7 +173,6 @@ func (d *orderRepository) UpdateDeliveryTime(sellerID string, orderID string) er
 		return resCustomError.ErrNoRowAffected
 	}
 	return nil
-
 }
 
 func (d *orderRepository) UpdateOrderDelivered(sellerID string, orderID string) (*responsemodel.OrderDetails, error) {
@@ -160,4 +188,16 @@ func (d *orderRepository) UpdateOrderDelivered(sellerID string, orderID string) 
 	return &deliveryDetails, nil
 }
 
-// func (d *orderRepository) Upda
+func (d *orderRepository) UpdateOrderCancel(orderID string, sellerID string) (*responsemodel.OrderDetails, error) {
+
+	var cancelOrder responsemodel.OrderDetails
+	query := "UPDATE orders SET order_status= 'cancel' WHERE id=? AND seller_id= ? AND order_status='processing' RETURNING*"
+	result := d.DB.Raw(query, orderID, sellerID).Scan(&cancelOrder)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while order is cancel")
+	}
+	if result.RowsAffected == 0 {
+		return nil, errors.New("product is alrady cancel, or seller have not this inventory")
+	}
+	return &cancelOrder, nil
+}

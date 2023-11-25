@@ -12,8 +12,11 @@ type IOrderRepository interface {
 	GetInventoryUnits(string) (*uint, error)
 	UpdateInventoryUnits(string, uint) error
 	GetOrderPrice(string) (uint, error)
+	UpdateUserOrderCancel(string, string) (*responsemodel.OrderDetails, error)
+	UpdateDeliveryTimeByUser(string, string) error
 
 	GetSellerOrders(string, string) (*[]responsemodel.OrderDetails, error)
 	UpdateOrderDelivered(string, string) (*responsemodel.OrderDetails, error)
 	UpdateDeliveryTime(string, string) error
+	UpdateOrderCancel(string, string) (*responsemodel.OrderDetails, error)
 }

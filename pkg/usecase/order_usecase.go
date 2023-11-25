@@ -87,6 +87,31 @@ func (r *orderUseCase) SingleOrder(orderID string, userID string) (*responsemode
 	return singleOrder, nil
 }
 
+func (r *orderUseCase) CancelUserOrder(orderID string, userID string) (*responsemodel.OrderDetails, error) {
+	orderDetails, err := r.repo.UpdateUserOrderCancel(orderID, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	// units, err := r.repo.GetInventoryUnits(orderDetails.InventoryID)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	err = r.repo.UpdateDeliveryTimeByUser(userID, orderID)
+	if err != nil {
+		return nil, err
+	}
+
+	// updateUnit := *units + orderDetails.Quantity
+
+	// err = r.repo.UpdateInventoryUnits(orderDetails.InventoryID, updateUnit)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	return orderDetails, nil
+}
+
 // ------------------------------------------Seller Control Orders------------------------------------\\
 
 func (r *orderUseCase) GetSellerOrders(sellerID string, remainingQuery string) (*[]responsemodel.OrderDetails, error) {
@@ -127,6 +152,32 @@ func (r *orderUseCase) ConfirmDeliverd(sellerID string, orderID string) (*respon
 	if err != nil {
 		return nil, err
 	}
+
+	return orderDetails, nil
+}
+
+func (r *orderUseCase) CancelOrder(orderID string, sellerID string) (*responsemodel.OrderDetails, error) {
+	orderDetails, err := r.repo.UpdateOrderCancel(orderID, sellerID)
+	if err != nil {
+		return nil, err
+	}
+
+	// units, err := r.repo.GetInventoryUnits(orderDetails.InventoryID)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	err = r.repo.UpdateDeliveryTime(sellerID, orderID)
+	if err != nil {
+		return nil, err
+	}
+
+	// updateUnit := *units + orderDetails.Quantity
+
+	// err = r.repo.UpdateInventoryUnits(orderDetails.InventoryID, updateUnit)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return orderDetails, nil
 }

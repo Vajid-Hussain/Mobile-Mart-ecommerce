@@ -165,3 +165,43 @@ func (u *OrderHandler) ConfirmDeliverd(c *gin.Context) {
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
+
+func (u *OrderHandler) CancelOrder(c *gin.Context) {
+
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+	orderID := c.Param("orderID")
+
+	orderDetais, err := u.useCase.CancelOrder(orderID, sellerID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", orderDetais, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *OrderHandler) CancelUserOrder(c *gin.Context) {
+
+	userID, exist := c.MustGet("UserID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+	orderID := c.Query("orderID")
+
+	orderDetais, err := u.useCase.CancelUserOrder(orderID, userID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", orderDetais, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
