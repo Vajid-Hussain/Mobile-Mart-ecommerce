@@ -21,8 +21,6 @@ func NewUserHandler(userUseCase interfaceUseCase.IuserUseCase) *UserHandler {
 	return &UserHandler{userUseCase: userUseCase}
 }
 
-//handlers
-
 // @Summary		User Signup
 // @Description	using this handler User can SIgnup
 // @Tags			User
@@ -94,6 +92,15 @@ func (u *UserHandler) VerifyOTP(c *gin.Context) {
 	}
 }
 
+// @Summary Send OTP
+// @Description Send OTP (One-Time Password) for verification.
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param otp body requestmodel.SendOtp true "OTP details for sending"
+// @Success 200 {object} response.Response "OTP sent successfully"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /sendotp [post]
 func (u *UserHandler) SendOtp(c *gin.Context) {
 
 	var sendOtp requestmodel.SendOtp
@@ -238,6 +245,18 @@ func (u *UserHandler) UnblockUser(c *gin.Context) {
 }
 
 // ------------------------------------------user Address------------------------------------\\
+
+// @Summary Add Address
+// @Description Add a new address.
+// @Tags User Addresses
+// @Accept json
+// @Produce json
+// @security	BearerTokenAuth
+// @security	Refreshtoken
+// @Param address body requestmodel.Address{} true "Address object to be added"
+// @Success 201 {object} response.Response{} "Successfully added the address"
+// @Failure 400 {object} response.Response{} "Bad request"
+// @Router /address [post]
 func (u *UserHandler) NewAddress(c *gin.Context) {
 
 	var Address requestmodel.Address
@@ -274,6 +293,18 @@ func (u *UserHandler) NewAddress(c *gin.Context) {
 	}
 }
 
+// @Summary Get Addresses
+// @Description Retrieve a list of addresses.
+// @Tags User Addresses
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Number of items per page" default(5)
+// @Success 200 {object} []requestmodel.Address "Successfully retrieved addresses"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /address [get]
 func (u *UserHandler) GetAddress(c *gin.Context) {
 
 	userID, exist := c.MustGet("UserID").(string)
@@ -296,6 +327,18 @@ func (u *UserHandler) GetAddress(c *gin.Context) {
 	}
 }
 
+// @Summary Update Address
+// @Description Update an existing address.
+// @Tags User Addresses
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param id path string true "Address ID in the URL path"
+// @Param address body requestmodel.EditAddress true "Updated address information"
+// @Success 200 {object} response.Response "Successfully updated the address"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /address/{id} [patch]
 func (u *UserHandler) EditAddress(c *gin.Context) {
 
 	var Address requestmodel.EditAddress
@@ -325,6 +368,17 @@ func (u *UserHandler) EditAddress(c *gin.Context) {
 	}
 }
 
+// @Summary Delete Address
+// @Description Delete an address by ID.
+// @Tags User Addresses
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param id query string true "Address ID in the query parameter"
+// @Success 200 {object} response.Response "Successfully deleted the address"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /address [delete]
 func (u *UserHandler) DeleteAddress(c *gin.Context) {
 
 	addressID := c.Query("id")
@@ -355,6 +409,16 @@ func (u *UserHandler) DeleteAddress(c *gin.Context) {
 
 // ------------------------------------------user Profile------------------------------------\\
 
+// @Summary Get User
+// @Description Retrieve the user's profile.
+// @Tags User Profile
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Success 200 {object} requestmodel.UserDetails{} "Successfully retrieved the user's profile"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /profile [get]
 func (u *UserHandler) GetProfile(c *gin.Context) {
 
 	userID, exist := c.MustGet("UserID").(string)
@@ -374,6 +438,17 @@ func (u *UserHandler) GetProfile(c *gin.Context) {
 	}
 }
 
+// @Summary Update User Profile
+// @Description Update the user's profile.
+// @Tags User
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param profile body requestmodel.UserEditProfile true "User profile details for updating"
+// @Success 200 {object} response.Response "Successfully updated the user's profile"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /profile [patch]
 func (u *UserHandler) EditProfile(c *gin.Context) {
 
 	var profile requestmodel.UserEditProfile
@@ -405,6 +480,15 @@ func (u *UserHandler) EditProfile(c *gin.Context) {
 
 // ------------------------------------------User Forgot Password------------------------------------\\
 
+// @Summary Forgot Password
+// @Description Initiate the process for resetting the password.
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param forgotPassword body requestmodel.ForgotPassword true "Details for initiating password reset"
+// @Success 200 {object} response.Response "Password reset initiated successfully"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /forgotpassword [post]
 func (u *UserHandler) ForgotPassword(c *gin.Context) {
 	var ForgotPassword requestmodel.ForgotPassword
 

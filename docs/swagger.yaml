@@ -1,7 +1,83 @@
 definitions:
+  requestmodel.Address:
+    properties:
+      addressID:
+        type: string
+      city:
+        type: string
+      firstName:
+        type: string
+      landmark:
+        type: string
+      lastName:
+        type: string
+      phoneNumber:
+        type: string
+      pincode:
+        minLength: 6
+        type: string
+      state:
+        type: string
+      street:
+        type: string
+      userid:
+        type: string
+    required:
+    - city
+    - firstName
+    - landmark
+    - phoneNumber
+    - state
+    - street
+    type: object
   requestmodel.AdminLoginData:
     properties:
       email:
+        type: string
+      password:
+        minLength: 4
+        type: string
+    type: object
+  requestmodel.EditAddress:
+    properties:
+      city:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: string
+      landmark:
+        type: string
+      lastName:
+        type: string
+      phoneNumber:
+        type: string
+      pincode:
+        minLength: 6
+        type: string
+      state:
+        type: string
+      street:
+        type: string
+      userid:
+        type: string
+    required:
+    - city
+    - firstName
+    - id
+    - landmark
+    - lastName
+    - phoneNumber
+    - pincode
+    - state
+    - street
+    - userid
+    type: object
+  requestmodel.ForgotPassword:
+    properties:
+      confirmpassword:
+        type: string
+      otp:
         type: string
       password:
         minLength: 4
@@ -31,7 +107,7 @@ definitions:
       gstno:
         type: string
       id:
-        type: string
+        type: integer
       name:
         type: string
       password:
@@ -40,6 +116,11 @@ definitions:
     required:
     - description
     - name
+    type: object
+  requestmodel.SendOtp:
+    properties:
+      phone:
+        type: string
     type: object
   requestmodel.UserDetails:
     properties:
@@ -56,6 +137,31 @@ definitions:
         type: string
       phone:
         type: string
+    required:
+    - name
+    type: object
+  requestmodel.UserEditProfile:
+    properties:
+      confirmpassword:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 4
+        type: string
+      phone:
+        type: string
+      userid:
+        type: string
+    required:
+    - confirmpassword
+    - email
+    - name
+    - password
+    - phone
+    - userid
     type: object
   requestmodel.UserLogin:
     properties:
@@ -102,6 +208,130 @@ info:
     itmes
   title: Go + Gin Mobile-Mart
 paths:
+  /address:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an address by ID.
+      parameters:
+      - description: Address ID in the query parameter
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted the address
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Delete Address
+      tags:
+      - User Addresses
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of addresses.
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 5
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved addresses
+          schema:
+            items:
+              $ref: '#/definitions/requestmodel.Address'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Get Addresses
+      tags:
+      - User Addresses
+    post:
+      consumes:
+      - application/json
+      description: Add a new address.
+      parameters:
+      - description: Address object to be added
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.Address'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully added the address
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Add Address
+      tags:
+      - User Addresses
+  /address/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing address.
+      parameters:
+      - description: Address ID in the URL path
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated address information
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.EditAddress'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the address
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Update Address
+      tags:
+      - User Addresses
   /admin/brand:
     get:
       consumes:
@@ -629,6 +859,82 @@ paths:
       summary: Unblock User
       tags:
       - Admins
+  /forgotpassword:
+    post:
+      consumes:
+      - application/json
+      description: Initiate the process for resetting the password.
+      parameters:
+      - description: Details for initiating password reset
+        in: body
+        name: forgotPassword
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.ForgotPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password reset initiated successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Forgot Password
+      tags:
+      - User
+  /profile:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the user's profile.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the user's profile
+          schema:
+            $ref: '#/definitions/requestmodel.UserDetails'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Get User Profile
+      tags:
+      - User Profile
+    patch:
+      consumes:
+      - application/json
+      description: Update the user's profile.
+      parameters:
+      - description: User profile details for updating
+        in: body
+        name: profile
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.UserEditProfile'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the user's profile
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Update User Profile
+      tags:
+      - User
   /seller/login:
     post:
       consumes:
@@ -681,6 +987,32 @@ paths:
       summary: Seller Signup
       tags:
       - Seller
+  /sendotp:
+    post:
+      consumes:
+      - application/json
+      description: Send OTP (One-Time Password) for verification.
+      parameters:
+      - description: OTP details for sending
+        in: body
+        name: otp
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.SendOtp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP sent successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Send OTP
+      tags:
+      - User
   /user/login/:
     post:
       consumes:

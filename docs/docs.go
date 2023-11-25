@@ -17,6 +17,207 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/address": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve a list of addresses.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Addresses"
+                ],
+                "summary": "Get Addresses",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 5,
+                        "description": "Number of items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved addresses",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/requestmodel.Address"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Add a new address.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Addresses"
+                ],
+                "summary": "Add Address",
+                "parameters": [
+                    {
+                        "description": "Address object to be added",
+                        "name": "address",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.Address"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully added the address",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Delete an address by ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Addresses"
+                ],
+                "summary": "Delete Address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address ID in the query parameter",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted the address",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/address/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Update an existing address.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Addresses"
+                ],
+                "summary": "Update Address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address ID in the URL path",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated address information",
+                        "name": "address",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.EditAddress"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated the address",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/brand": {
             "get": {
                 "security": [
@@ -846,6 +1047,129 @@ const docTemplate = `{
                 }
             }
         },
+        "/forgotpassword": {
+            "post": {
+                "description": "Initiate the process for resetting the password.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Forgot Password",
+                "parameters": [
+                    {
+                        "description": "Details for initiating password reset",
+                        "name": "forgotPassword",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.ForgotPassword"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password reset initiated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve the user's profile.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Profile"
+                ],
+                "summary": "Get User Profile",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the user's profile",
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.UserDetails"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Update the user's profile.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update User Profile",
+                "parameters": [
+                    {
+                        "description": "User profile details for updating",
+                        "name": "profile",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.UserEditProfile"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated the user's profile",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/seller/login": {
             "post": {
                 "description": "using this handler Seller can Login",
@@ -919,6 +1243,46 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/sendotp": {
+            "post": {
+                "description": "Send OTP (One-Time Password) for verification.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Send OTP",
+                "parameters": [
+                    {
+                        "description": "OTP details for sending",
+                        "name": "otp",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.SendOtp"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OTP sent successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -1048,10 +1412,117 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "requestmodel.Address": {
+            "type": "object",
+            "required": [
+                "city",
+                "firstName",
+                "landmark",
+                "phoneNumber",
+                "state",
+                "street"
+            ],
+            "properties": {
+                "addressID": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "landmark": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "phoneNumber": {
+                    "type": "string"
+                },
+                "pincode": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "state": {
+                    "type": "string"
+                },
+                "street": {
+                    "type": "string"
+                },
+                "userid": {
+                    "type": "string"
+                }
+            }
+        },
         "requestmodel.AdminLoginData": {
             "type": "object",
             "properties": {
                 "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 4
+                }
+            }
+        },
+        "requestmodel.EditAddress": {
+            "type": "object",
+            "required": [
+                "city",
+                "firstName",
+                "id",
+                "landmark",
+                "lastName",
+                "phoneNumber",
+                "pincode",
+                "state",
+                "street",
+                "userid"
+            ],
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "landmark": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "phoneNumber": {
+                    "type": "string"
+                },
+                "pincode": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "state": {
+                    "type": "string"
+                },
+                "street": {
+                    "type": "string"
+                },
+                "userid": {
+                    "type": "string"
+                }
+            }
+        },
+        "requestmodel.ForgotPassword": {
+            "type": "object",
+            "properties": {
+                "confirmpassword": {
+                    "type": "string"
+                },
+                "otp": {
                     "type": "string"
                 },
                 "password": {
@@ -1100,7 +1571,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -1111,8 +1582,19 @@ const docTemplate = `{
                 }
             }
         },
+        "requestmodel.SendOtp": {
+            "type": "object",
+            "properties": {
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
         "requestmodel.UserDetails": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "confirmpassword": {
                     "type": "string"
@@ -1131,6 +1613,38 @@ const docTemplate = `{
                     "minLength": 4
                 },
                 "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "requestmodel.UserEditProfile": {
+            "type": "object",
+            "required": [
+                "confirmpassword",
+                "email",
+                "name",
+                "password",
+                "phone",
+                "userid"
+            ],
+            "properties": {
+                "confirmpassword": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 4
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "userid": {
                     "type": "string"
                 }
             }

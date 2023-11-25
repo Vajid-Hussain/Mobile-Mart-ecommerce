@@ -20,5 +20,5 @@ buildrun:
 swaggo:
 	swag init -g ./cmd/api/main.go
 
-swagformat:
+swaggoformat:
 	swag fmt
