@@ -183,9 +183,22 @@ func (d *orderRepository) UpdateOrderDelivered(sellerID string, orderID string) 
 		return nil, errors.New("face some issue while order is delevered")
 	}
 	if result.RowsAffected == 0 {
-		return nil, errors.New("product is alrady deliverd")
+		return nil, resCustomError.ErrProductOrderCompleted
 	}
 	return &deliveryDetails, nil
+}
+
+func (d *orderRepository) UpdateOrderPaymetSuccess(sellerID string, orderID string) error {
+
+	query := "UPDATE orders SET payment_status='success' WHERE seller_id= ? AND id= ? AND order_status='delivered'"
+	result := d.DB.Raw(query, sellerID, orderID)
+	if result.Error != nil {
+		return errors.New("face some issue while update payment status success")
+	}
+	if result.RowsAffected == 0 {
+		return resCustomError.ErrProductOrderCompleted
+	}
+	return nil
 }
 
 func (d *orderRepository) UpdateOrderCancel(orderID string, sellerID string) (*responsemodel.OrderDetails, error) {
@@ -197,7 +210,22 @@ func (d *orderRepository) UpdateOrderCancel(orderID string, sellerID string) (*r
 		return nil, errors.New("face some issue while order is cancel")
 	}
 	if result.RowsAffected == 0 {
-		return nil, errors.New("product is alrady cancel, or seller have not this inventory")
+		return nil, resCustomError.ErrProductOrderCompleted
 	}
 	return &cancelOrder, nil
+}
+
+// ------------------------------------------Sales Report------------------------------------\\
+
+func (d *orderRepository) GetSalesReportByYear(sellerID string, balanceQuery string) (*responsemodel.SalesReport, error) {
+	var report responsemodel.SalesReport
+	query := "SELECT COUNT(*) AS Orders, SUM(quantity) AS Quantity, SUM(price) AS Price FROM orders WHERE seller_id= ? AND order_status='delivered' AND" + balanceQuery
+	result := d.DB.Raw(query, sellerID).Scan(&report)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while get report by year")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &report, nil
 }

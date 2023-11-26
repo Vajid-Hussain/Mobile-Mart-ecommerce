@@ -93,22 +93,22 @@ func (r *orderUseCase) CancelUserOrder(orderID string, userID string) (*response
 		return nil, err
 	}
 
-	// units, err := r.repo.GetInventoryUnits(orderDetails.InventoryID)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	units, err := r.repo.GetInventoryUnits(orderDetails.InventoryID)
+	if err != nil {
+		return nil, err
+	}
 
 	err = r.repo.UpdateDeliveryTimeByUser(userID, orderID)
 	if err != nil {
 		return nil, err
 	}
 
-	// updateUnit := *units + orderDetails.Quantity
+	updateUnit := *units + orderDetails.Quantity
 
-	// err = r.repo.UpdateInventoryUnits(orderDetails.InventoryID, updateUnit)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	err = r.repo.UpdateInventoryUnits(orderDetails.InventoryID, updateUnit)
+	if err != nil {
+		return nil, err
+	}
 	return orderDetails, nil
 }
 
@@ -162,22 +162,33 @@ func (r *orderUseCase) CancelOrder(orderID string, sellerID string) (*responsemo
 		return nil, err
 	}
 
-	// units, err := r.repo.GetInventoryUnits(orderDetails.InventoryID)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	units, err := r.repo.GetInventoryUnits(orderDetails.InventoryID)
+	if err != nil {
+		return nil, err
+	}
 
 	err = r.repo.UpdateDeliveryTime(sellerID, orderID)
 	if err != nil {
 		return nil, err
 	}
 
-	// updateUnit := *units + orderDetails.Quantity
+	updateUnit := *units + orderDetails.Quantity
 
-	// err = r.repo.UpdateInventoryUnits(orderDetails.InventoryID, updateUnit)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	err = r.repo.UpdateInventoryUnits(orderDetails.InventoryID, updateUnit)
+	if err != nil {
+		return nil, err
+	}
 
 	return orderDetails, nil
+}
+
+// ------------------------------------------Sales Report------------------------------------\\
+
+func (r *orderUseCase) GetSalesReportByYear(sellerID string, year string) (*responsemodel.SalesReport, error) {
+	fmt.Println("*", sellerID)
+	report, err := r.repo.GetSalesReportByYear(sellerID, year)
+	if err != nil {
+		return nil, err
+	}
+	return report, nil
 }

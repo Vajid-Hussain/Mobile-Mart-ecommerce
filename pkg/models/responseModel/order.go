@@ -51,3 +51,9 @@ type OrderSuccess struct {
 	TotalWorth uint   `json:"payable_amount"`
 	Orders     []OrderDetails
 }
+
+type SalesReport struct {
+	Orders   uint `json:"total -orders"`
+	Quantity uint `json:"total-unit"`
+	Price    uint `json:"total-price"`
+}

@@ -35,5 +35,13 @@ func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, invento
 			ordermanagenent.PATCH("/", order.ConfirmDeliverd)
 			ordermanagenent.PATCH("/:orderID/cancel", order.CancelOrder)
 		}
+
+		salesreportmanagement := engin.Group("/report")
+		{
+			salesreportmanagement.GET("", order.SalesReportByYear)
+			salesreportmanagement.GET("/month", order.SalesReportByMonth)
+			salesreportmanagement.GET("/week", order.SalesReportByWeek)
+			salesreportmanagement.GET("/day", order.SalesReportByDay)
+		}
 	}
 }

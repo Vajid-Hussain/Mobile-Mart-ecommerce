@@ -300,3 +300,92 @@ func (u *OrderHandler) CancelOrder(c *gin.Context) {
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
+
+// ------------------------------------------Sales Report------------------------------------\\
+
+func (u *OrderHandler) SalesReportByYear(c *gin.Context) {
+
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+	year := c.Query("year")
+	partialQuery := " EXTRACT(YEAR FROM order_date)=" + year
+
+	report, err := u.useCase.GetSalesReportByYear(sellerID, partialQuery)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", report, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *OrderHandler) SalesReportByMonth(c *gin.Context) {
+
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+	year := c.Query("year")
+	month := c.Query("month")
+	partialQuery := " EXTRACT(YEAR FROM order_date)=" + year + " AND EXTRACT(Month FROM order_date)=" + month
+
+	report, err := u.useCase.GetSalesReportByYear(sellerID, partialQuery)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", report, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *OrderHandler) SalesReportByWeek(c *gin.Context) {
+
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+	year := c.Query("year")
+	week := c.Query("week")
+	partialQuery := " EXTRACT(YEAR FROM order_date)=" + year + " AND EXTRACT(Week FROM order_date)=" + week
+
+	report, err := u.useCase.GetSalesReportByYear(sellerID, partialQuery)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", report, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *OrderHandler) SalesReportByDay(c *gin.Context) {
+
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+	year := c.Query("year")
+	day := c.Query("day")
+	partialQuery := " EXTRACT(YEAR FROM order_date)=" + year + " AND EXTRACT(Day FROM order_date)=" + day
+
+	report, err := u.useCase.GetSalesReportByYear(sellerID, partialQuery)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", report, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}

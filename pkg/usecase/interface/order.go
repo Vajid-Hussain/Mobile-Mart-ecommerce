@@ -14,4 +14,6 @@ type IOrderUseCase interface {
 	GetSellerOrders(string, string) (*[]responsemodel.OrderDetails, error)
 	ConfirmDeliverd(string, string) (*responsemodel.OrderDetails, error)
 	CancelOrder(string, string) (*responsemodel.OrderDetails, error)
+
+	GetSalesReportByYear(string, string) (*responsemodel.SalesReport, error)
 }
