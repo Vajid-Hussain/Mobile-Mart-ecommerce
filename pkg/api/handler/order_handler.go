@@ -259,7 +259,6 @@ func (u *OrderHandler) ConfirmDeliverd(c *gin.Context) {
 	}
 
 	orderID := c.Query("orderID")
-
 	orderDetais, err := u.useCase.ConfirmDeliverd(sellerID, orderID)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
@@ -377,8 +376,9 @@ func (u *OrderHandler) SalesReportByDay(c *gin.Context) {
 		return
 	}
 	year := c.Query("year")
+	month := c.Query("month")
 	day := c.Query("day")
-	partialQuery := " EXTRACT(YEAR FROM order_date)=" + year + " AND EXTRACT(Day FROM order_date)=" + day
+	partialQuery := " EXTRACT(YEAR FROM order_date)=" + year + " AND EXTRACT(Month FROM order_date)=" + month + " AND EXTRACT(Day FROM order_date)=" + day
 
 	report, err := u.useCase.GetSalesReportByYear(sellerID, partialQuery)
 	if err != nil {

@@ -103,9 +103,9 @@ func (r *orderUseCase) CancelUserOrder(orderID string, userID string) (*response
 		return nil, err
 	}
 
-	updateUnit := *units + orderDetails.Quantity
+	updatedUnit := *units + orderDetails.Quantity
 
-	err = r.repo.UpdateInventoryUnits(orderDetails.InventoryID, updateUnit)
+	err = r.repo.UpdateInventoryUnits(orderDetails.InventoryID, updatedUnit)
 	if err != nil {
 		return nil, err
 	}
@@ -132,6 +132,11 @@ func (r *orderUseCase) ConfirmDeliverd(sellerID string, orderID string) (*respon
 	orderDetails, err := r.repo.UpdateOrderDelivered(sellerID, orderID)
 	if err != nil {
 		fmt.Println("order", orderDetails)
+		return nil, err
+	}
+
+	err = r.repo.UpdateOrderPaymetSuccess(sellerID, orderID)
+	if err != nil {
 		return nil, err
 	}
 
@@ -172,9 +177,9 @@ func (r *orderUseCase) CancelOrder(orderID string, sellerID string) (*responsemo
 		return nil, err
 	}
 
-	updateUnit := *units + orderDetails.Quantity
+	updatedUnit := *units + orderDetails.Quantity
 
-	err = r.repo.UpdateInventoryUnits(orderDetails.InventoryID, updateUnit)
+	err = r.repo.UpdateInventoryUnits(orderDetails.InventoryID, updatedUnit)
 	if err != nil {
 		return nil, err
 	}
@@ -182,7 +187,7 @@ func (r *orderUseCase) CancelOrder(orderID string, sellerID string) (*responsemo
 	return orderDetails, nil
 }
 
-// ------------------------------------------Sales Report------------------------------------\\
+// ------------------------------------------Seller Sales Report------------------------------------\\
 
 func (r *orderUseCase) GetSalesReportByYear(sellerID string, year string) (*responsemodel.SalesReport, error) {
 	fmt.Println("*", sellerID)

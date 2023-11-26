@@ -124,7 +124,7 @@ func (d *orderRepository) UpdateUserOrderCancel(orderID string, userID string) (
 		return nil, errors.New("face some issue while order is cancel")
 	}
 	if result.RowsAffected == 0 {
-		return nil, errors.New("product is alrady cancel, or user have not this order")
+		return nil, resCustomError.ErrProductOrderCompleted
 	}
 	return &cancelOrder, nil
 }
@@ -191,7 +191,7 @@ func (d *orderRepository) UpdateOrderDelivered(sellerID string, orderID string) 
 func (d *orderRepository) UpdateOrderPaymetSuccess(sellerID string, orderID string) error {
 
 	query := "UPDATE orders SET payment_status='success' WHERE seller_id= ? AND id= ? AND order_status='delivered'"
-	result := d.DB.Raw(query, sellerID, orderID)
+	result := d.DB.Exec(query, sellerID, orderID)
 	if result.Error != nil {
 		return errors.New("face some issue while update payment status success")
 	}

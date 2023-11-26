@@ -19,6 +19,7 @@ type IOrderRepository interface {
 	UpdateOrderDelivered(string, string) (*responsemodel.OrderDetails, error)
 	UpdateDeliveryTime(string, string) error
 	UpdateOrderCancel(string, string) (*responsemodel.OrderDetails, error)
+	UpdateOrderPaymetSuccess(string, string) error
 
 	GetSalesReportByYear(string, string) (*responsemodel.SalesReport, error)
 }

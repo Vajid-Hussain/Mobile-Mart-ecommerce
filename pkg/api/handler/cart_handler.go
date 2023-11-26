@@ -112,7 +112,7 @@ func (u *CartHandler) DeleteInventoryFromCart(c *gin.Context) {
 // @Router /cart/increment [patch]
 func (u *CartHandler) IncrementQuantityCart(c *gin.Context) {
 
-	inventoryID := c.Query("inventoryid")
+	inventoryID := c.Query("productID")
 	id := strings.TrimSpace(inventoryID)
 
 	if len(id) == 0 {
