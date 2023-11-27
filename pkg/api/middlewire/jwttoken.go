@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
-	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/response"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 	"github.com/gin-gonic/gin"
@@ -23,19 +22,29 @@ func NewJwtTokenMiddleWire(jwtUseCase interfaceUseCase.IJwtTokenUseCase, keys co
 
 func SellerAuthorization(c *gin.Context) {
 
-	defer func() (string, error, error) {
-		if r := recover(); r != nil {
-			finalReslt := response.Responses(http.StatusUnauthorized, "", "", "token fully tamperd , can't decople id from token,for further process login")
-			c.JSON(http.StatusUnauthorized, finalReslt)
-			c.Abort()
-		}
-		return "", nil, nil
-	}()
+	// defer func() (string, error, error) {
+	// 	if r := recover(); r != nil {
+	// 		finalReslt := response.Responses(http.StatusUnauthorized, "", "", "token fully tamperd , can't decople id from token,for further process login")
+	// 		c.JSON(http.StatusUnauthorized, finalReslt)
+	// 		c.Abort()
+	// 	}
+	// 	return "", nil, nil
+	// }()
 
 	accessToken := c.Request.Header.Get("authorization")
 	refreshToken := c.Request.Header.Get("refreshtoken")
+	if accessToken == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"err": "there is no access token"})
+		c.Abort()
+		return
+	}
 
 	id, err := service.VerifyAcessToken(accessToken, token.securityKeys.SellerSecurityKey)
+	if id == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"err": "access token completly tamberd, can't fetch id from token"})
+		c.Abort()
+		return
+	}
 	if err != nil {
 		err := service.VerifyRefreshToken(refreshToken, token.securityKeys.SellerSecurityKey)
 		if err != nil {

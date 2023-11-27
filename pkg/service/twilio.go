@@ -45,7 +45,6 @@ func VerifyOtp(phone string, otp string) error {
 	params.SetTo("+91" + phone)
 	params.SetCode(otp)
 	res, err := tw.VerifyV2.CreateVerificationCheck(twilioOTP.requirements.ServiceSid, params)
-	fmt.Println("res.status on otp verification", *res.Status)
 	if err != nil {
 		return errors.New("eroor")
 	}

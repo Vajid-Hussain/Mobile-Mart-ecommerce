@@ -1306,6 +1306,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/login/": {
+            "post": {
+                "description": "using this handler User can Login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "User Login",
+                "parameters": [
+                    {
+                        "description": "User Login details",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.UserLogin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/order": {
             "get": {
                 "security": [
@@ -2257,47 +2297,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/login/": {
-            "post": {
-                "description": "using this handler User can Login",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "User Login",
-                "parameters": [
-                    {
-                        "description": "User Login details",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requestmodel.UserLogin"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/user/signup/": {
+        "/signup/": {
             "post": {
                 "description": "using this handler User can SIgnup",
                 "consumes": [
@@ -2337,7 +2337,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/verifyOTP/": {
+        "/verifyOTP/": {
             "post": {
                 "description": "using this handler User can send otp",
                 "consumes": [

@@ -61,13 +61,11 @@ func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) (responsemo
 func (u *userUseCase) VerifyOtp(otpConstrain requestmodel.OtpVerification, token string) (responsemodel.OtpValidation, error) {
 
 	var otpResponse responsemodel.OtpValidation
-
 	phone, err := service.FetchPhoneFromToken(token, u.token.TemperveryKey)
 	if err != nil {
 		otpResponse.Token = "invalid token"
-		return otpResponse, errors.New("error ar token extraction , cause by invalid token")
+		return otpResponse, errors.New("error at token extraction, cause by invalid token")
 	}
-
 	service.TwilioSetup()
 
 	if err := service.VerifyOtp(phone, otpConstrain.Otp); err != nil {
@@ -111,7 +109,7 @@ func (r *userUseCase) SendOtp(phone *requestmodel.SendOtp) (*string, error) {
 	if err != nil {
 		return nil, err
 	}
-	tempToken, err := service.TemperveryTokenForOtpVerification(r.token.UserSecurityKey, phone.Phone)
+	tempToken, err := service.TemperveryTokenForOtpVerification(r.token.TemperveryKey, phone.Phone)
 	if err != nil {
 		return nil, err
 	}

@@ -30,7 +30,7 @@ func main() {
 	docs.SwaggerInfo.Title = "Mobile_mart"
 	// docs.SwaggerInfo.Description = "This is a sample server Petstore server."
 	// docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = "localhost:7000/"
+	docs.SwaggerInfo.Host = "mobilemart.pranavs.tech/"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	server, err := di.InitializeAPI(*config)

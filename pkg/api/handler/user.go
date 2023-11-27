@@ -29,7 +29,7 @@ func NewUserHandler(userUseCase interfaceUseCase.IuserUseCase) *UserHandler {
 // @Param			user	body		requestmodel.UserDetails{}	true	"User Signup details"
 // @Success		200		{object}	responsemodel.SignupData{}
 // @Failure		400		{object}	response.Response{}
-// @Router			/user/signup/ [post]
+// @Router			/signup/ [post]
 func (u *UserHandler) UserSignup(c *gin.Context) {
 
 	var userSignupData requestmodel.UserDetails
@@ -64,7 +64,7 @@ func (u *UserHandler) UserSignup(c *gin.Context) {
 // @Param			user	body		requestmodel.OtpVerification{}	true	"User otp details"
 // @Success		200		{object}	response.Response{}
 // @Failure		400		{object}	response.Response{}
-// @Router			/user/verifyOTP/ [post]
+// @Router			/verifyOTP/ [post]
 func (u *UserHandler) VerifyOTP(c *gin.Context) {
 
 	var otpData requestmodel.OtpVerification
@@ -136,7 +136,7 @@ func (u *UserHandler) SendOtp(c *gin.Context) {
 // @Param			user	body		requestmodel.UserLogin{}	true	"User Login details"
 // @Success		200		{object}	response.Response{}
 // @Failure		400		{object}	response.Response{}
-// @Router			/user/login/ [post]
+// @Router			/login/ [post]
 func (u *UserHandler) UserLogin(c *gin.Context) {
 	var loginCredential requestmodel.UserLogin
 	if err := c.BindJSON(&loginCredential); err != nil {

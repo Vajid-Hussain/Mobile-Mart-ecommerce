@@ -1128,6 +1128,32 @@ paths:
       summary: Forgot Password
       tags:
       - User
+  /login/:
+    post:
+      consumes:
+      - application/json
+      description: using this handler User can Login
+      parameters:
+      - description: User Login details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User Login
+      tags:
+      - User
   /order:
     get:
       consumes:
@@ -1711,33 +1737,7 @@ paths:
       summary: Send OTP
       tags:
       - User
-  /user/login/:
-    post:
-      consumes:
-      - application/json
-      description: using this handler User can Login
-      parameters:
-      - description: User Login details
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/requestmodel.UserLogin'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: User Login
-      tags:
-      - User
-  /user/signup/:
+  /signup/:
     post:
       consumes:
       - application/json
@@ -1763,7 +1763,7 @@ paths:
       summary: User Signup
       tags:
       - User
-  /user/verifyOTP/:
+  /verifyOTP/:
     post:
       consumes:
       - application/json
