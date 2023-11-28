@@ -314,10 +314,41 @@ definitions:
 info:
   contact:
     name: API Support
-  description: TechDeck is an E-commerce platform to purchase and sell Electronic
-    itmes
+  description: "Mobile Mart - Your Ultimate Mobile Phone Shopping API \U0001F4F1\U0001F6D2"
   title: Go + Gin Mobile-Mart
 paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of products.
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 5
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved products
+          schema:
+            items:
+              $ref: '#/definitions/response.Response'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get Seller Products
+      tags:
+      - HomePage
   /address:
     delete:
       consumes:
@@ -1685,6 +1716,139 @@ paths:
       summary: Update Seller Profile
       tags:
       - Seller Profile
+  /seller/report:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the seller sales report for the specified year.
+      parameters:
+      - description: Year for which the report is requested
+        in: query
+        name: year
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Seller sales report retrieved successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid year.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Get Seller Sales Report
+      tags:
+      - Seller Sales Report
+  /seller/report/day:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the seller sales report for the specified year, month,
+        and day.
+      parameters:
+      - description: Year for which the report is requested
+        in: query
+        name: year
+        required: true
+        type: integer
+      - description: Month for which the report is requested (1-12)
+        in: query
+        name: month
+        required: true
+        type: integer
+      - description: Day for which the report is requested (1-31)
+        in: query
+        name: day
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Seller sales report retrieved successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid year, month, and day.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Get Seller Sales Report for a Specific Day
+      tags:
+      - Seller Sales Report
+  /seller/report/month:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the seller sales report for the specified year and month.
+      parameters:
+      - description: Year for which the report is requested
+        in: query
+        name: year
+        required: true
+        type: integer
+      - description: Month for which the report is requested (1-12)
+        in: query
+        name: month
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Seller sales report retrieved successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid year and month.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Get Seller Sales Report for a Specific Month
+      tags:
+      - Seller Sales Report
+  /seller/report/week:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the seller sales report for the specified year and week.
+      parameters:
+      - description: Year for which the report is requested
+        in: query
+        name: year
+        required: true
+        type: integer
+      - description: Week for which the report is requested
+        in: query
+        name: week
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Seller sales report retrieved successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid year and week.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Get Seller Sales Report for a Specific Week
+      tags:
+      - Seller Sales Report
   /seller/signup:
     post:
       consumes:

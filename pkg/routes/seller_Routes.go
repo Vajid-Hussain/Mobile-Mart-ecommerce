@@ -13,6 +13,7 @@ func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, invento
 
 	engin.Use(middlewire.SellerAuthorization)
 	{
+		engin.GET("/", seller.SellerDashbord)
 		engin.GET("/profile", seller.GetSellerProfile)
 		engin.PATCH("/profile", seller.EditSellerProfile)
 
@@ -42,6 +43,7 @@ func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, invento
 			salesreportmanagement.GET("/month", order.SalesReportByMonth)
 			salesreportmanagement.GET("/week", order.SalesReportByWeek)
 			salesreportmanagement.GET("/day", order.SalesReportByDay)
+			salesreportmanagement.GET("/days", order.SalesReportCustomDays)
 		}
 	}
 }

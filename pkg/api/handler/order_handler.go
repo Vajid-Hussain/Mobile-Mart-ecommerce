@@ -302,6 +302,17 @@ func (u *OrderHandler) CancelOrder(c *gin.Context) {
 
 // ------------------------------------------Sales Report------------------------------------\\
 
+// @Summary Get Seller Sales Report
+// @Description Retrieve the seller sales report for the specified year.
+// @Tags Seller Sales Report
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param year query int true "Year for which the report is requested"
+// @Success 200 {object} response.Response "Seller sales report retrieved successfully"
+// @Failure 400 {object} response.Response "Bad request. Please provide a valid year."
+// @Router /seller/report [get]
 func (u *OrderHandler) SalesReportByYear(c *gin.Context) {
 
 	sellerID, exist := c.MustGet("SellerID").(string)
@@ -311,9 +322,9 @@ func (u *OrderHandler) SalesReportByYear(c *gin.Context) {
 		return
 	}
 	year := c.Query("year")
-	partialQuery := " EXTRACT(YEAR FROM order_date)=" + year
+	remainingQuery := " EXTRACT(YEAR FROM order_date)=" + year
 
-	report, err := u.useCase.GetSalesReportByYear(sellerID, partialQuery)
+	report, err := u.useCase.GetSalesReportByYear(sellerID, remainingQuery)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
@@ -323,6 +334,18 @@ func (u *OrderHandler) SalesReportByYear(c *gin.Context) {
 	}
 }
 
+// @Summary Get Seller Sales Report for a Specific Month
+// @Description Retrieve the seller sales report for the specified year and month.
+// @Tags Seller Sales Report
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param year query int true "Year for which the report is requested"
+// @Param month query int true "Month for which the report is requested (1-12)"
+// @Success 200 {object} response.Response "Seller sales report retrieved successfully"
+// @Failure 400 {object} response.Response "Bad request. Please provide a valid year and month."
+// @Router /seller/report/month [get]
 func (u *OrderHandler) SalesReportByMonth(c *gin.Context) {
 
 	sellerID, exist := c.MustGet("SellerID").(string)
@@ -333,9 +356,9 @@ func (u *OrderHandler) SalesReportByMonth(c *gin.Context) {
 	}
 	year := c.Query("year")
 	month := c.Query("month")
-	partialQuery := " EXTRACT(YEAR FROM order_date)=" + year + " AND EXTRACT(Month FROM order_date)=" + month
+	remainingQuery := " EXTRACT(YEAR FROM order_date)=" + year + " AND EXTRACT(Month FROM order_date)=" + month
 
-	report, err := u.useCase.GetSalesReportByYear(sellerID, partialQuery)
+	report, err := u.useCase.GetSalesReportByYear(sellerID, remainingQuery)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
@@ -345,6 +368,18 @@ func (u *OrderHandler) SalesReportByMonth(c *gin.Context) {
 	}
 }
 
+// @Summary Get Seller Sales Report for a Specific Week
+// @Description Retrieve the seller sales report for the specified year and week.
+// @Tags Seller Sales Report
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param year query int true "Year for which the report is requested"
+// @Param week query int true "Week for which the report is requested"
+// @Success 200 {object} response.Response "Seller sales report retrieved successfully"
+// @Failure 400 {object} response.Response "Bad request. Please provide a valid year and week."
+// @Router /seller/report/week [get]
 func (u *OrderHandler) SalesReportByWeek(c *gin.Context) {
 
 	sellerID, exist := c.MustGet("SellerID").(string)
@@ -355,9 +390,9 @@ func (u *OrderHandler) SalesReportByWeek(c *gin.Context) {
 	}
 	year := c.Query("year")
 	week := c.Query("week")
-	partialQuery := " EXTRACT(YEAR FROM order_date)=" + year + " AND EXTRACT(Week FROM order_date)=" + week
+	remainingQuery := " EXTRACT(YEAR FROM order_date)=" + year + " AND EXTRACT(Week FROM order_date)=" + week
 
-	report, err := u.useCase.GetSalesReportByYear(sellerID, partialQuery)
+	report, err := u.useCase.GetSalesReportByYear(sellerID, remainingQuery)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
@@ -367,6 +402,19 @@ func (u *OrderHandler) SalesReportByWeek(c *gin.Context) {
 	}
 }
 
+// @Summary Get Seller Sales Report for a Specific Day
+// @Description Retrieve the seller sales report for the specified year, month, and day.
+// @Tags Seller Sales Report
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param year query int true "Year for which the report is requested"
+// @Param month query int true "Month for which the report is requested (1-12)"
+// @Param day query int true "Day for which the report is requested (1-31)"
+// @Success 200 {object} response.Response "Seller sales report retrieved successfully"
+// @Failure 400 {object} response.Response "Bad request. Please provide a valid year, month, and day."
+// @Router /seller/report/day [get]
 func (u *OrderHandler) SalesReportByDay(c *gin.Context) {
 
 	sellerID, exist := c.MustGet("SellerID").(string)
@@ -378,9 +426,28 @@ func (u *OrderHandler) SalesReportByDay(c *gin.Context) {
 	year := c.Query("year")
 	month := c.Query("month")
 	day := c.Query("day")
-	partialQuery := " EXTRACT(YEAR FROM order_date)=" + year + " AND EXTRACT(Month FROM order_date)=" + month + " AND EXTRACT(Day FROM order_date)=" + day
+	remainingQuery := " EXTRACT(YEAR FROM order_date)=" + year + " AND EXTRACT(Month FROM order_date)=" + month + " AND EXTRACT(Day FROM order_date)=" + day
 
-	report, err := u.useCase.GetSalesReportByYear(sellerID, partialQuery)
+	report, err := u.useCase.GetSalesReportByYear(sellerID, remainingQuery)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", report, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *OrderHandler) SalesReportCustomDays(c *gin.Context) {
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+	day := c.Query("days")
+
+	report, err := u.useCase.GetSalesReportByDays(sellerID, day)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)

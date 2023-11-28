@@ -16,4 +16,6 @@ type ISellerUseCase interface {
 
 	GetSellerProfile(string) (*responsemodel.SellerProfile, error)
 	UpdateSellerProfile(*requestmodel.SellerEditProfile) (*responsemodel.SellerProfile, error)
+
+	GetSellerDashbord(string) (*responsemodel.DashBord, error)
 }

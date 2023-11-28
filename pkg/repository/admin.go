@@ -25,3 +25,17 @@ func (d *adminRepository) GetPassword(email string) (string, error) {
 	}
 	return hashedPassword, nil
 }
+
+// func (d *adminRepository) GetSellerDetailsForDashBord(criteria string) (uint, error) {
+// 	var data uint
+
+// 	query := "SELECT COUNT(*) FROM sellers WHERE status= "+ criteria
+// 	d.DB.Raw(query).Scan(&data)
+
+// 	if result.Error != nil {
+// 		return nil, errors.New("face some issue while get report by days")
+// 	}
+// 	if result.RowsAffected == 0 {
+// 		return nil, resCustomError.ErrNoRowAffected
+// 	}
+// }

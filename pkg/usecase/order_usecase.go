@@ -190,8 +190,15 @@ func (r *orderUseCase) CancelOrder(orderID string, sellerID string) (*responsemo
 // ------------------------------------------Seller Sales Report------------------------------------\\
 
 func (r *orderUseCase) GetSalesReportByYear(sellerID string, year string) (*responsemodel.SalesReport, error) {
-	fmt.Println("*", sellerID)
 	report, err := r.repo.GetSalesReportByYear(sellerID, year)
+	if err != nil {
+		return nil, err
+	}
+	return report, nil
+}
+
+func (r *orderUseCase) GetSalesReportByDays(sellerID string, days string) (*responsemodel.SalesReport, error) {
+	report, err := r.repo.GetSalesReportByDays(sellerID, days)
 	if err != nil {
 		return nil, err
 	}

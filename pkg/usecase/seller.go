@@ -214,3 +214,44 @@ func (r *sellerUseCase) UpdateSellerProfile(editedProfile *requestmodel.SellerEd
 	}
 	return sellerEdittedProfile, nil
 }
+
+func (r *sellerUseCase) GetSellerDashbord(sellerID string) (*responsemodel.DashBord, error) {
+	var dashBord responsemodel.DashBord
+	var err error
+
+	dashBord.DeliveredOrders, err = r.repo.GetDashBordOrderCount(sellerID, "delivered")
+	if err != nil {
+		return nil, err
+	}
+
+	dashBord.CancelledOrders, err = r.repo.GetDashBordOrderCount(sellerID, "cancel")
+	if err != nil {
+		return nil, err
+	}
+
+	dashBord.TotalOrders, err = r.repo.GetDashBordOrderCount(sellerID, "")
+	if err != nil {
+		return nil, err
+	}
+
+	dashBord.TotalRevenue, err = r.repo.GetDashBordOrderSum(sellerID, "price")
+	if err != nil {
+		return nil, err
+	}
+
+	dashBord.TotalSelledProduct, err = r.repo.GetDashBordOrderSum(sellerID, "quantity")
+	if err != nil {
+		return nil, err
+	}
+
+	dashBord.AdminCredit, err = r.repo.GetSellerCredit(sellerID)
+	if err != nil {
+		return nil, err
+	}
+
+	dashBord.LowStockProductID, err = r.repo.GetLowStoceProduct(sellerID)
+	if err != nil {
+		return nil, err
+	}
+	return &dashBord, nil
+}

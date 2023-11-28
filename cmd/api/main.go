@@ -15,7 +15,7 @@ func main() {
 	}
 
 	//	@title						Go + Gin Mobile-Mart
-	//	@description				TechDeck is an E-commerce platform to purchase and sell Electronic itmes
+	//	@description				Mobile Mart - Your Ultimate Mobile Phone Shopping API 📱🛒
 	//	@contact.name				API Support
 	//	@securityDefinitions.apikey	BearerTokenAuth
 	//	@in							header
@@ -30,8 +30,8 @@ func main() {
 	docs.SwaggerInfo.Title = "Mobile_mart"
 	// docs.SwaggerInfo.Description = "This is a sample server Petstore server."
 	// docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = "mobilemart.pranavs.tech/"
-	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+	docs.SwaggerInfo.Host = "localhost:7000"
+	// docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	server, err := di.InitializeAPI(*config)
 	if err != nil {

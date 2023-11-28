@@ -222,7 +222,22 @@ func (d *orderRepository) GetSalesReportByYear(sellerID string, balanceQuery str
 	query := "SELECT COUNT(*) AS Orders, SUM(quantity) AS Quantity, SUM(price) AS Price FROM orders WHERE seller_id= ? AND order_status='delivered' AND" + balanceQuery
 	result := d.DB.Raw(query, sellerID).Scan(&report)
 	if result.Error != nil {
-		return nil, errors.New("face some issue while get report by year")
+		return nil, errors.New("face some issue while get report")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &report, nil
+}
+
+func (d *orderRepository) GetSalesReportByDays(sellerID string, days string) (*responsemodel.SalesReport, error) {
+	var report responsemodel.SalesReport
+	remainingQuery := "(now() - interval '" + days + " day')"
+	query := "SELECT COUNT(*) AS Orders, SUM(quantity) AS Quantity, SUM(price) AS Price FROM orders WHERE seller_id = ? AND order_status='delivered' AND order_date >= " + remainingQuery
+	result := d.DB.Raw(query, sellerID).Scan(&report)
+
+	if result.Error != nil {
+		return nil, errors.New("face some issue while get report by days")
 	}
 	if result.RowsAffected == 0 {
 		return nil, resCustomError.ErrNoRowAffected

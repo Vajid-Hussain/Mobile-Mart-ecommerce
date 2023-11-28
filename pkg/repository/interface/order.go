@@ -22,4 +22,5 @@ type IOrderRepository interface {
 	UpdateOrderPaymetSuccess(string, string) error
 
 	GetSalesReportByYear(string, string) (*responsemodel.SalesReport, error)
+	GetSalesReportByDays(string, string) (*responsemodel.SalesReport, error)
 }

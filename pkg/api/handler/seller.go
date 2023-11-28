@@ -259,16 +259,16 @@ func (u *SellerHandler) VerifySeller(c *gin.Context) {
 
 // ------------------------------------------Seller Profile------------------------------------\\
 
-// @Summary Get Seller Profile
-// @Description Retrieve details of the seller's profile.
-// @Tags Seller Profile
-// @Accept json
-// @Produce json
-// @Security BearerTokenAuth
-// @Security Refreshtoken
-// @Success 200 {object} response.Response "Successfully retrieved the seller's profile"
-// @Failure 400 {object} response.Response "Bad request"
-// @Router /seller/profile [get]
+// @Summary		Get Seller Profile
+// @Description	Retrieve details of the seller's profile.
+// @Tags			Seller Profile
+// @Accept			json
+// @Produce		json
+// @Security		BearerTokenAuth
+// @Security		Refreshtoken
+// @Success		200	{object}	response.Response	"Successfully retrieved the seller's profile"
+// @Failure		400	{object}	response.Response	"Bad request"
+// @Router			/seller/profile [get]
 func (u *SellerHandler) GetSellerProfile(c *gin.Context) {
 
 	userID, exist := c.MustGet("SellerID").(string)
@@ -288,17 +288,17 @@ func (u *SellerHandler) GetSellerProfile(c *gin.Context) {
 	}
 }
 
-// @Summary Update Seller Profile
-// @Description Update the seller's profile.
-// @Tags Seller Profile
-// @Accept json
-// @Produce json
-// @Security BearerTokenAuth
-// @Security Refreshtoken
-// @Param profile body requestmodel.SellerEditProfile true "Seller profile details for updating"
-// @Success 200 {object} response.Response "Successfully updated the seller's profile"
-// @Failure 400 {object} response.Response "Bad request"
-// @Router /seller/profile [patch]
+// @Summary		Update Seller Profile
+// @Description	Update the seller's profile.
+// @Tags			Seller Profile
+// @Accept			json
+// @Produce		json
+// @Security		BearerTokenAuth
+// @Security		Refreshtoken
+// @Param			profile	body		requestmodel.SellerEditProfile	true	"Seller profile details for updating"
+// @Success		200		{object}	response.Response				"Successfully updated the seller's profile"
+// @Failure		400		{object}	response.Response				"Bad request"
+// @Router			/seller/profile [patch]
 func (u *SellerHandler) EditSellerProfile(c *gin.Context) {
 
 	var profile requestmodel.SellerEditProfile
@@ -324,6 +324,24 @@ func (u *SellerHandler) EditSellerProfile(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
 		finalReslt := response.Responses(http.StatusOK, "Succesfully Edited", userProfile, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *SellerHandler) SellerDashbord(c *gin.Context) {
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	dashBord, err := u.usecase.GetSellerDashbord(sellerID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", dashBord, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }

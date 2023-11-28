@@ -1,6 +1,7 @@
 package middlewire
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
@@ -45,6 +46,7 @@ func SellerAuthorization(c *gin.Context) {
 		c.Abort()
 		return
 	}
+	fmt.Println("seller ID:-", id)
 	if err != nil {
 		err := service.VerifyRefreshToken(refreshToken, token.securityKeys.SellerSecurityKey)
 		if err != nil {

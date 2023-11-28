@@ -57,3 +57,13 @@ type SalesReport struct {
 	Quantity uint `json:"total-unit"`
 	Price    uint `json:"total-price"`
 }
+
+type DashBord struct {
+	TotalOrders        uint   `json:"totalOrders"`
+	DeliveredOrders    uint   `json:"deliveredOrders"`
+	CancelledOrders    uint   `json:"cancelledOrders"`
+	TotalRevenue       uint   `json:"totalRevenue"`
+	TotalSelledProduct uint   `json:"totalSelledProduct"`
+	AdminCredit        uint   `json:"adminCredit"`
+	LowStockProductID  []uint `json:"LowStockProductID"`
+}
