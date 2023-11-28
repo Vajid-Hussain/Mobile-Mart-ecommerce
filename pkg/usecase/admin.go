@@ -1,8 +1,6 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
@@ -10,7 +8,6 @@ import (
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
-	// "github.com/go-playground/validator/v10"
 )
 
 type adminUsecase struct {
@@ -26,26 +23,8 @@ func NewAdminUseCase(adminRepository interfaces.IAdminRepository, key *config.To
 func (r *adminUsecase) AdminLogin(adminData *requestmodel.AdminLoginData) (*responsemodel.AdminLoginRes, error) {
 	var adminLoginRes responsemodel.AdminLoginRes
 
-	// validate := validator.New(validator.WithRequiredStructEnabled())
-	// err := validate.Struct(adminData)
-	// if err != nil {
-	// 	if ve, ok := err.(validator.ValidationErrors); ok {
-	// 		for _, e := range ve {
-	// 			switch e.Field() {
-	// 			case "Email":
-	// 				adminLoginRes.Email = "email id is wrong "
-	// 			case "Password":
-	// 				adminLoginRes.Password = "password have four or more digit"
-	// 			}
-	// 		}
-	// 	}
-	// 	return &adminLoginRes, errors.New("did't fullfill the login requirement ")
-	// }
-
 	HashedPassword, err := r.repo.GetPassword(adminData.Email)
 	if err != nil {
-		fmt.Println(err, "---------", HashedPassword)
-
 		return nil, err
 	}
 
@@ -63,17 +42,39 @@ func (r *adminUsecase) AdminLogin(adminData *requestmodel.AdminLoginData) (*resp
 	return &adminLoginRes, nil
 }
 
-// func (r *adminUsecase) ImageUpload(img *multipart.FileHeader) error {
+func (r *adminUsecase) GetSellerDetailsForDashBord() (*responsemodel.AdminDashBord, error) {
+	var dashBord responsemodel.AdminDashBord
+	var err error
 
-// 	sess := service.CreateSession(&r.s3)
+	dashBord.TotalSellers, err = r.repo.GetSellerDetailsForDashBord("")
+	if err != nil {
+		return nil, err
+	}
 
-// 	s3Sess := service.CreateS3Session(sess)
+	dashBord.ActiveSellers, err = r.repo.GetSellerDetailsForDashBord("active")
+	if err != nil {
+		return nil, err
+	}
 
-// 	fmt.Println(*s3Sess)
-// 	err := service.UploadObject(img, sess)
-// 	if err != nil {
-// 		return errors.New("can't upload images")
-// 	}
+	dashBord.BlockedSellers, err = r.repo.GetSellerDetailsForDashBord("block")
+	if err != nil {
+		return nil, err
+	}
 
-// 	return nil
-// }
+	dashBord.PendingSellers, err = r.repo.GetSellerDetailsForDashBord("pending")
+	if err != nil {
+		return nil, err
+	}
+
+	dashBord.TotalOrders, dashBord.TotalRevenue, err = r.repo.TotalRevenue()
+	if err != nil {
+		return nil, err
+	}
+
+	dashBord.TotalCredit, err = r.repo.GetNetCredit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &dashBord, nil
+}

@@ -224,9 +224,6 @@ func (d *orderRepository) GetSalesReportByYear(sellerID string, balanceQuery str
 	if result.Error != nil {
 		return nil, errors.New("face some issue while get report")
 	}
-	if result.RowsAffected == 0 {
-		return nil, resCustomError.ErrNoRowAffected
-	}
 	return &report, nil
 }
 
@@ -238,9 +235,6 @@ func (d *orderRepository) GetSalesReportByDays(sellerID string, days string) (*r
 
 	if result.Error != nil {
 		return nil, errors.New("face some issue while get report by days")
-	}
-	if result.RowsAffected == 0 {
-		return nil, resCustomError.ErrNoRowAffected
 	}
 	return &report, nil
 }

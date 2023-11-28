@@ -11,7 +11,7 @@ import (
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase"
 )
 
-func InitializeAPI(config config.Config) (*server.ServerHttp, error) {
+func InitializeAPI(config *config.Config) (*server.ServerHttp, error) {
 	DB, err := db.ConnectDatabase(config.DB)
 	if err != nil {
 		return nil, err

@@ -12,6 +12,8 @@ func AdminRoutes(engin *gin.RouterGroup, admin *handler.AdminHandler, seller *ha
 
 	engin.Use(middlewire.AdminAuthorization)
 	{
+		engin.GET("/", admin.AdminDashBord)
+
 		usermanagement := engin.Group("/users")
 		{
 			usermanagement.GET("/getuser", user.GetUser)

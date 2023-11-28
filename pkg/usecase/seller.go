@@ -224,6 +224,11 @@ func (r *sellerUseCase) GetSellerDashbord(sellerID string) (*responsemodel.DashB
 		return nil, err
 	}
 
+	dashBord.OngoingOrders, err = r.repo.GetDashBordOrderCount(sellerID, "processing")
+	if err != nil {
+		return nil, err
+	}
+
 	dashBord.CancelledOrders, err = r.repo.GetDashBordOrderCount(sellerID, "cancel")
 	if err != nil {
 		return nil, err

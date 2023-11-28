@@ -61,6 +61,7 @@ type SalesReport struct {
 type DashBord struct {
 	TotalOrders        uint   `json:"totalOrders"`
 	DeliveredOrders    uint   `json:"deliveredOrders"`
+	OngoingOrders      uint   `json:"OngoingOrders"`
 	CancelledOrders    uint   `json:"cancelledOrders"`
 	TotalRevenue       uint   `json:"totalRevenue"`
 	TotalSelledProduct uint   `json:"totalSelledProduct"`

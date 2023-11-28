@@ -33,7 +33,7 @@ func main() {
 	docs.SwaggerInfo.Host = "localhost:7000"
 	// docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
-	server, err := di.InitializeAPI(*config)
+	server, err := di.InitializeAPI(config)
 	if err != nil {
 		log.Fatal("error for server creation")
 	}

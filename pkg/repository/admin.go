@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	"gorm.io/gorm"
@@ -26,16 +27,49 @@ func (d *adminRepository) GetPassword(email string) (string, error) {
 	return hashedPassword, nil
 }
 
-// func (d *adminRepository) GetSellerDetailsForDashBord(criteria string) (uint, error) {
-// 	var data uint
+func (d *adminRepository) GetSellerDetailsForDashBord(criteria string) (uint, error) {
+	var data uint
 
-// 	query := "SELECT COUNT(*) FROM sellers WHERE status= "+ criteria
-// 	d.DB.Raw(query).Scan(&data)
+	query := "SELECT COUNT(*) FROM sellers WHERE status= $1 OR $1 = '' "
+	result := d.DB.Raw(query, criteria).Scan(&data)
 
-// 	if result.Error != nil {
-// 		return nil, errors.New("face some issue while get report by days")
+	if result.Error != nil {
+		return 0, errors.New("face some issue while get report by days")
+	}
+	return data, nil
+}
+
+// func (d *adminRepository) TotalRevenue() (uint, uint, error) {
+
+// 	var orders, netrevenue uint
+// 	query := "SELECT COALESCE(COUNT(*),0), COALESCE(SUM(price),0) FROM orders"
+// 	result := d.DB.Raw(query).Row().Scan(&orders, &netrevenue).Error()
+// 	if result != "" {
+// 		return 0, 0, errors.New("face some issue while get report by days")
 // 	}
-// 	if result.RowsAffected == 0 {
-// 		return nil, resCustomError.ErrNoRowAffected
-// 	}
+// 	return orders, netrevenue, nil
 // }
+
+func (d *adminRepository) TotalRevenue() (uint, uint, error) {
+	var count, sum uint
+	query := "SELECT COALESCE(COUNT(*), 0), COALESCE(SUM(price), 0) FROM orders WHERE order_status='delivered'"
+	result := d.DB.Raw(query).Row().Scan(&count, &sum)
+	if result != nil {
+		return 0, 0, errors.New("face some issue while get report by days")
+	}
+
+	return count, sum, nil
+}
+
+// COALESCE
+
+func (d *adminRepository) GetNetCredit() (uint, error) {
+	var credit uint
+	query := "SELECT COALESCE(SUM(seller_credit),0) FROM sellers"
+	result := d.DB.Raw(query).Scan(&credit)
+	if result.Error != nil {
+		return 0, errors.New("face some issue while get report by days")
+	}
+	fmt.Println("$$", credit)
+	return credit, nil
+}

@@ -11,6 +11,7 @@ type AdminLoginRes struct {
 type AdminDashBord struct {
 	TotalSellers   uint `json:"totalSellers"`
 	BlockedSellers uint `json:"blockedSellers"`
+	PendingSellers uint `json:"PendingSellers"`
 	ActiveSellers  uint `json:"activeSellers"`
 	TotalRevenue   uint `json:"totalRevenue"`
 	TotalOrders    uint `json:"totalOrders"`

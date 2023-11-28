@@ -42,7 +42,7 @@ func SellerAuthorization(c *gin.Context) {
 
 	id, err := service.VerifyAcessToken(accessToken, token.securityKeys.SellerSecurityKey)
 	if id == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{"err": "access token completly tamberd, can't fetch id from token"})
+		c.JSON(http.StatusUnauthorized, gin.H{"err": "access token completly tamperd, can't fetch id from token"})
 		c.Abort()
 		return
 	}
