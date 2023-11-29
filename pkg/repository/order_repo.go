@@ -28,8 +28,8 @@ func (d *orderRepository) CreateOrder(order *requestmodel.Order) (*responsemodel
 	var result *gorm.DB
 
 	for _, data := range order.Cart {
-		query := `INSERT INTO orders (user_id, address_id, payment_method, inventory_id, seller_id, price, quantity,  order_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING*`
-		result = d.DB.Raw(query, order.UserID, order.Address, order.Payment, data.InventoryID, data.SellerID, data.Price, data.Quantity, today).Scan(&orderData)
+		query := `INSERT INTO orders (user_id, address_id, payment_method, inventory_id, seller_id, price, quantity,  order_date, order_status,  order_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING*`
+		result = d.DB.Raw(query, order.UserID, order.Address, order.Payment, data.InventoryID, data.SellerID, data.Price, data.Quantity, today, order.OrderStatus, order.OrderID).Scan(&orderData)
 		orderSucess.TotalWorth += orderData.Price
 		orderSucess.Orders = append(orderSucess.Orders, orderData)
 	}
@@ -237,4 +237,33 @@ func (d *orderRepository) GetSalesReportByDays(sellerID string, days string) (*r
 		return nil, errors.New("face some issue while get report by days")
 	}
 	return &report, nil
+}
+
+// ------------------------------------------Payment------------------------------------\\
+
+func (d *orderRepository) OnlinePayment(userID string) (*responsemodel.OnlinePayment, error) {
+
+	var orderDetails responsemodel.OnlinePayment
+	query := "SELECT * FROM users INNER JOIN orders ON orders.user_id = users.id INNER JOIN addresses ON addresses.id = address_id WHERE orders.user_id=? AND payment_status = 'pending' AND payment_method= 'ONLINE'"
+	result := d.DB.Raw(query, userID).Scan(&orderDetails)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while processing online payment")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &orderDetails, nil
+}
+
+func (d *orderRepository) GetFinalPriceByorderID(orderID string) (uint, error) {
+	var finalPrice uint
+	query := "SELECT SUM(price) FROM orders WHERE order_id= ?"
+	result := d.DB.Raw(query, orderID).Scan(&finalPrice)
+	if result.Error != nil {
+		return 0, errors.New("face some issue while getting tatal amount of order by using order id")
+	}
+	if result.RowsAffected == 0 {
+		return 0, resCustomError.ErrNoRowAffected
+	}
+	return finalPrice, nil
 }

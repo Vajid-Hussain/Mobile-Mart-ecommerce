@@ -2,8 +2,8 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 
+	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	"gorm.io/gorm"
 )
@@ -34,28 +34,17 @@ func (d *adminRepository) GetSellerDetailsForDashBord(criteria string) (uint, er
 	result := d.DB.Raw(query, criteria).Scan(&data)
 
 	if result.Error != nil {
-		return 0, errors.New("face some issue while get report by days")
+		return 0, resCustomError.ErrAdminDashbord
 	}
 	return data, nil
 }
-
-// func (d *adminRepository) TotalRevenue() (uint, uint, error) {
-
-// 	var orders, netrevenue uint
-// 	query := "SELECT COALESCE(COUNT(*),0), COALESCE(SUM(price),0) FROM orders"
-// 	result := d.DB.Raw(query).Row().Scan(&orders, &netrevenue).Error()
-// 	if result != "" {
-// 		return 0, 0, errors.New("face some issue while get report by days")
-// 	}
-// 	return orders, netrevenue, nil
-// }
 
 func (d *adminRepository) TotalRevenue() (uint, uint, error) {
 	var count, sum uint
 	query := "SELECT COALESCE(COUNT(*), 0), COALESCE(SUM(price), 0) FROM orders WHERE order_status='delivered'"
 	result := d.DB.Raw(query).Row().Scan(&count, &sum)
 	if result != nil {
-		return 0, 0, errors.New("face some issue while get report by days")
+		return 0, 0, resCustomError.ErrAdminDashbord
 	}
 
 	return count, sum, nil
@@ -68,8 +57,7 @@ func (d *adminRepository) GetNetCredit() (uint, error) {
 	query := "SELECT COALESCE(SUM(seller_credit),0) FROM sellers"
 	result := d.DB.Raw(query).Scan(&credit)
 	if result.Error != nil {
-		return 0, errors.New("face some issue while get report by days")
+		return 0, resCustomError.ErrAdminDashbord
 	}
-	fmt.Println("$$", credit)
 	return credit, nil
 }

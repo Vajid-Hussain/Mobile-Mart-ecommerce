@@ -68,3 +68,10 @@ type DashBord struct {
 	AdminCredit        uint   `json:"adminCredit"`
 	LowStockProductID  []uint `json:"LowStockProductID"`
 }
+
+type OnlinePayment struct {
+	OrderID     string `json:"orderID" `
+	User        string `gorm:"column:first_name" json:"user"`
+	FinalPrice  uint   `json:"finalPrice"`
+	PhoneNumber uint   `json:"phoneNumber" `
+}

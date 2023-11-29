@@ -6,6 +6,7 @@ import (
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 )
 
@@ -20,6 +21,12 @@ func NewOrderUseCase(repository interfaces.IOrderRepository, cartrepository inte
 }
 
 func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.OrderSuccess, error) {
+
+	if order.Payment == "COD" {
+		order.OrderStatus = "processing"
+	} else {
+		order.OrderStatus = "pending"
+	}
 
 	userCart, err := r.cartrepo.GetCart(order.UserID)
 	if err != nil {
@@ -51,6 +58,15 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 			return nil, err
 		}
 		order.Cart[i].Price = inventotyPrice * product.Quantity
+		order.FinalPrice += order.Cart[i].Price
+	}
+
+	if order.Payment == "ONLINE" {
+		orderID, err := service.Razopay(order.FinalPrice)
+		if err != nil {
+			return nil, err
+		}
+		order.OrderID = orderID
 	}
 
 	orderResponse, err := r.repo.CreateOrder(order)
@@ -58,12 +74,12 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		return nil, err
 	}
 
-	for _, data := range order.Cart {
-		err = r.cartrepo.DeleteInventoryFromCart(data.InventoryID, order.UserID)
-		if err != nil {
-			return nil, err
-		}
-	}
+	// for _, data := range order.Cart {
+	// 	err = r.cartrepo.DeleteInventoryFromCart(data.InventoryID, order.UserID)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	// }
 
 	orderResponse.UserID = order.UserID
 	orderResponse.Address = order.Address
@@ -203,4 +219,19 @@ func (r *orderUseCase) GetSalesReportByDays(sellerID string, days string) (*resp
 		return nil, err
 	}
 	return report, nil
+}
+
+// ------------------------------------------Online Payment------------------------------------\\
+
+func (r *orderUseCase) OnlinePayment(userID string) (*responsemodel.OnlinePayment, error) {
+	paymentDetails, err := r.repo.OnlinePayment(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	paymentDetails.FinalPrice, err = r.repo.GetFinalPriceByorderID(paymentDetails.OrderID)
+	if err != nil {
+		return nil, err
+	}
+	return paymentDetails, nil
 }

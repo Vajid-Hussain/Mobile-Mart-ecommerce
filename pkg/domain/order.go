@@ -18,5 +18,6 @@ type Order struct {
 	OrderDate     time.Time
 	DeliveryDate  time.Time
 	PaymentStatus status `gorm:"default:pending"`
-	OrderStatus   string `gorm:"default:processing"`
+	OrderStatus   string
+	OrderID       string
 }

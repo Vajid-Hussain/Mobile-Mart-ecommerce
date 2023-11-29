@@ -23,4 +23,7 @@ type IOrderRepository interface {
 
 	GetSalesReportByYear(string, string) (*responsemodel.SalesReport, error)
 	GetSalesReportByDays(string, string) (*responsemodel.SalesReport, error)
+
+	OnlinePayment(string) (*responsemodel.OnlinePayment, error)
+	GetFinalPriceByorderID(string) (uint, error)
 }

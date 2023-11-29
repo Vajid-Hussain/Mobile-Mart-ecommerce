@@ -25,6 +25,9 @@ func NewServerHttp(user *handler.UserHandler,
 	engin := gin.New()
 	engin.Use(gin.Logger())
 
+	// load htmlpages
+	engin.LoadHTMLGlob("./template/*.html")
+
 	// use ginSwagger middleware to serve the API docs
 	engin.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

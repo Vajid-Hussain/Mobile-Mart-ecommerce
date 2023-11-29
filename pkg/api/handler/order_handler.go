@@ -456,3 +456,19 @@ func (u *OrderHandler) SalesReportCustomDays(c *gin.Context) {
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
+
+func (u *OrderHandler) LoadRazopayHtml(c *gin.Context) {
+	userID, exist := c.MustGet("UserID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	orderDetails, err := u.useCase.OnlinePayment(userID)
+	if err != nil {
+		c.HTML(http.StatusBadRequest, "razopay.html", gin.H{"badRequest": "Refine your request"})
+	} else {
+		c.HTML(http.StatusOK, "razopay.html", orderDetails)
+	}
+}
