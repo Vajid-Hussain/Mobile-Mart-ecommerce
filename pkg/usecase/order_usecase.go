@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"fmt"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -234,4 +235,12 @@ func (r *orderUseCase) OnlinePayment(userID string) (*responsemodel.OnlinePaymen
 		return nil, err
 	}
 	return paymentDetails, nil
+}
+
+func (r *orderUseCase) OnlinePaymentVerification(details *requestmodel.OnlinePaymentVerification) error {
+	result := service.VerifyPayment(details.OrderID, details.PaymentID, details.Signature)
+	if !result {
+		return errors.New("payment is not succesfull")
+	}
+	return nil
 }

@@ -250,6 +250,7 @@ func (d *orderRepository) OnlinePayment(userID string) (*responsemodel.OnlinePay
 		return nil, errors.New("face some issue while processing online payment")
 	}
 	if result.RowsAffected == 0 {
+		fmt.Println("data fetching")
 		return nil, resCustomError.ErrNoRowAffected
 	}
 	return &orderDetails, nil

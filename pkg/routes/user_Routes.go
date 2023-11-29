@@ -1,8 +1,6 @@
 package routes
 
 import (
-	"fmt"
-
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/api/handler"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/api/middlewire"
 	"github.com/gin-gonic/gin"
@@ -12,6 +10,8 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 
 	engin.GET("/", inventory.GetInventory)
 	engin.GET("/:productid", inventory.GetAInventory)
+
+	engin.GET("/razopay", order.OnlinePayment)
 
 	engin.POST("/signup", user.UserSignup)
 	engin.POST("/verifyOTP", user.VerifyOTP)
@@ -55,9 +55,8 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 
 		paymentmanagement := engin.Group("/payment")
 		{
-			fmt.Println("h********")
+			paymentmanagement.POST("/verify", order.VerifyOnlinePayment)
 
-			paymentmanagement.GET("/", order.LoadRazopayHtml)
 		}
 	}
 }

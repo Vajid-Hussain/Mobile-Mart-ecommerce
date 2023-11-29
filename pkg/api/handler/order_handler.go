@@ -1,12 +1,14 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/response"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
 	"github.com/gin-gonic/gin"
 )
 
@@ -457,18 +459,47 @@ func (u *OrderHandler) SalesReportCustomDays(c *gin.Context) {
 	}
 }
 
-func (u *OrderHandler) LoadRazopayHtml(c *gin.Context) {
-	userID, exist := c.MustGet("UserID").(string)
-	if !exist {
-		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
-		c.JSON(http.StatusBadRequest, finalReslt)
-		return
-	}
-
+func (u *OrderHandler) OnlinePayment(c *gin.Context) {
+	userID := c.Query("userID")
+	fmt.Println("****", userID)
 	orderDetails, err := u.useCase.OnlinePayment(userID)
+	fmt.Println("###", orderDetails, err)
 	if err != nil {
 		c.HTML(http.StatusBadRequest, "razopay.html", gin.H{"badRequest": "Refine your request"})
 	} else {
 		c.HTML(http.StatusOK, "razopay.html", orderDetails)
+	}
+}
+
+func (u *OrderHandler) VerifyOnlinePayment(c *gin.Context) {
+	var onlinePaymentDetails requestmodel.OnlinePaymentVerification
+
+	// userID, exist := c.MustGet("UserID").(string)
+	// if !exist {
+	// 	finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+	// 	c.JSON(http.StatusBadRequest, finalReslt)
+	// 	return
+	// }
+
+	if err := c.BindJSON(&onlinePaymentDetails); err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	data, err := helper.Validation(onlinePaymentDetails)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	err = u.useCase.OnlinePaymentVerification(&onlinePaymentDetails)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", "", nil)
+		c.JSON(http.StatusOK, finalReslt)
 	}
 }

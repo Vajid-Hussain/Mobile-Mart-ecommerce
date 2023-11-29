@@ -11,3 +11,9 @@ type Order struct {
 	FinalPrice  uint                          `json:"-"`
 	Cart        []responsemodel.CartInventory `json:"-"`
 }
+
+type OnlinePaymentVerification struct {
+	PaymentID string `json:"payment_id" validate:"required"`
+	OrderID   string `json:"order_id" validate:"required"`
+	Signature string `json:"signature" validate:"required"`
+}
