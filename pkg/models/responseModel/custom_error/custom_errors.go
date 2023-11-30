@@ -12,7 +12,7 @@ var (
 	ErrPagination            = errors.New("page must start from one")
 	ErrPageLimit             = errors.New("page limit must graterthen one")
 	ErrNegativeID            = errors.New("id must be grater than one")
-	ErrNoRowAffected         = errors.New("no data matching the criteria was found in the database")
+	ErrNoRowAffected         = errors.New("no data matching the specified criteria was found in the database")
 	ErrProductOrderCompleted = errors.New("the product order is already completed")
 	ErrAdminDashbord         = errors.New("face some issue while admin dashbord ")
 )

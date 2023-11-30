@@ -48,6 +48,13 @@ func (u *OrderHandler) NewOrder(c *gin.Context) {
 		return
 	}
 
+	data, err := helper.Validation(*order)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
 	order.UserID = userID
 
 	orderDetais, err := u.useCase.NewOrder(order)
@@ -494,12 +501,12 @@ func (u *OrderHandler) VerifyOnlinePayment(c *gin.Context) {
 		return
 	}
 
-	err = u.useCase.OnlinePaymentVerification(&onlinePaymentDetails)
+	order, err := u.useCase.OnlinePaymentVerification(&onlinePaymentDetails)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
-		finalReslt := response.Responses(http.StatusOK, "", "", nil)
+		finalReslt := response.Responses(http.StatusOK, "", order, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }

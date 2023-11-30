@@ -32,19 +32,27 @@ type S3Bucket struct {
 	BucketName      string `mapstructure:"BucketName"`
 }
 
+type Razopay struct {
+	RazopayKey    string `mapstructure:"RAZOPAYKEY"`
+	RazopaySecret string `mapstructure:"PAZOPAYSECRET"`
+}
+
 type Config struct {
-	DB    DataBase
-	Token Token
-	Otp   OTP
-	S3aws S3Bucket
+	DB      DataBase
+	Token   Token
+	Otp     OTP
+	S3aws   S3Bucket
+	Razopay Razopay
 }
 
 func LoadConfig() (*Config, error) {
-
-	var db DataBase
-	var token Token
-	var otp OTP
-	var s3 S3Bucket
+	var (
+		db      DataBase
+		token   Token
+		otp     OTP
+		s3      S3Bucket
+		razopay Razopay
+	)
 
 	viper.AddConfigPath("./")
 	viper.SetConfigFile(".env")
@@ -71,7 +79,11 @@ func LoadConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = viper.Unmarshal(&razopay)
+	if err != nil {
+		return nil, err
+	}
 
-	config := Config{DB: db, Token: token, Otp: otp, S3aws: s3}
+	config := Config{DB: db, Token: token, Otp: otp, S3aws: s3, Razopay: razopay}
 	return &config, nil
 }

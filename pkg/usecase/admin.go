@@ -42,7 +42,7 @@ func (r *adminUsecase) AdminLogin(adminData *requestmodel.AdminLoginData) (*resp
 	return &adminLoginRes, nil
 }
 
-func (r *adminUsecase) GetSellerDetailsForDashBord() (*responsemodel.AdminDashBord, error) {
+func (r *adminUsecase) GetSellerDetailsForAdminDashBord() (*responsemodel.AdminDashBord, error) {
 	var dashBord responsemodel.AdminDashBord
 	var err error
 

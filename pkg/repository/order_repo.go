@@ -43,10 +43,23 @@ func (d *orderRepository) CreateOrder(order *requestmodel.Order) (*responsemodel
 	return orderSucess, nil
 }
 
+func (d *orderRepository) GetAddressExist(userID, addressesID string) error {
+	query := "SELECT * FROM addresses WHERE userid= ? AND id= ?"
+	result := d.DB.Exec(query, userID, addressesID)
+	if result.Error != nil {
+		return errors.New("face some issue while chcking address is exist of user")
+	}
+	if result.RowsAffected == 0 {
+
+		return errors.New("user does not have specified address")
+	}
+	return nil
+}
+
 func (d *orderRepository) GetOrderShowcase(userID string) (*[]responsemodel.OrderShowcase, error) {
 
 	var OrderShowcase []responsemodel.OrderShowcase
-	query := "SELECT * FROM inventories INNER JOIN  orders ON orders.inventory_id= inventories.id WHERE orders.user_id= ? ORDER BY orders.id DESC"
+	query := "SELECT * FROM inventories INNER JOIN  orders ON orders.inventory_id= inventories.id WHERE orders.user_id= ? AND orders.order_status!='pending' ORDER BY orders.id DESC"
 	result := d.DB.Raw(query, userID).Scan(&OrderShowcase)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while order showcase")
@@ -129,6 +142,19 @@ func (d *orderRepository) UpdateUserOrderCancel(orderID string, userID string) (
 	return &cancelOrder, nil
 }
 
+func (d *orderRepository) UpdateOnlinePaymentSucess(orderID string) (*[]responsemodel.OrderDetails, error) {
+	var orders []responsemodel.OrderDetails
+	query := "UPDATE orders SET payment_status='success', order_status='processing' WHERE order_id = ? RETURNING*"
+	result := d.DB.Raw(query, orderID).Scan(&orders)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while update order status and payment status on verify online payment success")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrProductOrderCompleted
+	}
+	return &orders, nil
+}
+
 func (d *orderRepository) UpdateDeliveryTimeByUser(userID string, orderID string) error {
 
 	delivaryTime := time.Now().Format("2006-01-02 15:04:05")
@@ -140,6 +166,23 @@ func (d *orderRepository) UpdateDeliveryTimeByUser(userID string, orderID string
 	}
 	if result.RowsAffected == 0 {
 		return resCustomError.ErrNoRowAffected
+	}
+	return nil
+}
+
+func (d *orderRepository) GetOrderExistOfUser(orderID, userID string) error {
+
+	query := "SELECT * FROM orders WHERE id= $1 AND user_id= $2"
+
+	result := d.DB.Exec(query, orderID, userID)
+	if result.Error != nil {
+		return errors.New("encountered an issue while checking if the order exists")
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("no orders were found matching the specified criteria")
+	}
+	if result.RowsAffected != 0 {
+		return nil
 	}
 	return nil
 }
@@ -204,7 +247,7 @@ func (d *orderRepository) UpdateOrderPaymetSuccess(sellerID string, orderID stri
 func (d *orderRepository) UpdateOrderCancel(orderID string, sellerID string) (*responsemodel.OrderDetails, error) {
 
 	var cancelOrder responsemodel.OrderDetails
-	query := "UPDATE orders SET order_status= 'cancel' WHERE id=? AND seller_id= ? AND order_status='processing' RETURNING*"
+	query := "UPDATE orders SET order_status= 'cancel', payment_status='cancel' WHERE id=? AND seller_id= ? AND order_status='processing' RETURNING*"
 	result := d.DB.Raw(query, orderID, sellerID).Scan(&cancelOrder)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while order is cancel")
@@ -213,6 +256,23 @@ func (d *orderRepository) UpdateOrderCancel(orderID string, sellerID string) (*r
 		return nil, resCustomError.ErrProductOrderCompleted
 	}
 	return &cancelOrder, nil
+}
+
+func (d *orderRepository) GetOrderExistOfSeller(orderID, sellerID string) error {
+
+	query := "SELECT * FROM orders WHERE id= $1 AND seller_id=$2"
+
+	result := d.DB.Exec(query, orderID, sellerID)
+	if result.Error != nil {
+		return errors.New("encountered an issue while checking if the order exists")
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("no orders were found matching the specified criteria")
+	}
+	if result.RowsAffected != 0 {
+		return nil
+	}
+	return nil
 }
 
 // ------------------------------------------Sales Report------------------------------------\\

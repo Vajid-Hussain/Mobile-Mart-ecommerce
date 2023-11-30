@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
@@ -15,10 +16,11 @@ type orderUseCase struct {
 	repo             interfaces.IOrderRepository
 	cartrepo         interfaces.ICartRepository
 	sellerRepository interfaces.ISellerRepo
+	razopay          *config.Razopay
 }
 
-func NewOrderUseCase(repository interfaces.IOrderRepository, cartrepository interfaces.ICartRepository, sellerRepository interfaces.ISellerRepo) interfaceUseCase.IOrderUseCase {
-	return &orderUseCase{repo: repository, cartrepo: cartrepository, sellerRepository: sellerRepository}
+func NewOrderUseCase(repository interfaces.IOrderRepository, cartrepository interfaces.ICartRepository, sellerRepository interfaces.ISellerRepo, razopay *config.Razopay) interfaceUseCase.IOrderUseCase {
+	return &orderUseCase{repo: repository, cartrepo: cartrepository, sellerRepository: sellerRepository, razopay: razopay}
 }
 
 func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.OrderSuccess, error) {
@@ -29,11 +31,15 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		order.OrderStatus = "pending"
 	}
 
-	userCart, err := r.cartrepo.GetCart(order.UserID)
+	err := r.repo.GetAddressExist(order.UserID, order.Address)
 	if err != nil {
 		return nil, err
 	}
 
+	userCart, err := r.cartrepo.GetCart(order.UserID)
+	if err != nil {
+		return nil, err
+	}
 	order.Cart = *userCart
 
 	for _, data := range order.Cart {
@@ -43,7 +49,7 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		}
 
 		if *unit < data.Quantity {
-			return nil, fmt.Errorf("sorry for inconvinent for less stock , we have only %d units, your requirement is %d unit", *unit, data.Quantity)
+			return nil, fmt.Errorf("sorry for inconvinent for less stock , we have only %d units, your requirement is %d unit,of product id %s", *unit, data.Quantity, data.InventoryID)
 		}
 
 		newUnit := *unit - data.Quantity
@@ -53,6 +59,7 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		}
 	}
 
+	// find total amount
 	for i, product := range order.Cart {
 		inventotyPrice, err := r.cartrepo.GetInventoryPrice(product.InventoryID)
 		if err != nil {
@@ -62,8 +69,9 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		order.FinalPrice += order.Cart[i].Price
 	}
 
+	// place order on payment is online
 	if order.Payment == "ONLINE" {
-		orderID, err := service.Razopay(order.FinalPrice)
+		orderID, err := service.Razopay(order.FinalPrice, r.razopay.RazopayKey, r.razopay.RazopaySecret)
 		if err != nil {
 			return nil, err
 		}
@@ -75,12 +83,12 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		return nil, err
 	}
 
-	// for _, data := range order.Cart {
-	// 	err = r.cartrepo.DeleteInventoryFromCart(data.InventoryID, order.UserID)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// }
+	for _, data := range order.Cart {
+		err = r.cartrepo.DeleteInventoryFromCart(data.InventoryID, order.UserID)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	orderResponse.UserID = order.UserID
 	orderResponse.Address = order.Address
@@ -105,6 +113,12 @@ func (r *orderUseCase) SingleOrder(orderID string, userID string) (*responsemode
 }
 
 func (r *orderUseCase) CancelUserOrder(orderID string, userID string) (*responsemodel.OrderDetails, error) {
+	fmt.Println("**", orderID, userID)
+	err := r.repo.GetOrderExistOfUser(orderID, userID)
+	if err != nil {
+		return nil, err
+	}
+
 	orderDetails, err := r.repo.UpdateUserOrderCancel(orderID, userID)
 	if err != nil {
 		return nil, err
@@ -127,6 +141,34 @@ func (r *orderUseCase) CancelUserOrder(orderID string, userID string) (*response
 		return nil, err
 	}
 	return orderDetails, nil
+}
+
+// ------------------------------------------Online Payment------------------------------------\\
+
+func (r *orderUseCase) OnlinePayment(userID string) (*responsemodel.OnlinePayment, error) {
+	paymentDetails, err := r.repo.OnlinePayment(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	paymentDetails.FinalPrice, err = r.repo.GetFinalPriceByorderID(paymentDetails.OrderID)
+	if err != nil {
+		return nil, err
+	}
+	return paymentDetails, nil
+}
+
+func (r *orderUseCase) OnlinePaymentVerification(details *requestmodel.OnlinePaymentVerification) (*[]responsemodel.OrderDetails, error) {
+	result := service.VerifyPayment(details.OrderID, details.PaymentID, details.Signature, r.razopay.RazopaySecret)
+	if !result {
+		return nil, errors.New("payment is unsuccessful")
+	}
+
+	orders, err := r.repo.UpdateOnlinePaymentSucess(details.OrderID)
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
 }
 
 // ------------------------------------------Seller Control Orders------------------------------------\\
@@ -179,6 +221,10 @@ func (r *orderUseCase) ConfirmDeliverd(sellerID string, orderID string) (*respon
 }
 
 func (r *orderUseCase) CancelOrder(orderID string, sellerID string) (*responsemodel.OrderDetails, error) {
+	err := r.repo.GetOrderExistOfSeller(orderID, sellerID)
+	if err != nil {
+		return nil, err
+	}
 	orderDetails, err := r.repo.UpdateOrderCancel(orderID, sellerID)
 	if err != nil {
 		return nil, err
@@ -220,27 +266,4 @@ func (r *orderUseCase) GetSalesReportByDays(sellerID string, days string) (*resp
 		return nil, err
 	}
 	return report, nil
-}
-
-// ------------------------------------------Online Payment------------------------------------\\
-
-func (r *orderUseCase) OnlinePayment(userID string) (*responsemodel.OnlinePayment, error) {
-	paymentDetails, err := r.repo.OnlinePayment(userID)
-	if err != nil {
-		return nil, err
-	}
-
-	paymentDetails.FinalPrice, err = r.repo.GetFinalPriceByorderID(paymentDetails.OrderID)
-	if err != nil {
-		return nil, err
-	}
-	return paymentDetails, nil
-}
-
-func (r *orderUseCase) OnlinePaymentVerification(details *requestmodel.OnlinePaymentVerification) error {
-	result := service.VerifyPayment(details.OrderID, details.PaymentID, details.Signature)
-	if !result {
-		return errors.New("payment is not succesfull")
-	}
-	return nil
 }

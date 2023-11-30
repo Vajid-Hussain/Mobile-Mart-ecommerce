@@ -13,15 +13,16 @@ type OrderShowcase struct {
 }
 
 type OrderDetails struct {
-	ID          string `gorm:"id" json:"orderid"`
-	UserID      string `gorm:"column:user_id" json:"userid"`
-	Address     string `gorm:"column:address_id" json:"address_id"`
-	Payment     string `gorm:"column:payment_method" json:"payment"`
-	SellerID    string `json:"seller id" gorm:"column:seller_id"`
-	InventoryID string `gorm:"column:inventory_id" json:"productid"`
-	Quantity    uint   `json:"quantity"`
-	Price       uint   `json:"price"`
-	OrderStatus string `json:"orderstatus,omitempty"`
+	ID            string `gorm:"id" json:"orderid"`
+	UserID        string `gorm:"column:user_id" json:"userid"`
+	Address       string `gorm:"column:address_id" json:"address_id"`
+	Payment       string `gorm:"column:payment_method" json:"payment"`
+	SellerID      string `json:"seller id" gorm:"column:seller_id"`
+	InventoryID   string `gorm:"column:inventory_id" json:"productid"`
+	Quantity      uint   `json:"quantity"`
+	Price         uint   `json:"price"`
+	OrderStatus   string `json:"orderstatus,omitempty"`
+	PaymentStatus string `json:"paymentStatu,omitempty"`
 }
 
 type SingleOrder struct {

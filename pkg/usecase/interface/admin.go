@@ -7,5 +7,5 @@ import (
 
 type IAdminUseCase interface {
 	AdminLogin(*requestmodel.AdminLoginData) (*responsemodel.AdminLoginRes, error)
-	GetSellerDetailsForDashBord() (*responsemodel.AdminDashBord, error)
+	GetSellerDetailsForAdminDashBord() (*responsemodel.AdminDashBord, error)
 }

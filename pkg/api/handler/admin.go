@@ -55,7 +55,7 @@ func (u *AdminHandler) AdminLogin(c *gin.Context) {
 }
 
 func (u *AdminHandler) AdminDashBord(c *gin.Context) {
-	result, err := u.AdminUseCase.GetSellerDetailsForDashBord()
+	result, err := u.AdminUseCase.GetSellerDetailsForAdminDashBord()
 	if err != nil {
 		finalReslt := response.Responses(http.StatusUnauthorized, "", result, err)
 		c.JSON(http.StatusBadRequest, finalReslt)
