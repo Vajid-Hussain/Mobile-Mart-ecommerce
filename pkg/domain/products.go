@@ -11,6 +11,7 @@ type Inventories struct {
 	SellerID           string   `gorm:"not null"`
 	Seller             Seller   `gorm:"forgienKey:SellerID;association_foreignkey:ID"`
 	Mrp                int
+	Discount           uint
 	Saleprice          int
 	Units              int64
 	Os                 string

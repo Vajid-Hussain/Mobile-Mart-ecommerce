@@ -8,6 +8,7 @@ type InventoryRes struct {
 	CategoryID         uint    `json:"categoryID" validate:"required"`
 	SellerID           string  `json:"sellerID" validate:"required"`
 	Mrp                uint    `json:"mrp" validate:"required,min=0"`
+	Discount           uint    `form:"discount" validate:"required,min=0,max=99,number"`
 	Saleprice          uint    `json:"saleprice" validate:"required,min=0"`
 	Units              uint64  `json:"units" validate:"required,min=0"`
 	Os                 string  `json:"os"`
@@ -27,6 +28,7 @@ type InventoryShowcase struct {
 	ID          uint   `json:"product"`
 	Productname string `json:"productname"`
 	Mrp         int    `json:"mrp" `
+	Discount    uint   `form:"discount" validate:"required,min=0,max=99,number"`
 	Saleprice   int    `json:"saleprice" `
 	SellerID    string `json:"sellerID" `
 	Units       uint   `json:"units"`
@@ -36,6 +38,7 @@ type FilterProduct struct {
 	ID          uint   `json:"product" gorm:"column:productid"`
 	Productname string `json:"productname"`
 	Mrp         int    `json:"mrp" `
+	Discount    uint   `form:"discount" validate:"required,min=0,max=99,number"`
 	Saleprice   int    `json:"saleprice" `
 	SellerID    string `json:"sellerID" `
 	Category    string `json:"categoty" gorm:"column:name"`

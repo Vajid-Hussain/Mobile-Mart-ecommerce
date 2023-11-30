@@ -23,12 +23,12 @@ func (d *inventoryRepository) CreateProduct(inventory *requestmodel.InventoryReq
 
 	var insertedData responsemodel.InventoryRes
 
-	query := `INSERT INTO inventories (productname, description, brand_id, category_id, mrp, saleprice, units,os, cellular_technology, ram, screensize, Batterycapacity, processor, seller_id, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *;`
+	query := `INSERT INTO inventories (productname, description, brand_id, category_id, mrp, saleprice, units,os, cellular_technology, ram, screensize, Batterycapacity, processor, seller_id, image_url, discount) VALUES (?, ?,  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *;`
 	result := d.DB.Raw(query,
 		inventory.Productname, inventory.Description, inventory.BrandID, inventory.CategoryID,
 		inventory.Mrp, inventory.Saleprice, inventory.Units,
 		inventory.Os, inventory.CellularTechnology, inventory.Ram,
-		inventory.Screensize, inventory.Batterycapacity, inventory.Processor, inventory.SellerID, inventory.ImageURL,
+		inventory.Screensize, inventory.Batterycapacity, inventory.Processor, inventory.SellerID, inventory.ImageURL, inventory.Discount,
 	).Scan(&insertedData)
 
 	if result.Error != nil {

@@ -9,7 +9,8 @@ type InventoryReq struct {
 	CategoryID         uint                  `form:"categoryID" validate:"required,number"`
 	SellerID           uint                  `form:"sellerID" validate:"required,number"`
 	Mrp                uint                  `form:"mrp" validate:"required,min=0,number"`
-	Saleprice          uint                  `form:"saleprice" validate:"required,min=0,number"`
+	Discount           uint                  `form:"discount" validate:"required,min=0,max=99,number"`
+	Saleprice          uint                  `form:"saleprice"`
 	Units              uint64                `form:"units" validate:"required,min=0,number"`
 	Os                 string                `form:"os" validate:"required"`
 	CellularTechnology string                `form:"cellularTechnology" validate:"required"`
@@ -29,7 +30,7 @@ type EditInventory struct {
 	CategoryID         uint    `json:"categoryID" validate:"required"`
 	SellerID           string  `json:"cellerID" validate:"required"`
 	Mrp                uint    `json:"mrp" validate:"required,min=0"`
-	Saleprice          uint    `json:"saleprice" validate:"required,min=0"`
+	Discount           uint    `form:"discount" validate:"required,min=0,max=99,number"`
 	Units              uint64  `json:"units" validate:"required,min=0"`
 	Os                 string  `json:"os" validate:"required"`
 	CellularTechnology string  `json:"cellularTechnology" validate:"required"`

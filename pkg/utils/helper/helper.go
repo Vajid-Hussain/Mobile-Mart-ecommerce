@@ -102,3 +102,9 @@ func StringToUintConvertion(id string) (uint, error) {
 	}
 	return uint(result), nil
 }
+
+func FindDiscount(originalPrice, percentageOffer float64) uint {
+	discountAmount := (percentageOffer / 100) * originalPrice
+	discountedPrice := originalPrice - discountAmount
+	return uint(discountedPrice)
+}

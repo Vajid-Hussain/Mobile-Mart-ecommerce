@@ -31,6 +31,8 @@ func (d *inventoryUseCase) AddInventory(inventory *requestmodel.InventoryReq) (*
 	}
 
 	inventory.ImageURL = ImageURL
+	discountedPrice := helper.FindDiscount(float64(inventory.Mrp), float64(inventory.Discount))
+	inventory.Saleprice = discountedPrice
 
 	product, err := d.repo.CreateProduct(inventory)
 	if err != nil {
@@ -131,7 +133,7 @@ func (r *inventoryUseCase) EditInventory(editInventory *requestmodel.EditInvento
 				case "Mrp":
 					editInventory.Mrp = inventory.Mrp
 				case "Saleprice":
-					editInventory.Saleprice = inventory.Saleprice
+					editInventory.Discount = inventory.Discount
 				case "Units":
 					editInventory.Units = inventory.Units
 				case "Os":
