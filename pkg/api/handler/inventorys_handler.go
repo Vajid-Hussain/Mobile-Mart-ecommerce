@@ -162,7 +162,7 @@ func (u *InventotyHandler) DeleteInventory(c *gin.Context) {
 
 // @Summary		Get Seller Products
 // @Description	Retrieve a list of products.
-// @Tags			HomePage
+// @Tags			User
 // @Accept			json
 // @Produce		json
 // @Param			page	query		int					false	"Page number"				default(1)

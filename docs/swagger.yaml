@@ -154,6 +154,19 @@ definitions:
         minLength: 4
         type: string
     type: object
+  requestmodel.OnlinePaymentVerification:
+    properties:
+      order_id:
+        type: string
+      payment_id:
+        type: string
+      signature:
+        type: string
+    required:
+    - order_id
+    - payment_id
+    - signature
+    type: object
   requestmodel.Order:
     properties:
       address:
@@ -165,7 +178,6 @@ definitions:
     required:
     - address
     - payment
-    - userid
     type: object
   requestmodel.OtpVerification:
     properties:
@@ -348,7 +360,7 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: Get Seller Products
       tags:
-      - HomePage
+      - User
   /address:
     delete:
       consumes:
@@ -473,6 +485,27 @@ paths:
       summary: Update Address
       tags:
       - User Addresses
+  /admin:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve details for the admin.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Admin details retrieved successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized. Authentication required.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Get Admin Details
+      tags:
+      - Admins
   /admin/brand:
     get:
       consumes:
@@ -1290,6 +1323,34 @@ paths:
       summary: Get User Order Details
       tags:
       - UserOrders
+  /payment/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verify an online payment using the provided details.
+      parameters:
+      - description: Details for online payment verification
+        in: body
+        name: verificationDetails
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.OnlinePaymentVerification'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Payment verification successful
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide valid verification details.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Verify Online Payment
+      tags:
+      - PaymentIntegration
   /profile:
     get:
       consumes:
@@ -1340,6 +1401,53 @@ paths:
       summary: Update User Profile
       tags:
       - User Profile
+  /razorpay:
+    get:
+      consumes:
+      - text/html
+      description: Retrieve the Razorpay payment page for the specified user.
+      parameters:
+      - description: User ID for which the payment page is requested
+        in: query
+        name: userID
+        required: true
+        type: integer
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: HTML page for Razorpay payment
+          schema:
+            type: string
+        "400":
+          description: Bad request. Please provide a valid user ID.
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get Razorpay Payment Page
+      tags:
+      - PaymentIntegration
+  /seller:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve details for the seller.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Details retrieved successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized. Authentication required.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Get Seller Details
+      tags:
+      - Seller
   /seller/login:
     post:
       consumes:
@@ -1783,6 +1891,34 @@ paths:
       summary: Get Seller Sales Report for a Specific Day
       tags:
       - Seller Sales Report
+  /seller/report/days:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the seller sales report for a custom number of days.
+      parameters:
+      - description: Number of days for which the sales report is requested
+        in: query
+        name: days
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Seller sales report retrieved successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid number of days.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Get Seller Sales Report for Custom Number of Days
+      tags:
+      - SellerSalesReport
   /seller/report/month:
     get:
       consumes:

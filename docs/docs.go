@@ -27,7 +27,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "HomePage"
+                    "User"
                 ],
                 "summary": "Get Seller Products",
                 "parameters": [
@@ -259,6 +259,40 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Retrieve details for the admin.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admins"
+                ],
+                "summary": "Get Admin Details",
+                "responses": {
+                    "200": {
+                        "description": "Admin details retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Authentication required.",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -1567,6 +1601,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/payment/verify": {
+            "post": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Verify an online payment using the provided details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentIntegration"
+                ],
+                "summary": "Verify Online Payment",
+                "parameters": [
+                    {
+                        "description": "Details for online payment verification",
+                        "name": "verificationDetails",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.OnlinePaymentVerification"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment verification successful",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide valid verification details.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/profile": {
             "get": {
                 "security": [
@@ -1643,6 +1722,81 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/razorpay": {
+            "get": {
+                "description": "Retrieve the Razorpay payment page for the specified user.",
+                "consumes": [
+                    "text/html"
+                ],
+                "produces": [
+                    "text/html"
+                ],
+                "tags": [
+                    "PaymentIntegration"
+                ],
+                "summary": "Get Razorpay Payment Page",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID for which the payment page is requested",
+                        "name": "userID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "HTML page for Razorpay payment",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide a valid user ID.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve details for the seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller"
+                ],
+                "summary": "Get Seller Details",
+                "responses": {
+                    "200": {
+                        "description": "Details retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Authentication required.",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -2371,6 +2525,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/seller/report/days": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve the seller sales report for a custom number of days.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SellerSalesReport"
+                ],
+                "summary": "Get Seller Sales Report for Custom Number of Days",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Number of days for which the sales report is requested",
+                        "name": "days",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Seller sales report retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide a valid number of days.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/seller/report/month": {
             "get": {
                 "security": [
@@ -2854,12 +3054,30 @@ const docTemplate = `{
                 }
             }
         },
+        "requestmodel.OnlinePaymentVerification": {
+            "type": "object",
+            "required": [
+                "order_id",
+                "payment_id",
+                "signature"
+            ],
+            "properties": {
+                "order_id": {
+                    "type": "string"
+                },
+                "payment_id": {
+                    "type": "string"
+                },
+                "signature": {
+                    "type": "string"
+                }
+            }
+        },
         "requestmodel.Order": {
             "type": "object",
             "required": [
                 "address",
-                "payment",
-                "userid"
+                "payment"
             ],
             "properties": {
                 "address": {
