@@ -24,10 +24,21 @@ type Errors struct {
 }
 
 type InventoryShowcase struct {
-	ID          uint   `json:"inventoryID"`
+	ID          uint   `json:"product"`
 	Productname string `json:"productname"`
 	Mrp         int    `json:"mrp" `
 	Saleprice   int    `json:"saleprice" `
 	SellerID    string `json:"sellerID" `
+	Units       uint   `json:"units"`
+}
+
+type FilterProduct struct {
+	ID          uint   `json:"product" gorm:"column:productid"`
+	Productname string `json:"productname"`
+	Mrp         int    `json:"mrp" `
+	Saleprice   int    `json:"saleprice" `
+	SellerID    string `json:"sellerID" `
+	Category    string `json:"categoty" gorm:"column:name"`
+	Brand       string `json:"brand" gorm:"column:name"`
 	Units       uint   `json:"units"`
 }

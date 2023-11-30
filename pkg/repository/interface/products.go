@@ -14,4 +14,6 @@ type IInventoryRepository interface {
 	GetAInventory(string) (*responsemodel.InventoryRes, error)
 	GetSellerInventory(int, int, string) (*[]responsemodel.InventoryShowcase, error)
 	UpdateInventory(*requestmodel.EditInventory) (*responsemodel.InventoryRes, error)
+
+	GetProductFilter(*requestmodel.FilterCriterion) (*[]responsemodel.FilterProduct, error)
 }

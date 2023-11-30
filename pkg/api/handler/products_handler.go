@@ -268,3 +268,24 @@ func (u *InventotyHandler) EditInventory(c *gin.Context) {
 	}
 
 }
+
+func (u *InventotyHandler) FilterProduct(c *gin.Context) {
+
+	var criterial requestmodel.FilterCriterion
+
+	if err := c.BindJSON(&criterial); err != nil {
+		fmt.Println(err)
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, nil)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	filteredProduct, err := u.userCase.GetProductFilter(&criterial)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", filteredProduct, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}

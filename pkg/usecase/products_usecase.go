@@ -158,3 +158,11 @@ func (r *inventoryUseCase) EditInventory(editInventory *requestmodel.EditInvento
 
 	return updatedData, nil
 }
+
+func (r *inventoryUseCase) GetProductFilter(criterion *requestmodel.FilterCriterion) (*[]responsemodel.FilterProduct, error) {
+	filteredProduct, err := r.repo.GetProductFilter(criterion)
+	if err != nil {
+		return nil, err
+	}
+	return filteredProduct, nil
+}

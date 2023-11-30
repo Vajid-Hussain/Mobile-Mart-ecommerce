@@ -137,3 +137,20 @@ func (d *inventoryRepository) UpdateInventory(inventory *requestmodel.EditInvent
 	}
 	return &updatedData, nil
 }
+
+func (d *inventoryRepository) GetProductFilter(criterion *requestmodel.FilterCriterion) (*[]responsemodel.FilterProduct, error) {
+	fmt.Println("##", criterion.MinPrice)
+	var sortedProduct []responsemodel.FilterProduct
+	fmt.Println("*****", criterion)
+	// query := "SELECT inventories.id AS productID, * FROM inventories INNER JOIN categories ON categories.id= inventories.category_id INNER JOIN brands ON brands.id= inventories.brand_id WHERE categories.name ILIKE '%" + criterion.Category + "%' AND brands.name ILIKE '%" + criterion.Brand + "%' AND inventories.productname ILIKE '%" + criterion.Product + "%'  AND ($1 = '0' OR $1 < inventories.saleprice)      "
+	// result := d.DB.Raw(query, criterion.MinPrice).Scan(&sortedProduct)
+	query := "SELECT inventories.id AS productID, * FROM inventories INNER JOIN categories ON categories.id= inventories.category_id INNER JOIN brands ON brands.id= inventories.brand_id WHERE categories.name ILIKE '%' || $1 || '%' AND brands.name ILIKE '%' || $2 || '%' AND inventories.productname ILIKE '%' || $3 || '%' AND ($4 = 0 OR $4 < inventories.saleprice AND ($5 = 0 OR $5 >= inventories.saleprice))"
+	result := d.DB.Raw(query, criterion.Category, criterion.Brand, criterion.Product, criterion.MinPrice, criterion.MaxPrice).Scan(&sortedProduct)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while filter product")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &sortedProduct, nil
+}

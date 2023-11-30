@@ -38,3 +38,10 @@ type EditInventory struct {
 	Batterycapacity    uint    `json:"batterycapacity" validate:"required,min=500"`
 	Processor          string  `json:"processor" validate:"required"`
 }
+type FilterCriterion struct {
+	Category string `json:"category" validate:"alpha"`
+	Brand    string `json:"brand" validate:"alpha"`
+	Product  string `json:"product" validate:"alpha"`
+	MinPrice uint   `json:"minprice" validate:"numeric"`
+	MaxPrice uint   `json:"maxprice" validate:"numeric"`
+}

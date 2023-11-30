@@ -14,4 +14,6 @@ type IInventoryUseCase interface {
 	GetAInventory(string) (*responsemodel.InventoryRes, error)
 	GetSellerInventory(string, string, string) (*[]responsemodel.InventoryShowcase, error)
 	EditInventory(*requestmodel.EditInventory, string) (*responsemodel.InventoryRes, error)
+
+	GetProductFilter(*requestmodel.FilterCriterion) (*[]responsemodel.FilterProduct, error)
 }
