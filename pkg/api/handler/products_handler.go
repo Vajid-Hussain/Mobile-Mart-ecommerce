@@ -49,6 +49,7 @@ func (u *InventotyHandler) AddInventory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
+
 	sellerID, _ := strconv.ParseUint(sellerid, 16, 16)
 	inventoryDetails.SellerID = uint(sellerID)
 	fmt.Println("****", sellerID)
@@ -248,8 +249,10 @@ func (u *InventotyHandler) GetSellerInventory(c *gin.Context) {
 // @Router			/seller/products [patch]
 func (u *InventotyHandler) EditInventory(c *gin.Context) {
 
-	inventoryID := c.Query("productid")
 	var edittedInventory requestmodel.EditInventory
+
+	edittedInventory.ID = c.Query("productid")
+	edittedInventory.SellerID = c.MustGet("SellerID").(string)
 
 	if err := c.BindJSON(&edittedInventory); err != nil {
 		fmt.Println(err)
@@ -258,7 +261,7 @@ func (u *InventotyHandler) EditInventory(c *gin.Context) {
 		return
 	}
 
-	updatedInverntory, err := u.userCase.EditInventory(&edittedInventory, inventoryID)
+	updatedInverntory, err := u.userCase.EditInventory(&edittedInventory)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
@@ -266,7 +269,6 @@ func (u *InventotyHandler) EditInventory(c *gin.Context) {
 		finalReslt := response.Responses(http.StatusOK, "", updatedInverntory, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
-
 }
 
 func (u *InventotyHandler) FilterProduct(c *gin.Context) {

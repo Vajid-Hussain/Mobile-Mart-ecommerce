@@ -113,22 +113,22 @@ func (d *inventoryRepository) GetSellerInventory(offSet int, limit int, sellerID
 func (d *inventoryRepository) UpdateInventory(inventory *requestmodel.EditInventory) (*responsemodel.InventoryRes, error) {
 	var updatedData responsemodel.InventoryRes
 
-	fmt.Println(inventory)
+	// query := `UPDATE inventories
+	// SET productname = ?, description = ?, brand_id = ?, category_id = ?,
+	// 	mrp = ?, saleprice = ?, units = ?, os = ?, cellular_technology = ?,
+	// 	ram = ?, screensize = ?, batterycapacity = ?, processor = ?
+	// WHERE id = ? RETURNING *;`
 
-	query := `UPDATE inventories 
-	SET productname = ?, description = ?, brand_id = ?, category_id = ?, 
-		mrp = ?, saleprice = ?, units = ?, os = ?, cellular_technology = ?, 
-		ram = ?, screensize = ?, batterycapacity = ?, processor = ?
-	WHERE id = ? RETURNING *;`
+	// result := d.DB.Raw(query,
+	// 	inventory.Productname, inventory.Description, inventory.BrandID, inventory.CategoryID,
+	// 	inventory.Mrp, inventory.Saleprice, inventory.Units,
+	// 	inventory.Os, inventory.CellularTechnology, inventory.Ram,
+	// 	inventory.Screensize, inventory.Batterycapacity, inventory.Processor,
+	// 	inventory.ID,
+	// ).Scan(&updatedData)
 
-	result := d.DB.Raw(query,
-		inventory.Productname, inventory.Description, inventory.BrandID, inventory.CategoryID,
-		inventory.Mrp, inventory.Saleprice, inventory.Units,
-		inventory.Os, inventory.CellularTechnology, inventory.Ram,
-		inventory.Screensize, inventory.Batterycapacity, inventory.Processor,
-		inventory.ID,
-	).Scan(&updatedData)
-
+	query := "UPDATE inventories SET mrp=?, discount= ?, saleprice= ?, units= ? WHERE id=? RETURNING*;"
+	result := d.DB.Raw(query, inventory.Mrp, inventory.Discount, inventory.Saleprice, inventory.Units, inventory.ID).Scan(&updatedData)
 	if result.Error != nil {
 		return nil, errors.New("inventory is not updated into database")
 	}
@@ -142,8 +142,7 @@ func (d *inventoryRepository) GetProductFilter(criterion *requestmodel.FilterCri
 	fmt.Println("##", criterion.MinPrice)
 	var sortedProduct []responsemodel.FilterProduct
 	fmt.Println("*****", criterion)
-	// query := "SELECT inventories.id AS productID, * FROM inventories INNER JOIN categories ON categories.id= inventories.category_id INNER JOIN brands ON brands.id= inventories.brand_id WHERE categories.name ILIKE '%" + criterion.Category + "%' AND brands.name ILIKE '%" + criterion.Brand + "%' AND inventories.productname ILIKE '%" + criterion.Product + "%'  AND ($1 = '0' OR $1 < inventories.saleprice)      "
-	// result := d.DB.Raw(query, criterion.MinPrice).Scan(&sortedProduct)
+
 	query := "SELECT inventories.id AS productID, * FROM inventories INNER JOIN categories ON categories.id= inventories.category_id INNER JOIN brands ON brands.id= inventories.brand_id WHERE categories.name ILIKE '%' || $1 || '%' AND brands.name ILIKE '%' || $2 || '%' AND inventories.productname ILIKE '%' || $3 || '%' AND ($4 = 0 OR $4 < inventories.saleprice AND ($5 = 0 OR $5 >= inventories.saleprice))"
 	result := d.DB.Raw(query, criterion.Category, criterion.Brand, criterion.Product, criterion.MinPrice, criterion.MaxPrice).Scan(&sortedProduct)
 	if result.Error != nil {

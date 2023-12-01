@@ -23,21 +23,23 @@ type InventoryReq struct {
 }
 
 type EditInventory struct {
-	ID                 uint    `json:"id" validate:"required"`
-	Productname        string  `json:"productname" validate:"required,min=3,max=100"`
-	Description        string  `json:"description" validate:"required,min=5"`
-	BrandID            uint    `json:"brandID" validate:"required"`
-	CategoryID         uint    `json:"categoryID" validate:"required"`
-	SellerID           string  `json:"cellerID" validate:"required"`
-	Mrp                uint    `json:"mrp" validate:"required,min=0"`
-	Discount           uint    `form:"discount" validate:"required,min=0,max=99,number"`
-	Units              uint64  `json:"units" validate:"required,min=0"`
-	Os                 string  `json:"os" validate:"required"`
-	CellularTechnology string  `json:"cellularTechnology" validate:"required"`
-	Ram                uint    `json:"ram" validate:"required,min=0"`
-	Screensize         float64 `json:"screensize" validate:"required,min=0"`
-	Batterycapacity    uint    `json:"batterycapacity" validate:"required,min=500"`
-	Processor          string  `json:"processor" validate:"required"`
+	ID        string `json:"id" validate:"required"`
+	Mrp       uint   `json:"mrp" validate:"required,min=0"`
+	Discount  uint   `form:"discount" validate:"required,min=0,max=99,number"`
+	Saleprice uint   `form:"saleprice"`
+	Units     uint64 `json:"units" validate:"required,min=0"`
+	SellerID  string `json:"-"`
+	// Productname        string  `json:"productname" validate:"required,min=3,max=100"`
+	// Description        string  `json:"description" validate:"required,min=5"`
+	// BrandID            uint    `json:"brandID" validate:"required"`
+	// CategoryID         uint    `json:"categoryID" validate:"required"`
+	// SellerID           string  `json:"cellerID" validate:"required"`
+	// Os                 string  `json:"os" validate:"required"`
+	// CellularTechnology string  `json:"cellularTechnology" validate:"required"`
+	// Ram                uint    `json:"ram" validate:"required,min=0"`
+	// Screensize         float64 `json:"screensize" validate:"required,min=0"`
+	// Batterycapacity    uint    `json:"batterycapacity" validate:"required,min=500"`
+	// Processor          string  `json:"processor" validate:"required"`
 }
 type FilterCriterion struct {
 	Category string `json:"category" validate:"alpha"`

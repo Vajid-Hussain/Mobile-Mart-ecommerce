@@ -131,7 +131,7 @@ func (d *orderRepository) GetOrderPrice(orderID string) (uint, error) {
 func (d *orderRepository) UpdateUserOrderCancel(orderID string, userID string) (*responsemodel.OrderDetails, error) {
 
 	var cancelOrder responsemodel.OrderDetails
-	query := "UPDATE orders SET order_status= 'cancel' WHERE id=? AND user_id= ? AND order_status='processing' RETURNING*"
+	query := "UPDATE orders SET order_status= 'cancelled', payment_status= 'cancelled' WHERE id=? AND user_id= ? AND order_status='processing' RETURNING*"
 	result := d.DB.Raw(query, orderID, userID).Scan(&cancelOrder)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while order is cancel")
