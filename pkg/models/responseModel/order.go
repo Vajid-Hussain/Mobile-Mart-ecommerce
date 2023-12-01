@@ -25,6 +25,25 @@ type OrderDetails struct {
 	PaymentStatus string `json:"paymentStatu,omitempty"`
 }
 
+type OrderProducts struct {
+	ID       string `json:"id"`
+	SellerID string `json:"sellerID"`
+	OrderID  string `json:"orderID"`
+	Quantity uint   `json:"quantity"`
+	Price    uint   `json:"price"`
+}
+
+type OrderSuccess struct {
+	ID            string `json:"id"`
+	UserID        string `gorm:"column:user_id" json:"userid"`
+	Address       string `gorm:"column:address_id" json:"address_id"`
+	Payment       string `gorm:"column:payment_method" json:"payment"`
+	TotalPrice    uint   `json:"payable_amount"`
+	OrderDate     string `json:"orderDate"`
+	Delivery_date string `json:"deliveryDate,omitempty"`
+	Orders        []OrderProducts
+}
+
 type SingleOrder struct {
 	Productname  string `json:"productname" validate:"required,min=3,max=100"`
 	ID           string `gorm:"column:id" json:"orderID" validate:"required,number"`
@@ -43,14 +62,6 @@ type SingleOrder struct {
 	Pincode      string `json:"pincode" validate:"min=6"`
 	LandMark     string `json:"landmark" validate:"required"`
 	PhoneNumber  string `json:"phoneNumber" validate:"required,len=10,number"`
-}
-
-type OrderSuccess struct {
-	UserID     string `gorm:"column:user_id" json:"userid"`
-	Address    string `gorm:"column:address_id" json:"address_id"`
-	Payment    string `gorm:"column:payment_method" json:"payment"`
-	TotalWorth uint   `json:"payable_amount"`
-	Orders     []OrderDetails
 }
 
 type SalesReport struct {

@@ -24,15 +24,17 @@ func (d *orderRepository) CreateOrder(order *requestmodel.Order) (*responsemodel
 
 	today := time.Now().Format("2006-01-02 15:04:05")
 	var orderSucess = &responsemodel.OrderSuccess{}
-	var orderData responsemodel.OrderDetails
+	// var orderData responsemodel.OrderDetails
 	var result *gorm.DB
 
-	for _, data := range order.Cart {
-		query := `INSERT INTO orders (user_id, address_id, payment_method, inventory_id, seller_id, price, quantity,  order_date, order_status,  order_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING*`
-		result = d.DB.Raw(query, order.UserID, order.Address, order.Payment, data.InventoryID, data.SellerID, data.Price, data.Quantity, today, order.OrderStatus, order.OrderID).Scan(&orderData)
-		orderSucess.TotalWorth += orderData.Price
-		orderSucess.Orders = append(orderSucess.Orders, orderData)
-	}
+	query := "INSERT INTO orders (user_id, address_id, payment_method, total_price,  order_date, order_status,  order_id) VALUES(?, ?, ?, ?, ?, ?, ?) RETURNING*"
+	d.DB.Raw(query, order.UserID, order.Address, order.Payment, order.FinalPrice, today, order.OrderStatus, order.OrderID)
+	// for _, data := range order.Cart {
+	// 	query := `INSERT INTO orders (user_id, address_id, payment_method, inventory_id, seller_id, price, quantity,  order_date, order_status,  order_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING*`
+	// 	result = d.DB.Raw(query, order.UserID, order.Address, order.Payment, data.InventoryID, data.SellerID, data.Price, data.Quantity, today, order.OrderStatus, order.OrderID).Scan(&orderData)
+	// 	orderSucess.TotalWorth += orderData.Price
+	// 	orderSucess.Orders = append(orderSucess.Orders, orderData)
+	// }
 	if result.Error != nil {
 		return nil, errors.New("face some issue while creating order")
 	}
@@ -41,6 +43,15 @@ func (d *orderRepository) CreateOrder(order *requestmodel.Order) (*responsemodel
 		return nil, resCustomError.ErrNoRowAffected
 	}
 	return orderSucess, nil
+}
+
+func (d *orderRepository) AddProdutToOrderProductTable(order *requestmodel.Order, orderDetails *responsemodel.OrderSuccess) (*responsemodel.OrderSuccess, error) {
+
+	var orderProduct 
+	for i, data := range order.Cart {
+		query := "INSERT INTO order_product (order_id, inventory_id, seller_id, price, quantity) VALUES (?, ?, ?, ?, ?) RETURING*"
+		d.DB.Raw(query, order.ID, data.InventoryID, data.SellerID, data.Quantity, data.Price).Scan(&)
+	}
 }
 
 func (d *orderRepository) GetAddressExist(userID, addressesID string) error {
