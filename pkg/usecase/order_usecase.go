@@ -16,11 +16,12 @@ type orderUseCase struct {
 	repo             interfaces.IOrderRepository
 	cartrepo         interfaces.ICartRepository
 	sellerRepository interfaces.ISellerRepo
+	paymentRepo      interfaces.IPaymentRepository
 	razopay          *config.Razopay
 }
 
-func NewOrderUseCase(repository interfaces.IOrderRepository, cartrepository interfaces.ICartRepository, sellerRepository interfaces.ISellerRepo, razopay *config.Razopay) interfaceUseCase.IOrderUseCase {
-	return &orderUseCase{repo: repository, cartrepo: cartrepository, sellerRepository: sellerRepository, razopay: razopay}
+func NewOrderUseCase(repository interfaces.IOrderRepository, cartrepository interfaces.ICartRepository, sellerRepository interfaces.ISellerRepo, paymentRepository interfaces.IPaymentRepository, razopay *config.Razopay) interfaceUseCase.IOrderUseCase {
+	return &orderUseCase{repo: repository, cartrepo: cartrepository, sellerRepository: sellerRepository, paymentRepo: paymentRepository, razopay: razopay}
 }
 
 func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order, error) {
@@ -129,14 +130,17 @@ func (r *orderUseCase) CancelUserOrder(orderItemID string, userID string) (*resp
 		return nil, err
 	}
 
-	// paymentType, err := r.repo.GetPaymentType(orderItemID)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	paymentType, err := r.repo.GetPaymentType(orderItemID)
+	if err != nil {
+		return nil, err
+	}
 
-	// if paymentType == "ONLINE" {
-
-	// }
+	if paymentType == "ONLINE" {
+		_, err := r.paymentRepo.CreateOrUpdateWallet(userID, orderDetails.Price)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	units, err := r.repo.GetInventoryUnits(orderDetails.InventoryID)
 	if err != nil {

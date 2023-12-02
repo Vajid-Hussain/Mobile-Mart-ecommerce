@@ -28,6 +28,7 @@ type OrderDetails struct {
 	Price         uint   `json:"price"`
 	OrderStatus   string `json:"orderstatus,omitempty"`
 	PaymentStatus string `json:"paymentStatu,omitempty"`
+	WalletBalance uint   `json:"walletBelance,omitempty"`
 }
 
 type OrderProducts struct {

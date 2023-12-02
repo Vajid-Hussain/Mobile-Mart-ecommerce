@@ -21,7 +21,8 @@ func NewServerHttp(user *handler.UserHandler,
 	category *handler.CategoryHandler,
 	inventory *handler.InventotyHandler,
 	cart *handler.CartHandler,
-	order *handler.OrderHandler) *ServerHttp {
+	order *handler.OrderHandler,
+	payment *handler.PaymentHandler) *ServerHttp {
 	engin := gin.New()
 	engin.Use(gin.Logger())
 
@@ -33,7 +34,7 @@ func NewServerHttp(user *handler.UserHandler,
 
 	routes.UserRoutes(engin.Group("/"), user, inventory, cart, order)
 	routes.SellerRoutes(engin.Group("/seller"), seller, inventory, order)
-	routes.AdminRoutes(engin.Group("/admin"), admin, seller, user, category)
+	routes.AdminRoutes(engin.Group("/admin"), admin, seller, user, category, payment)
 
 	return &ServerHttp{engin: engin}
 }
