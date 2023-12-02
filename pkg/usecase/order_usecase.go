@@ -75,11 +75,12 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		if err != nil {
 			return nil, err
 		}
-		order.OrderID = orderID
+		order.OrderIDRazopay = orderID
 	}
 
 	orderResponse, err := r.repo.CreateOrder(order)
-	if err != nil {
+	if err != nil { // secret := "qvxbhiwTJZLHHE3tNQQv8Mty"
+
 		return nil, err
 	}
 
@@ -116,24 +117,28 @@ func (r *orderUseCase) SingleOrder(orderID string, userID string) (*responsemode
 	return singleOrder, nil
 }
 
-func (r *orderUseCase) CancelUserOrder(orderID string, userID string) (*responsemodel.OrderDetails, error) {
-	fmt.Println("**", orderID, userID)
-	err := r.repo.GetOrderExistOfUser(orderID, userID)
+func (r *orderUseCase) CancelUserOrder(orderItemID string, userID string) (*responsemodel.OrderDetails, error) {
+
+	err := r.repo.GetOrderExistOfUser(orderItemID, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	orderDetails, err := r.repo.UpdateUserOrderCancel(orderID, userID)
+	orderDetails, err := r.repo.UpdateUserOrderCancel(orderItemID, userID)
 	if err != nil {
 		return nil, err
 	}
+
+	// paymentType, err := r.repo.GetPaymentType(orderItemID)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// if paymentType == "ONLINE" {
+
+	// }
 
 	units, err := r.repo.GetInventoryUnits(orderDetails.InventoryID)
-	if err != nil {
-		return nil, err
-	}
-
-	err = r.repo.UpdateDeliveryTimeByUser(userID, orderID)
 	if err != nil {
 		return nil, err
 	}

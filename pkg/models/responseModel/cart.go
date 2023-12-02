@@ -9,7 +9,6 @@ type CartInventory struct {
 	Saleprice   uint   `json:"saleprice" validate:"required,min=0,number"`
 	Price       uint   `json:"mrp" gorm:"column:mrp"`
 	Units       uint64 `json:"available units" validate:"required,min=0,number"`
-	ImageURL    string `json:"imageURL"`
 }
 
 type UserCart struct {

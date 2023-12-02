@@ -8,7 +8,7 @@ import (
 )
 
 func Razopay(totalPrice uint, razopaykey, razopaysecret string) (string, error) {
-	client := razorpay.NewClient("rzp_test_TvFtCr7NADxnEC", "qvxbhiwTJZLHHE3tNQQv8Mty")
+	client := razorpay.NewClient(razopaykey, razopaysecret)
 
 	data := map[string]interface{}{
 		"amount":   totalPrice * 100,
@@ -30,7 +30,6 @@ func VerifyPayment(orderID, paymentID, signature, razopaySecret string) bool {
 		"razorpay_payment_id": paymentID,
 	}
 
-	// secret := "qvxbhiwTJZLHHE3tNQQv8Mty"
 	result := utils.VerifyPaymentSignature(params, signature, razopaySecret)
 	fmt.Println("*****", result)
 	return result
