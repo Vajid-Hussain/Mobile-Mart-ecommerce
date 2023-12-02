@@ -1,12 +1,15 @@
 package responsemodel
 
+import "time"
+
 type OrderShowcase struct {
 	Productname string `json:"productname" validate:"required,min=3,max=100"`
-	ID          string `gorm:"column:id" json:"orderID" validate:"required,number"`
+	ID          string `gorm:"column:order_id" json:"orderID" validate:"required,number"`
 	UserID      string `gorm:"column:user_id" json:"userid"`
 	SellerID    string `json:"seller id" gorm:"column:seller_id"`
 	InventoryID string `gorm:"column:inventory_id" json:"productid"`
 	Price       uint   `json:"total-amout"`
+	Saleprice   uint   `json:"singleUnitCost"`
 	OrderStatus string `json:"orderstatus,omitempty"`
 	Quantity    uint   `json:"quantity"`
 	ImageURL    string `json:"imageURL"`
@@ -26,33 +29,37 @@ type OrderDetails struct {
 }
 
 type OrderProducts struct {
-	ID       string `json:"id"`
-	SellerID string `json:"sellerID"`
-	OrderID  string `json:"orderID"`
-	Quantity uint   `json:"quantity"`
-	Price    uint   `json:"price"`
+	OrderID     string `json:"orderID"`
+	InventoryID string `json:"productID"`
+	SellerID    string `json:"sellerID"`
+	Quantity    uint   `json:"quantity"`
+	Price       uint   `json:"price"`
+	ImageURL    string `json:"imageURL"`
 }
 
-type OrderSuccess struct {
-	ID            string `json:"id"`
-	UserID        string `gorm:"column:user_id" json:"userid"`
-	Address       string `gorm:"column:address_id" json:"address_id"`
-	Payment       string `gorm:"column:payment_method" json:"payment"`
-	TotalPrice    uint   `json:"payable_amount"`
-	OrderDate     string `json:"orderDate"`
-	Delivery_date string `json:"deliveryDate,omitempty"`
-	Orders        []OrderProducts
+type Order struct {
+	ID             string    `json:"id"`
+	UserID         string    `gorm:"column:user_id" json:"userid"`
+	Address        string    `gorm:"column:address_id" json:"address_id"`
+	Payment        string    `gorm:"column:payment_method" json:"payment"`
+	TotalPrice     uint      `json:"payable_amount"`
+	OrderDate      time.Time `json:"orderDate"`
+	DeliveryDate   string    `json:"delivaryDate,omitempty"`
+	OrderStatus    string    `json:"omitempty"`
+	PaymentStatus  string    `json:"paymentStatus,omitempty"`
+	OrderIDRazopay string    `json:"razopayOrderID,omitempty"`
+	Orders         []OrderProducts
 }
 
 type SingleOrder struct {
 	Productname  string `json:"productname" validate:"required,min=3,max=100"`
-	ID           string `gorm:"column:id" json:"orderID" validate:"required,number"`
-	SingleUnit   uint   `json:"Price of a unit" gorm:"column:saleprice"`
-	Price        uint   `json:"total-amout" `
+	ID           string `gorm:"column:order_id" json:"orderID" validate:"required,number"`
+	SingleUnit   uint   `json:"PriceOfAUnit" gorm:"column:saleprice"`
+	Price        uint   `json:"totalAmout" `
 	Quantity     uint   `json:"quantity"`
-	OrderStatus  string `json:"order_status"`
+	OrderStatus  string `json:"orderStatus"`
 	OrderDate    string `json:"orderdate"`
-	DeliveryDate string `json:"delivary_date,omitempty"`
+	DeliveryDate string `json:"delivaryDate,omitempty"`
 	ImageURL     string `json:"imageURL"`
 	FirstName    string `json:"firstName" validate:"required"`
 	LastName     string `json:"lastName,omitempty"`

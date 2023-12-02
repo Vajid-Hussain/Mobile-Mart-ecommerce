@@ -20,15 +20,14 @@ func NewOrderRepository(db *gorm.DB) interfaces.IOrderRepository {
 	return &orderRepository{DB: db}
 }
 
-func (d *orderRepository) CreateOrder(order *requestmodel.Order) (*responsemodel.OrderSuccess, error) {
+func (d *orderRepository) CreateOrder(order *requestmodel.Order) (*responsemodel.Order, error) {
 
 	today := time.Now().Format("2006-01-02 15:04:05")
-	var orderSucess = &responsemodel.OrderSuccess{}
+	var orderSucess = &responsemodel.Order{}
 	// var orderData responsemodel.OrderDetails
-	var result *gorm.DB
 
-	query := "INSERT INTO orders (user_id, address_id, payment_method, total_price,  order_date, order_status,  order_id) VALUES(?, ?, ?, ?, ?, ?, ?) RETURNING*"
-	d.DB.Raw(query, order.UserID, order.Address, order.Payment, order.FinalPrice, today, order.OrderStatus, order.OrderID)
+	query := "INSERT INTO orders (user_id, address_id, payment_method, total_price,  order_date, order_status,  order_id_razopay) VALUES(?, ?, ?, ?, ?, ?, ?) RETURNING*"
+	result := d.DB.Raw(query, order.UserID, order.Address, order.Payment, order.FinalPrice, today, order.OrderStatus, order.OrderID).Scan(&orderSucess)
 	// for _, data := range order.Cart {
 	// 	query := `INSERT INTO orders (user_id, address_id, payment_method, inventory_id, seller_id, price, quantity,  order_date, order_status,  order_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING*`
 	// 	result = d.DB.Raw(query, order.UserID, order.Address, order.Payment, data.InventoryID, data.SellerID, data.Price, data.Quantity, today, order.OrderStatus, order.OrderID).Scan(&orderData)
@@ -45,13 +44,16 @@ func (d *orderRepository) CreateOrder(order *requestmodel.Order) (*responsemodel
 	return orderSucess, nil
 }
 
-func (d *orderRepository) AddProdutToOrderProductTable(order *requestmodel.Order, orderDetails *responsemodel.OrderSuccess) (*responsemodel.OrderSuccess, error) {
+func (d *orderRepository) AddProdutToOrderProductTable(order *requestmodel.Order, orderDetails *responsemodel.Order) (*responsemodel.Order, error) {
 
-	var orderProduct 
-	for i, data := range order.Cart {
-		query := "INSERT INTO order_product (order_id, inventory_id, seller_id, price, quantity) VALUES (?, ?, ?, ?, ?) RETURING*"
-		d.DB.Raw(query, order.ID, data.InventoryID, data.SellerID, data.Quantity, data.Price).Scan(&)
+	var orderProduct responsemodel.OrderProducts
+
+	for _, data := range order.Cart {
+		query := "INSERT INTO order_products (order_id, inventory_id, seller_id, price, quantity, image_url) VALUES (?, ?, ?, ?, ?,? ) RETURNING*"
+		d.DB.Raw(query, orderDetails.ID, data.InventoryID, data.SellerID, data.Price, data.Quantity, data.ImageURL).Scan(&orderProduct)
+		orderDetails.Orders = append(orderDetails.Orders, orderProduct)
 	}
+	return orderDetails, nil
 }
 
 func (d *orderRepository) GetAddressExist(userID, addressesID string) error {
@@ -70,7 +72,7 @@ func (d *orderRepository) GetAddressExist(userID, addressesID string) error {
 func (d *orderRepository) GetOrderShowcase(userID string) (*[]responsemodel.OrderShowcase, error) {
 
 	var OrderShowcase []responsemodel.OrderShowcase
-	query := "SELECT * FROM inventories INNER JOIN  orders ON orders.inventory_id= inventories.id WHERE orders.user_id= ? AND orders.order_status!='pending' ORDER BY orders.id DESC"
+	query := "SELECT * FROM orders INNER JOIN order_products ON orders.id=order_products.order_id INNER JOIN inventories ON inventories.id=order_products.inventory_id WHERE orders.user_id=? ORDER BY orders.id DESC"
 	result := d.DB.Raw(query, userID).Scan(&OrderShowcase)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while order showcase")
@@ -85,7 +87,7 @@ func (d *orderRepository) GetOrderShowcase(userID string) (*[]responsemodel.Orde
 func (d *orderRepository) GetSingleOrder(orderID string, userID string) (*responsemodel.SingleOrder, error) {
 
 	var OrderShowcase *responsemodel.SingleOrder
-	query := "SELECT * FROM inventories INNER JOIN  orders ON orders.inventory_id= inventories.id INNER JOIN addresses ON addresses.id=orders.address_id WHERE orders.id= ? AND user_id= ?"
+	query := "SELECT * FROM orders INNER JOIN order_products ON orders.id=order_products.order_id INNER JOIN inventories ON inventories.id=order_products.inventory_id INNER JOIN addresses ON addresses.id= orders.address_id WHERE order_products.id=? AND orders.user_id=?"
 	result := d.DB.Raw(query, orderID, userID).Scan(&OrderShowcase)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while get single order")

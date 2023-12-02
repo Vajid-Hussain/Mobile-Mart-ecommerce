@@ -6,7 +6,7 @@ import (
 )
 
 type IOrderRepository interface {
-	CreateOrder(*requestmodel.Order) (*responsemodel.OrderSuccess, error)
+	CreateOrder(*requestmodel.Order) (*responsemodel.Order, error)
 	GetOrderShowcase(string) (*[]responsemodel.OrderShowcase, error)
 	GetSingleOrder(string, string) (*responsemodel.SingleOrder, error)
 	GetInventoryUnits(string) (*uint, error)
@@ -16,6 +16,7 @@ type IOrderRepository interface {
 	UpdateDeliveryTimeByUser(string, string) error
 	GetOrderExistOfUser(string, string) error
 	GetAddressExist(string, string) error
+	AddProdutToOrderProductTable(*requestmodel.Order, *responsemodel.Order) (*responsemodel.Order, error)
 
 	GetSellerOrders(string, string) (*[]responsemodel.OrderDetails, error)
 	UpdateOrderDelivered(string, string) (*responsemodel.OrderDetails, error)

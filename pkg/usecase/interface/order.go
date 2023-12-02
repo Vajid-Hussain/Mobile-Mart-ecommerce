@@ -6,7 +6,7 @@ import (
 )
 
 type IOrderUseCase interface {
-	NewOrder(*requestmodel.Order) (*responsemodel.OrderSuccess, error)
+	NewOrder(*requestmodel.Order) (*responsemodel.Order, error)
 	OrderShowcase(string) (*[]responsemodel.OrderShowcase, error)
 	SingleOrder(string, string) (*responsemodel.SingleOrder, error)
 	CancelUserOrder(string, string) (*responsemodel.OrderDetails, error)

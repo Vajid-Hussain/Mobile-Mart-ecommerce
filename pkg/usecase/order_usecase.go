@@ -23,7 +23,7 @@ func NewOrderUseCase(repository interfaces.IOrderRepository, cartrepository inte
 	return &orderUseCase{repo: repository, cartrepo: cartrepository, sellerRepository: sellerRepository, razopay: razopay}
 }
 
-func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.OrderSuccess, error) {
+func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order, error) {
 
 	if order.Payment == "COD" {
 		order.OrderStatus = "processing"
@@ -83,6 +83,10 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		return nil, err
 	}
 
+	OrderSuccessDetails, err := r.repo.AddProdutToOrderProductTable(order, orderResponse)
+	if err != nil {
+		return nil, err
+	}
 	// for _, data := range order.Cart {
 	// 	err = r.cartrepo.DeleteInventoryFromCart(data.InventoryID, order.UserID)
 	// 	if err != nil {
@@ -90,10 +94,10 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 	// 	}
 	// }
 
-	orderResponse.UserID = order.UserID
-	orderResponse.Address = order.Address
-	orderResponse.Payment = order.Payment
-	return orderResponse, nil
+	// orderResponse.UserID = order.UserID
+	// orderResponse.Address = order.Address
+	// orderResponse.Payment = order.Payment
+	return OrderSuccessDetails, nil
 }
 
 func (r *orderUseCase) OrderShowcase(userID string) (*[]responsemodel.OrderShowcase, error) {
