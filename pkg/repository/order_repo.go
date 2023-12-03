@@ -25,8 +25,8 @@ func (d *orderRepository) CreateOrder(order *requestmodel.Order) (*responsemodel
 	var orderSucess = &responsemodel.Order{}
 	// var orderData responsemodel.OrderDetails
 
-	query := "INSERT INTO orders (user_id, address_id, payment_method, total_price, order_id_razopay) VALUES(?, ?, ?, ?, ?) RETURNING*"
-	result := d.DB.Raw(query, order.UserID, order.Address, order.Payment, order.FinalPrice, order.OrderIDRazopay).Scan(&orderSucess)
+	query := "INSERT INTO orders (user_id, address_id, payment_method, order_id_razopay) VALUES(?, ?, ?, ?) RETURNING*"
+	result := d.DB.Raw(query, order.UserID, order.Address, order.Payment, order.OrderIDRazopay).Scan(&orderSucess)
 	// for _, data := range order.Cart {
 	// 	query := `INSERT INTO orders (user_id, address_id, payment_method, inventory_id, seller_id, price, quantity,  order_date, order_status,  order_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING*`
 	// 	result = d.DB.Raw(query, order.UserID, order.Address, order.Payment, data.InventoryID, data.SellerID, data.Price, data.Quantity, today, order.OrderStatus, order.OrderID).Scan(&orderData)
@@ -49,8 +49,8 @@ func (d *orderRepository) AddProdutToOrderProductTable(order *requestmodel.Order
 	today := time.Now().Format("2006-01-02 15:04:05")
 
 	for _, data := range order.Cart {
-		query := "INSERT INTO order_products (order_id, inventory_id, seller_id, quantity, order_date, order_status) VALUES (?, ?, ?, ?, ?,?, ?) RETURNING*"
-		d.DB.Raw(query, orderDetails.ID, data.InventoryID, data.SellerID, data.Quantity, today, order.OrderStatus).Scan(&orderProduct)
+		query := "INSERT INTO order_products (order_id, inventory_id, seller_id, quantity, order_date, order_status, price) VALUES (?, ?, ?, ?, ?,?, ?) RETURNING*"
+		d.DB.Raw(query, orderDetails.ID, data.InventoryID, data.SellerID, data.Quantity, today, order.OrderStatus, data.Price).Scan(&orderProduct)
 		orderDetails.Orders = append(orderDetails.Orders, orderProduct)
 	}
 	return orderDetails, nil
@@ -70,15 +70,14 @@ func (d *orderRepository) GetAddressExist(userID, addressesID string) error {
 }
 
 func (d *orderRepository) GetOrderShowcase(userID string) (*[]responsemodel.OrderShowcase, error) {
-
+	fmt.Println("***", userID)
 	var OrderShowcase []responsemodel.OrderShowcase
-	query := "SELECT * FROM orders INNER JOIN order_products ON orders.id=order_products.item_id INNER JOIN inventories ON inventories.id=order_products.inventory_id WHERE orders.user_id=? ORDER BY order_products.item_id DESC"
+	query := "SELECT * FROM orders INNER JOIN order_products ON orders.id=order_products.order_id INNER JOIN inventories ON inventories.id=order_products.inventory_id WHERE orders.user_id=? ORDER BY order_products.item_id DESC "
 	result := d.DB.Raw(query, userID).Scan(&OrderShowcase)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while order showcase")
 	}
 	if result.RowsAffected == 0 {
-
 		return nil, resCustomError.ErrNoRowAffected
 	}
 	return &OrderShowcase, nil
@@ -87,13 +86,12 @@ func (d *orderRepository) GetOrderShowcase(userID string) (*[]responsemodel.Orde
 func (d *orderRepository) GetSingleOrder(orderID string, userID string) (*responsemodel.SingleOrder, error) {
 
 	var OrderShowcase *responsemodel.SingleOrder
-	query := "SELECT * FROM orders INNER JOIN order_products ON orders.id=order_products.order_id INNER JOIN inventories ON inventories.id=order_products.inventory_id INNER JOIN addresses ON addresses.id= orders.address_id WHERE order_products.item_id=? AND orders.user_id=?"
+	query := "SELECT * FROM orders INNER JOIN order_products ON orders.id=order_products.order_id INNER JOIN inventories ON inventories.id=order_products.inventory_id INNER JOIN addresses ON addresses.id= orders.address_id WHERE order_products.item_id=? AND orders.user_id=? "
 	result := d.DB.Raw(query, orderID, userID).Scan(&OrderShowcase)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while get single order")
 	}
 	if result.RowsAffected == 0 {
-
 		return nil, resCustomError.ErrNoRowAffected
 	}
 	return OrderShowcase, nil
@@ -172,20 +170,6 @@ func (d *orderRepository) UpdateUserOrderCancel(orderItemID string, userID strin
 	return &cancelOrder, nil
 }
 
-func (d *orderRepository) UpdateOnlinePaymentSucess(orderID string) (*[]responsemodel.OrderDetails, error) {
-
-	var orders []responsemodel.OrderDetails
-	query := "UPDATE orders SET payment_status='success', order_status='processing' WHERE order_id = ? RETURNING*"
-	result := d.DB.Raw(query, orderID).Scan(&orders)
-	if result.Error != nil {
-		return nil, errors.New("face some issue while update order status and payment status on verify online payment success")
-	}
-	if result.RowsAffected == 0 {
-		return nil, resCustomError.ErrProductOrderCompleted
-	}
-	return &orders, nil
-}
-
 func (d *orderRepository) UpdateDeliveryTimeByUser(userID string, orderItemID string) error {
 
 	delivaryTime := time.Now().Format("2006-01-02 15:04:05")
@@ -223,7 +207,7 @@ func (d *orderRepository) GetOrderExistOfUser(orderItemID, userID string) error 
 func (d *orderRepository) GetSellerOrders(sellerID string, remainingQuery string) (*[]responsemodel.OrderDetails, error) {
 
 	var orderList *[]responsemodel.OrderDetails
-	query := "SELECT * FROM orders WHERE seller_id=? AND order_status" + remainingQuery
+	query := "SELECT * FROM orders INNER JOIN order_products ON orders.id= order_products.order_id WHERE seller_id=? AND order_status" + remainingQuery
 	result := d.DB.Raw(query, sellerID).Scan(&orderList)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while get user orders")
@@ -234,12 +218,12 @@ func (d *orderRepository) GetSellerOrders(sellerID string, remainingQuery string
 	return orderList, nil
 }
 
-func (d *orderRepository) UpdateDeliveryTime(sellerID string, orderID string) error {
+func (d *orderRepository) UpdateDeliveryTime(sellerID string, orderItemID string) error {
 
 	delivaryTime := time.Now().Format("2006-01-02 15:04:05")
 
-	query := "UPDATE orders SET delivery_date= ? WHERE seller_id= ? AND id = ?"
-	result := d.DB.Exec(query, delivaryTime, sellerID, orderID)
+	query := "UPDATE order_products SET end_date= ? FROM orders WHERE orders.id= order_products.order_id AND seller_id= ? AND order_products.item_id= ? AND order_status='processing'"
+	result := d.DB.Exec(query, delivaryTime, sellerID, orderItemID)
 	if result.Error != nil {
 		return errors.New("face some issue while updating delivary time")
 	}
@@ -249,28 +233,28 @@ func (d *orderRepository) UpdateDeliveryTime(sellerID string, orderID string) er
 	return nil
 }
 
-func (d *orderRepository) UpdateOrderDelivered(sellerID string, orderID string) (*responsemodel.OrderDetails, error) {
+func (d *orderRepository) UpdateOrderDelivered(sellerID string, orderItemID string) (*responsemodel.OrderDetails, error) {
 	var deliveryDetails responsemodel.OrderDetails
-	query := "UPDATE orders SET order_status = 'delivered' WHERE seller_id= ? AND id= ? AND order_status='processing' RETURNING*"
-	result := d.DB.Raw(query, sellerID, orderID).Scan(&deliveryDetails)
+	query := "UPDATE order_products SET order_status='delivered' FROM orders WHERE orders.id= order_products.order_id AND seller_id= ? AND order_products.item_id= ? RETURNING*"
+	result := d.DB.Raw(query, sellerID, orderItemID).Scan(&deliveryDetails)
 	if result.Error != nil {
-		return nil, errors.New("face some issue while order is delevered")
+		return nil, errors.New("face some issue while update order delivered")
 	}
 	if result.RowsAffected == 0 {
-		return nil, resCustomError.ErrProductOrderCompleted
+		return nil, resCustomError.ErrNoRowAffected
 	}
 	return &deliveryDetails, nil
 }
 
-func (d *orderRepository) UpdateOrderPaymetSuccess(sellerID string, orderID string) error {
+func (d *orderRepository) UpdateOrderPaymetSuccess(sellerID string, orderItemID string) error {
 
-	query := "UPDATE orders SET payment_status='success' WHERE seller_id= ? AND id= ? AND order_status='delivered'"
-	result := d.DB.Exec(query, sellerID, orderID)
+	query := "UPDATE order_products SET payment_status = 'success' FROM orders WHERE orders.id= order_products.order_id AND seller_id= ? AND order_products.item_id= ?"
+	result := d.DB.Exec(query, sellerID, orderItemID)
 	if result.Error != nil {
 		return errors.New("face some issue while update payment status success")
 	}
 	if result.RowsAffected == 0 {
-		return resCustomError.ErrProductOrderCompleted
+		return resCustomError.ErrNoRowAffected
 	}
 	return nil
 }
@@ -328,34 +312,4 @@ func (d *orderRepository) GetSalesReportByDays(sellerID string, days string) (*r
 		return nil, errors.New("face some issue while get report by days")
 	}
 	return &report, nil
-}
-
-// ------------------------------------------Payment------------------------------------\\
-
-func (d *orderRepository) OnlinePayment(userID string) (*responsemodel.OnlinePayment, error) {
-
-	var orderDetails responsemodel.OnlinePayment
-	query := "SELECT * FROM users INNER JOIN orders ON orders.user_id = users.id INNER JOIN addresses ON addresses.id = address_id WHERE orders.user_id=? AND payment_status = 'pending' AND payment_method= 'ONLINE'"
-	result := d.DB.Raw(query, userID).Scan(&orderDetails)
-	if result.Error != nil {
-		return nil, errors.New("face some issue while processing online payment")
-	}
-	if result.RowsAffected == 0 {
-		fmt.Println("data fetching")
-		return nil, resCustomError.ErrNoRowAffected
-	}
-	return &orderDetails, nil
-}
-
-func (d *orderRepository) GetFinalPriceByorderID(orderID string) (uint, error) {
-	var finalPrice uint
-	query := "SELECT SUM(price) FROM orders WHERE order_id= ?"
-	result := d.DB.Raw(query, orderID).Scan(&finalPrice)
-	if result.Error != nil {
-		return 0, errors.New("face some issue while getting tatal amount of order by using order id")
-	}
-	if result.RowsAffected == 0 {
-		return 0, resCustomError.ErrNoRowAffected
-	}
-	return finalPrice, nil
 }

@@ -48,7 +48,7 @@ func InitializeAPI(config *config.Config) (*server.ServerHttp, error) {
 	cartHanlder := handler.NewCartHandler(cartUseCase)
 
 	paymentRepository := repository.NewPaymentRepository(DB)
-	paymentUseCase := usecase.NewPaymentUseCase(paymentRepository)
+	paymentUseCase := usecase.NewPaymentUseCase(paymentRepository, &config.Razopay)
 	paymentHandler := handler.NewPaymentHandler(paymentUseCase)
 
 	orderRepository := repository.NewOrderRepository(DB)

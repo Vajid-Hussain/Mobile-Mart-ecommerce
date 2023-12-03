@@ -41,7 +41,7 @@ func (d *adminRepository) GetSellerDetailsForDashBord(criteria string) (uint, er
 
 func (d *adminRepository) TotalRevenue() (uint, uint, error) {
 	var count, sum uint
-	query := "SELECT COALESCE(COUNT(*), 0), COALESCE(SUM(price), 0) FROM orders WHERE order_status='delivered'"
+	query := "SELECT COALESCE(COUNT(*), 0), COALESCE(SUM(price), 0) FROM order_products WHERE order_status='delivered'"
 	result := d.DB.Raw(query).Row().Scan(&count, &sum)
 	if result != nil {
 		return 0, 0, resCustomError.ErrAdminDashbord

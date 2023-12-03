@@ -33,6 +33,7 @@ func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, invento
 			ordermanagenent.GET("", order.GetSellerOrders)
 			ordermanagenent.GET("/processing", order.GetSellerOrdersProcessing)
 			ordermanagenent.GET("/delivered", order.GetSellerOrdersDeliverd)
+			ordermanagenent.GET("/cancelled", order.GetSellerOrdersCancelled)
 			ordermanagenent.PATCH("/", order.ConfirmDeliverd)
 			ordermanagenent.PATCH("/:orderID/cancel", order.CancelOrder)
 		}

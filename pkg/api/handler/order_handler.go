@@ -178,7 +178,7 @@ func (u *OrderHandler) GetSellerOrders(c *gin.Context) {
 		return
 	}
 
-	remainingQuery := " IN ('processing','delivered')"
+	remainingQuery := " IN ('processing','delivered','cancelled')"
 	orderDetais, err := u.useCase.GetSellerOrders(sellerID, remainingQuery)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
@@ -237,6 +237,25 @@ func (u *OrderHandler) GetSellerOrdersDeliverd(c *gin.Context) {
 	}
 
 	remainingQuery := " IN ('delivered')"
+	orderDetais, err := u.useCase.GetSellerOrders(sellerID, remainingQuery)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", orderDetais, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *OrderHandler) GetSellerOrdersCancelled(c *gin.Context) {
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	remainingQuery := " IN ('cancelled')"
 	orderDetais, err := u.useCase.GetSellerOrders(sellerID, remainingQuery)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
@@ -472,61 +491,6 @@ func (u *OrderHandler) SalesReportCustomDays(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
 		finalReslt := response.Responses(http.StatusOK, "", report, nil)
-		c.JSON(http.StatusOK, finalReslt)
-	}
-}
-
-// @Summary		Get Razorpay Payment Page
-// @Description	Retrieve the Razorpay payment page for the specified user.
-// @Tags			PaymentIntegration
-// @Accept			html
-// @Produce		html
-// @Param			userID	query		int					true	"User ID for which the payment page is requested"
-// @Success		200		{string}	html				"HTML page for Razorpay payment"
-// @Failure		400		{object}	response.Response	"Bad request. Please provide a valid user ID."
-// @Router			/razorpay [get]
-func (u *OrderHandler) OnlinePayment(c *gin.Context) {
-	userID := c.Query("userID")
-	orderDetails, err := u.useCase.OnlinePayment(userID)
-	if err != nil {
-		c.HTML(http.StatusBadRequest, "razopay.html", gin.H{"badRequest": "Refine your request"})
-	} else {
-		c.HTML(http.StatusOK, "razopay.html", orderDetails)
-	}
-}
-
-// @Summary		Verify Online Payment
-// @Description	Verify an online payment using the provided details.
-// @Tags			PaymentIntegration
-// @Accept			json
-// @Produce		json
-// @Security		BearerTokenAuth
-// @Param			verificationDetails	body		requestmodel.OnlinePaymentVerification	true	"Details for online payment verification"
-// @Success		200					{object}	response.Response						"Payment verification successful"
-// @Failure		400					{object}	response.Response						"Bad request. Please provide valid verification details."
-// @Router			/payment/verify [post]
-func (u *OrderHandler) VerifyOnlinePayment(c *gin.Context) {
-	var onlinePaymentDetails requestmodel.OnlinePaymentVerification
-
-	if err := c.BindJSON(&onlinePaymentDetails); err != nil {
-		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
-		c.JSON(http.StatusBadRequest, finalReslt)
-		return
-	}
-
-	data, err := helper.Validation(onlinePaymentDetails)
-	if err != nil {
-		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
-		c.JSON(http.StatusBadRequest, finalReslt)
-		return
-	}
-
-	order, err := u.useCase.OnlinePaymentVerification(&onlinePaymentDetails)
-	if err != nil {
-		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
-		c.JSON(http.StatusBadRequest, finalReslt)
-	} else {
-		finalReslt := response.Responses(http.StatusOK, "", order, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }

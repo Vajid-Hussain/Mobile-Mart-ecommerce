@@ -218,6 +218,7 @@ func (r *sellerUseCase) UpdateSellerProfile(editedProfile *requestmodel.SellerEd
 func (r *sellerUseCase) GetSellerDashbord(sellerID string) (*responsemodel.DashBord, error) {
 	var dashBord responsemodel.DashBord
 	var err error
+	dashBord.SellerID = sellerID
 
 	dashBord.DeliveredOrders, err = r.repo.GetDashBordOrderCount(sellerID, "delivered")
 	if err != nil {
@@ -229,7 +230,7 @@ func (r *sellerUseCase) GetSellerDashbord(sellerID string) (*responsemodel.DashB
 		return nil, err
 	}
 
-	dashBord.CancelledOrders, err = r.repo.GetDashBordOrderCount(sellerID, "cancel")
+	dashBord.CancelledOrders, err = r.repo.GetDashBordOrderCount(sellerID, "cancelled")
 	if err != nil {
 		return nil, err
 	}
@@ -254,7 +255,7 @@ func (r *sellerUseCase) GetSellerDashbord(sellerID string) (*responsemodel.DashB
 		return nil, err
 	}
 
-	dashBord.LowStockProductID, err = r.repo.GetLowStoceProduct(sellerID)
+	dashBord.LowStockProductID, err = r.repo.GetLowStokesProduct(sellerID)
 	if err != nil {
 		return nil, err
 	}

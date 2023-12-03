@@ -27,7 +27,7 @@ type OrderDetails struct {
 	Quantity      uint   `json:"quantity"`
 	Price         uint   `json:"price"`
 	OrderStatus   string `json:"orderstatus,omitempty"`
-	PaymentStatus string `json:"paymentStatu,omitempty"`
+	PaymentStatus string `json:"paymentStatus,omitempty"`
 	WalletBalance uint   `json:"walletBelance,omitempty"`
 }
 
@@ -65,7 +65,7 @@ type SingleOrder struct {
 	OrderStatus   string `json:"orderStatus"`
 	Coupon        string `json:"coupon,omitempty"`
 	OrderDate     string `json:"orderdate"`
-	DeliveryDate  string `json:"delivaryDate,omitempty"`
+	EndDate       string `json:"delivaryDate,omitempty"`
 	ImageURL      string `json:"imageURL"`
 	FirstName     string `json:"firstName" validate:"required"`
 	LastName      string `json:"lastName,omitempty"`
@@ -84,6 +84,7 @@ type SalesReport struct {
 }
 
 type DashBord struct {
+	SellerID           string `json:"sellerID"`
 	TotalOrders        uint   `json:"totalOrders"`
 	DeliveredOrders    uint   `json:"deliveredOrders"`
 	OngoingOrders      uint   `json:"OngoingOrders"`
@@ -95,7 +96,7 @@ type DashBord struct {
 }
 
 type OnlinePayment struct {
-	OrderID     string `json:"orderID" `
+	OrderID     string `json:"orderID" gorm:"column:order_id_razopay" `
 	User        string `gorm:"column:first_name" json:"user"`
 	FinalPrice  uint   `json:"finalPrice"`
 	PhoneNumber uint   `json:"phoneNumber" `

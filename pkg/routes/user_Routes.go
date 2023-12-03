@@ -6,13 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *handler.InventotyHandler, cart *handler.CartHandler, order *handler.OrderHandler) {
+func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *handler.InventotyHandler, cart *handler.CartHandler, order *handler.OrderHandler, payment *handler.PaymentHandler) {
 
 	engin.GET("/", inventory.GetInventory)
 	engin.GET("/:productid", inventory.GetAInventory)
 	engin.POST("/", inventory.FilterProduct)
 
-	engin.GET("/razopay", order.OnlinePayment)
+	engin.GET("/razopay", payment.OnlinePayment)
 
 	engin.POST("/signup", user.UserSignup)
 	engin.POST("/verifyOTP", user.VerifyOTP)
@@ -56,7 +56,7 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 
 		paymentmanagement := engin.Group("/payment")
 		{
-			paymentmanagement.POST("/verify", order.VerifyOnlinePayment)
+			paymentmanagement.POST("/verify", payment.VerifyOnlinePayment)
 		}
 	}
 }

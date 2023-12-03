@@ -215,7 +215,7 @@ func (d *sellerRepository) GetSellerCredit(sellerID string) (uint, error) {
 func (d *sellerRepository) GetDashBordOrderCount(sellerID string, orderstatus string) (uint, error) {
 
 	var data uint
-	query := "SELECT COALESCE(COUNT(*),0) FROM orders WHERE seller_id= $1 AND (order_status=$2 OR $2='')"
+	query := "SELECT COALESCE(COUNT(*),0) FROM order_products WHERE seller_id= $1 AND (order_status=$2 OR $2='')"
 	result := d.DB.Raw(query, sellerID, orderstatus).Scan(&data)
 	if result.Error != nil {
 		return 0, errors.New("face some issue while get dashbord criteria")
@@ -229,7 +229,7 @@ func (d *sellerRepository) GetDashBordOrderCount(sellerID string, orderstatus st
 func (d *sellerRepository) GetDashBordOrderSum(sellerID string, criteria string) (uint, error) {
 
 	var data uint
-	query := "SELECT COALESCE(SUM(" + criteria + "),0) FROM orders WHERE seller_id= ? AND order_status= 'delivered'"
+	query := "SELECT COALESCE(SUM(" + criteria + "),0) FROM order_products WHERE seller_id= ? AND order_status= 'delivered'"
 	result := d.DB.Raw(query, sellerID).Scan(&data)
 	if result.Error != nil {
 		return 0, errors.New("face some issue while get dashbord criteria")
@@ -254,7 +254,7 @@ func (d *sellerRepository) GetDashBordOrderSum(sellerID string, criteria string)
 // 	return data, nil
 // }
 
-func (d *sellerRepository) GetLowStoceProduct(sellerID string) ([]uint, error) {
+func (d *sellerRepository) GetLowStokesProduct(sellerID string) ([]uint, error) {
 
 	var data []uint
 	query := "SELECT COALESCE(id,0) FROM inventories WHERE seller_id= ? AND units<100"

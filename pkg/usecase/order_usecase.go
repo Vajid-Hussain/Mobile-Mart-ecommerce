@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
@@ -99,6 +98,7 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 	// orderResponse.UserID = order.UserID
 	// orderResponse.Address = order.Address
 	// orderResponse.Payment = order.Payment
+	orderResponse.TotalPrice = order.FinalPrice
 	return OrderSuccessDetails, nil
 }
 
@@ -156,34 +156,6 @@ func (r *orderUseCase) CancelUserOrder(orderItemID string, userID string) (*resp
 	return orderDetails, nil
 }
 
-// ------------------------------------------Online Payment------------------------------------\\
-
-func (r *orderUseCase) OnlinePayment(userID string) (*responsemodel.OnlinePayment, error) {
-	paymentDetails, err := r.repo.OnlinePayment(userID)
-	if err != nil {
-		return nil, err
-	}
-
-	paymentDetails.FinalPrice, err = r.repo.GetFinalPriceByorderID(paymentDetails.OrderID)
-	if err != nil {
-		return nil, err
-	}
-	return paymentDetails, nil
-}
-
-func (r *orderUseCase) OnlinePaymentVerification(details *requestmodel.OnlinePaymentVerification) (*[]responsemodel.OrderDetails, error) {
-	result := service.VerifyPayment(details.OrderID, details.PaymentID, details.Signature, r.razopay.RazopaySecret)
-	if !result {
-		return nil, errors.New("payment is unsuccessful")
-	}
-
-	orders, err := r.repo.UpdateOnlinePaymentSucess(details.OrderID)
-	if err != nil {
-		return nil, err
-	}
-	return orders, nil
-}
-
 // ------------------------------------------Seller Control Orders------------------------------------\\
 
 func (r *orderUseCase) GetSellerOrders(sellerID string, remainingQuery string) (*[]responsemodel.OrderDetails, error) {
@@ -194,25 +166,21 @@ func (r *orderUseCase) GetSellerOrders(sellerID string, remainingQuery string) (
 	return userOrders, nil
 }
 
-func (r *orderUseCase) ConfirmDeliverd(sellerID string, orderID string) (*responsemodel.OrderDetails, error) {
+func (r *orderUseCase) ConfirmDeliverd(sellerID string, orderItemID string) (*responsemodel.OrderDetails, error) {
 
-	err := r.repo.UpdateDeliveryTime(sellerID, orderID)
+	err := r.repo.UpdateDeliveryTime(sellerID, orderItemID)
+	if err != nil {
+		fmt.Println("err", err)
+		return nil, err
+	}
+	fmt.Println("hiii")
+
+	orderDetails, err := r.repo.UpdateOrderDelivered(sellerID, orderItemID)
 	if err != nil {
 		return nil, err
 	}
 
-	orderDetails, err := r.repo.UpdateOrderDelivered(sellerID, orderID)
-	if err != nil {
-		fmt.Println("order", orderDetails)
-		return nil, err
-	}
-
-	err = r.repo.UpdateOrderPaymetSuccess(sellerID, orderID)
-	if err != nil {
-		return nil, err
-	}
-
-	orderPrice, err := r.repo.GetOrderPrice(orderID)
+	err = r.repo.UpdateOrderPaymetSuccess(sellerID, orderItemID)
 	if err != nil {
 		return nil, err
 	}
@@ -222,10 +190,7 @@ func (r *orderUseCase) ConfirmDeliverd(sellerID string, orderID string) (*respon
 		return nil, err
 	}
 
-	newSellerCredit := sellerCredit + orderPrice
-	fmt.Println("$", newSellerCredit)
-
-	err = r.sellerRepository.UpdateSellerCredit(sellerID, newSellerCredit)
+	err = r.sellerRepository.UpdateSellerCredit(sellerID, sellerCredit+orderDetails.Price)
 	if err != nil {
 		return nil, err
 	}
@@ -248,7 +213,7 @@ func (r *orderUseCase) CancelOrder(orderID string, sellerID string) (*responsemo
 		return nil, err
 	}
 
-	err = r.repo.UpdateDeliveryTime(sellerID, orderID)
+	// err = r.repo.UpdateDeliveryTime(sellerID, orderID)
 	if err != nil {
 		return nil, err
 	}

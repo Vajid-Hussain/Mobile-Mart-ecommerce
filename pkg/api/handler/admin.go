@@ -18,15 +18,15 @@ func NewAdminHandler(useCase interfaceUseCase.IAdminUseCase) *AdminHandler {
 	return &AdminHandler{AdminUseCase: useCase}
 }
 
-//	@Summary		Admin login
-//	@Description	using this handler admins can login
-//	@Tags			Admins
-//	@Accept			json
-//	@Produce		json
-//	@Param			admin	body		requestmodel.AdminLoginData	true	"Admin login details"
-//	@Success		200		{object}	response.Response{}
-//	@Failure		400		{object}	response.Response{}
-//	@Router			/admin/login/ [post]
+// @Summary		Admin login
+// @Description	using this handler admins can login
+// @Tags			Admins
+// @Accept			json
+// @Produce		json
+// @Param			admin	body		requestmodel.AdminLoginData	true	"Admin login details"
+// @Success		200		{object}	response.Response{}
+// @Failure		400		{object}	response.Response{}
+// @Router			/admin/login/ [post]
 func (u *AdminHandler) AdminLogin(c *gin.Context) {
 	var loginCredential requestmodel.AdminLoginData
 
@@ -54,19 +54,19 @@ func (u *AdminHandler) AdminLogin(c *gin.Context) {
 	}
 }
 
-//	@Summary		Get Admin Details
-//	@Description	Retrieve details for the admin.
-//	@Tags			Admins
-//	@Accept			json
-//	@Produce		json
-//	@Security		BearerTokenAuth
-//	@Success		200	{object}	response.Response	"Admin details retrieved successfully"
-//	@Failure		401	{object}	response.Response	"Unauthorized. Authentication required."
-//	@Router			/admin [get]
+// @Summary		Get Admin Details
+// @Description	Retrieve details for the admin.
+// @Tags			Admins
+// @Accept			json
+// @Produce		json
+// @Security		BearerTokenAuth
+// @Success		200	{object}	response.Response	"Admin details retrieved successfully"
+// @Failure		401	{object}	response.Response	"Unauthorized. Authentication required."
+// @Router			/admin [get]
 func (u *AdminHandler) AdminDashBord(c *gin.Context) {
 	result, err := u.AdminUseCase.GetSellerDetailsForAdminDashBord()
 	if err != nil {
-		finalReslt := response.Responses(http.StatusUnauthorized, "", result, err)
+		finalReslt := response.Responses(http.StatusUnauthorized, "", result, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
 		finalReslt := response.Responses(http.StatusOK, "succesfully login", result, nil)

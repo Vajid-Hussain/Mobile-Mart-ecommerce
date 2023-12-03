@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"fmt"
+
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
@@ -65,7 +67,7 @@ func (r *adminUsecase) GetSellerDetailsForAdminDashBord() (*responsemodel.AdminD
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println("**", dashBord)
 	dashBord.TotalOrders, dashBord.TotalRevenue, err = r.repo.TotalRevenue()
 	if err != nil {
 		return nil, err

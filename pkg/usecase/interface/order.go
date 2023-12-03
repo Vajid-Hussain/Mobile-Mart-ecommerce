@@ -17,7 +17,4 @@ type IOrderUseCase interface {
 
 	GetSalesReportByYear(string, string) (*responsemodel.SalesReport, error)
 	GetSalesReportByDays(string, string) (*responsemodel.SalesReport, error)
-
-	OnlinePayment(string) (*responsemodel.OnlinePayment, error)
-	OnlinePaymentVerification(*requestmodel.OnlinePaymentVerification) (*[]responsemodel.OrderDetails, error)
 }

@@ -28,5 +28,5 @@ type ISellerRepo interface {
 	GetDashBordOrderCount(string, string) (uint, error)
 	GetDashBordOrderSum(string, string) (uint, error)
 	// GetSellerCredit(string) (uint, error)
-	GetLowStoceProduct(string) ([]uint, error)
+	GetLowStokesProduct(string) ([]uint, error)
 }
