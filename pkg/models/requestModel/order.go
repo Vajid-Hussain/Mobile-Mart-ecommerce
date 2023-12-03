@@ -11,6 +11,7 @@ type Order struct {
 	OrderIDRazopay string                        `json:"-"`
 	FinalPrice     uint                          `json:"-"`
 	OrderStatus    string                        `json:"-"`
+	PaymentStatus  string                        `json:"-"`
 	Cart           []responsemodel.CartInventory `json:"-"`
 }
 

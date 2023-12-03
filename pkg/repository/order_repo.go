@@ -49,8 +49,8 @@ func (d *orderRepository) AddProdutToOrderProductTable(order *requestmodel.Order
 	today := time.Now().Format("2006-01-02 15:04:05")
 
 	for _, data := range order.Cart {
-		query := "INSERT INTO order_products (order_id, inventory_id, seller_id, quantity, order_date, order_status, price) VALUES (?, ?, ?, ?, ?,?, ?) RETURNING*"
-		d.DB.Raw(query, orderDetails.ID, data.InventoryID, data.SellerID, data.Quantity, today, order.OrderStatus, data.Price).Scan(&orderProduct)
+		query := "INSERT INTO order_products (order_id, inventory_id, seller_id, quantity, order_date, order_status,payment_status, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING*"
+		d.DB.Raw(query, orderDetails.ID, data.InventoryID, data.SellerID, data.Quantity, today, order.OrderStatus, order.PaymentStatus, data.Price).Scan(&orderProduct)
 		orderDetails.Orders = append(orderDetails.Orders, orderProduct)
 	}
 	return orderDetails, nil
@@ -294,7 +294,7 @@ func (d *orderRepository) GetOrderExistOfSeller(orderID, sellerID string) error 
 
 func (d *orderRepository) GetSalesReportByYear(sellerID string, balanceQuery string) (*responsemodel.SalesReport, error) {
 	var report responsemodel.SalesReport
-	query := "SELECT COUNT(*) AS Orders, SUM(quantity) AS Quantity, SUM(price) AS Price FROM orders WHERE seller_id= ? AND order_status='delivered' AND" + balanceQuery
+	query := "SELECT COUNT(*) AS Orders, SUM(quantity) AS Quantity, SUM(price) AS Price FROM order_products WHERE seller_id= ? AND order_status='delivered' AND" + balanceQuery
 	result := d.DB.Raw(query, sellerID).Scan(&report)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while get report")
@@ -305,7 +305,7 @@ func (d *orderRepository) GetSalesReportByYear(sellerID string, balanceQuery str
 func (d *orderRepository) GetSalesReportByDays(sellerID string, days string) (*responsemodel.SalesReport, error) {
 	var report responsemodel.SalesReport
 	remainingQuery := "(now() - interval '" + days + " day')"
-	query := "SELECT COUNT(*) AS Orders, SUM(quantity) AS Quantity, SUM(price) AS Price FROM orders WHERE seller_id = ? AND order_status='delivered' AND order_date >= " + remainingQuery
+	query := "SELECT COUNT(*) AS Orders, SUM(quantity) AS Quantity, SUM(price) AS Price FROM order_products WHERE seller_id = ? AND order_status='delivered' AND order_date >= " + remainingQuery
 	result := d.DB.Raw(query, sellerID).Scan(&report)
 
 	if result.Error != nil {

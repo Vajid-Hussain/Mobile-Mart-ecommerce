@@ -18,18 +18,18 @@ func NewPaymentRepository(db *gorm.DB) interfaces.IPaymentRepository {
 	return &paymentRepo{DB: db}
 }
 
-func (d *paymentRepo) CreateOrUpdateWallet(userID string, creditAmount uint) (*uint, error) {
+func (d *paymentRepo) CreateOrUpdateWallet(userID string, creditAmount uint) (uint, error) {
 
-	var currentBalance uint
-	query := "INSERT INTO wallets (user_id, balance) VALUES ($1, $2) ON CONFLICT(user_id) DO UPDATE SET balance=wallets.balance + $2"
-	result := d.DB.Exec(query, userID, creditAmount)
+	var balance uint
+	query := "INSERT INTO wallets (user_id, balance) VALUES ($1, $2) ON CONFLICT(user_id) DO UPDATE SET balance=wallets.balance + $2 RETURNING balance"
+	result := d.DB.Raw(query, userID, creditAmount).Scan(&balance)
 	if result.Error != nil {
-		return nil, errors.New("face some issue while intract with wallet for made change in balance")
+		return 0, errors.New("face some issue while intract with wallet for made change in balance")
 	}
 	if result.RowsAffected == 0 {
-		return nil, resCustomError.ErrNoRowAffected
+		return 0, resCustomError.ErrNoRowAffected
 	}
-	return &currentBalance, nil
+	return balance, nil
 }
 
 func (d *paymentRepo) GetWalletbalance(userID string) (*uint, error) {
@@ -86,7 +86,34 @@ func (d *paymentRepo) UpdateOnlinePaymentSucess(orderID string) (*[]responsemode
 		return nil, errors.New("face some issue while update order status and payment status on verify online payment success")
 	}
 	if result.RowsAffected == 0 {
-		return nil, resCustomError.ErrProductOrderCompleted
+		return nil, resCustomError.ErrNoRowAffected
 	}
 	return &orders, nil
+}
+
+func (d *paymentRepo) GetWallet(userID string) (*responsemodel.UserWallet, error) {
+
+	var userWallet responsemodel.UserWallet
+	query := "SELECT COALESCE(balance,0),* FROM wallets WHERE user_id= ?"
+	result := d.DB.Raw(query, userID).Scan(&userWallet)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while get user wallet")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &userWallet, nil
+}
+
+func (d *paymentRepo) UpdateWalletReduceBalance(userID string, amount uint) error {
+	fmt.Println("##", userID, amount)
+	query := "UPDATE wallets SET balance=balance-$1 WHERE user_id = $2"
+	result := d.DB.Exec(query, amount, userID)
+	if result.Error != nil {
+		return errors.New("face some issue while update wallet balance")
+	}
+	if result.RowsAffected == 0 {
+		return resCustomError.ErrNoRowAffected
+	}
+	return nil
 }

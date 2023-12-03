@@ -58,5 +58,10 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 		{
 			paymentmanagement.POST("/verify", payment.VerifyOnlinePayment)
 		}
+
+		walletmenagement := engin.Group("/wallet")
+		{
+			walletmenagement.GET("/", payment.ViewWallet)
+		}
 	}
 }

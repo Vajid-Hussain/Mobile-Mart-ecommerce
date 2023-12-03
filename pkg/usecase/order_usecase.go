@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
@@ -27,8 +28,15 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 
 	if order.Payment == "COD" {
 		order.OrderStatus = "processing"
-	} else {
+		order.PaymentStatus = "pending"
+	}
+	if order.Payment == "ONLINE" {
 		order.OrderStatus = "pending"
+		order.PaymentStatus = "pending"
+	}
+	if order.Payment == "WALLET" {
+		order.OrderStatus = "processing"
+		order.PaymentStatus = "success"
 	}
 
 	err := r.repo.GetAddressExist(order.UserID, order.Address)
@@ -78,9 +86,24 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		order.OrderIDRazopay = orderID
 	}
 
-	orderResponse, err := r.repo.CreateOrder(order)
-	if err != nil { // secret := "qvxbhiwTJZLHHE3tNQQv8Mty"
+	if order.Payment == "WALLET" {
+		userWallet, err := r.paymentRepo.GetWallet(order.UserID)
+		if err != nil {
+			return nil, err
+		}
 
+		if userWallet.Balance < order.FinalPrice {
+			return nil, errors.New("no sufficient balance in the wallet")
+		}
+
+		err = r.paymentRepo.UpdateWalletReduceBalance(order.UserID, order.FinalPrice)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	orderResponse, err := r.repo.CreateOrder(order)
+	if err != nil {
 		return nil, err
 	}
 
@@ -88,12 +111,13 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 	if err != nil {
 		return nil, err
 	}
-	// for _, data := range order.Cart {
-	// 	err = r.cartrepo.DeleteInventoryFromCart(data.InventoryID, order.UserID)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// }
+
+	for _, data := range order.Cart {
+		err = r.cartrepo.DeleteInventoryFromCart(data.InventoryID, order.UserID)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	// orderResponse.UserID = order.UserID
 	// orderResponse.Address = order.Address
@@ -135,8 +159,8 @@ func (r *orderUseCase) CancelUserOrder(orderItemID string, userID string) (*resp
 		return nil, err
 	}
 
-	if paymentType == "ONLINE" {
-		_, err := r.paymentRepo.CreateOrUpdateWallet(userID, orderDetails.Price)
+	if paymentType == "ONLINE" || paymentType == "WALLET" {
+		orderDetails.WalletBalance, err = r.paymentRepo.CreateOrUpdateWallet(userID, orderDetails.Price)
 		if err != nil {
 			return nil, err
 		}

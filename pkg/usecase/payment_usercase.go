@@ -46,3 +46,11 @@ func (r *paymentUseCase) OnlinePaymentVerification(details *requestmodel.OnlineP
 	}
 	return orders, nil
 }
+
+func (r *paymentUseCase) GetUserWallet(userID string) (*responsemodel.UserWallet, error) {
+	userWallet, err := r.repo.GetWallet(userID)
+	if err != nil {
+		return nil, err
+	}
+	return userWallet, err
+}

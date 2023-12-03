@@ -8,4 +8,5 @@ import (
 type IPaymentUseCase interface {
 	OnlinePayment(string, string) (*responsemodel.OnlinePayment, error)
 	OnlinePaymentVerification(*requestmodel.OnlinePaymentVerification) (*[]responsemodel.OrderDetails, error)
+	GetUserWallet(string) (*responsemodel.UserWallet, error)
 }

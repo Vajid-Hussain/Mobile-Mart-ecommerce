@@ -27,6 +27,6 @@ type OrderProducts struct {
 	Price         uint
 	OrderDate     time.Time
 	EndDate       time.Time
-	PaymentStatus status `gorm:"default:pending"`
+	PaymentStatus status
 	OrderStatus   string
 }
