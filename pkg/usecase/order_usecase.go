@@ -180,6 +180,43 @@ func (r *orderUseCase) CancelUserOrder(orderItemID string, userID string) (*resp
 	return orderDetails, nil
 }
 
+func (r *orderUseCase) ReturnUserOrder(orderItemID, userID string) (*responsemodel.OrderDetails, error) {
+
+	orderDetails, err := r.repo.UpdateUserOrderReturn(orderItemID, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	orderDetails.WalletBalance, err = r.paymentRepo.CreateOrUpdateWallet(userID, orderDetails.Price)
+	if err != nil {
+		return nil, err
+	}
+
+	units, err := r.repo.GetInventoryUnits(orderDetails.InventoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedUnit := *units + orderDetails.Quantity
+
+	err = r.repo.UpdateInventoryUnits(orderDetails.InventoryID, updatedUnit)
+	if err != nil {
+		return nil, err
+	}
+
+	sellerCredit, err := r.sellerRepository.GetSellerCredit(orderDetails.SellerID)
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.sellerRepository.UpdateSellerCredit(orderDetails.SellerID, sellerCredit-orderDetails.Price)
+	if err != nil {
+		return nil, err
+	}
+
+	return orderDetails, nil
+}
+
 // ------------------------------------------Seller Control Orders------------------------------------\\
 
 func (r *orderUseCase) GetSellerOrders(sellerID string, remainingQuery string) (*[]responsemodel.OrderDetails, error) {

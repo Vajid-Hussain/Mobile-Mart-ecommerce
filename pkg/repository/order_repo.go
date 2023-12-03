@@ -63,7 +63,6 @@ func (d *orderRepository) GetAddressExist(userID, addressesID string) error {
 		return errors.New("face some issue while chcking address is exist of user")
 	}
 	if result.RowsAffected == 0 {
-
 		return errors.New("user does not have specified address")
 	}
 	return nil
@@ -159,7 +158,7 @@ func (d *orderRepository) UpdateUserOrderCancel(orderItemID string, userID strin
 	var cancelOrder responsemodel.OrderDetails
 	today := time.Now().Format("2006-01-02 15:04:05")
 
-	query := "UPDATE order_products SET order_status= 'cancelled', payment_status= 'cancelled', end_date=? FROM orders WHERE orders.id=order_products.order_id AND item_id=? AND user_id= ? AND order_status='processing' RETURNING*"
+	query := "UPDATE order_products SET order_status= 'cancelled', payment_status= 'refunded', end_date=? FROM orders WHERE orders.id=order_products.order_id AND item_id=? AND user_id= ? AND order_status='processing' RETURNING*"
 	result := d.DB.Raw(query, today, orderItemID, userID).Scan(&cancelOrder)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while order is cancel")
@@ -168,6 +167,22 @@ func (d *orderRepository) UpdateUserOrderCancel(orderItemID string, userID strin
 		return nil, resCustomError.ErrProductOrderCompleted
 	}
 	return &cancelOrder, nil
+}
+
+func (d *orderRepository) UpdateUserOrderReturn(orderItemID string, userID string) (*responsemodel.OrderDetails, error) {
+
+	var returnOrder responsemodel.OrderDetails
+	today := time.Now().Format("2006-01-02 15:04:05")
+
+	query := "UPDATE order_products SET order_status= 'return', payment_status= 'refunded', end_date=? FROM orders WHERE orders.id=order_products.order_id AND item_id=? AND user_id= ? AND order_status='delivered' RETURNING*"
+	result := d.DB.Raw(query, today, orderItemID, userID).Scan(&returnOrder)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while order is return")
+	}
+	if result.RowsAffected == 0 {
+		return nil, errors.New("no deliverd order exist for the given order item id of the user")
+	}
+	return &returnOrder, nil
 }
 
 func (d *orderRepository) UpdateDeliveryTimeByUser(userID string, orderItemID string) error {

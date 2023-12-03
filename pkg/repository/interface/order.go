@@ -18,6 +18,7 @@ type IOrderRepository interface {
 	GetOrderExistOfUser(string, string) error
 	GetAddressExist(string, string) error
 	AddProdutToOrderProductTable(*requestmodel.Order, *responsemodel.Order) (*responsemodel.Order, error)
+	UpdateUserOrderReturn(string, string) (*responsemodel.OrderDetails, error)
 
 	GetSellerOrders(string, string) (*[]responsemodel.OrderDetails, error)
 	UpdateOrderDelivered(string, string) (*responsemodel.OrderDetails, error)

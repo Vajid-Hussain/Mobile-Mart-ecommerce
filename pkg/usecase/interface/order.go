@@ -10,6 +10,7 @@ type IOrderUseCase interface {
 	OrderShowcase(string) (*[]responsemodel.OrderShowcase, error)
 	SingleOrder(string, string) (*responsemodel.SingleOrder, error)
 	CancelUserOrder(string, string) (*responsemodel.OrderDetails, error)
+	ReturnUserOrder(string, string) (*responsemodel.OrderDetails, error)
 
 	GetSellerOrders(string, string) (*[]responsemodel.OrderDetails, error)
 	ConfirmDeliverd(string, string) (*responsemodel.OrderDetails, error)

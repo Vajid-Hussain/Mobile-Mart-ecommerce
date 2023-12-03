@@ -158,6 +158,26 @@ func (u *OrderHandler) CancelUserOrder(c *gin.Context) {
 	}
 }
 
+func (u *OrderHandler) ReturnUserOrder(c *gin.Context) {
+
+	userID, exist := c.MustGet("UserID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+	orderID := c.Query("orderID")
+
+	orderDetais, err := u.useCase.ReturnUserOrder(orderID, userID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", orderDetais, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
 // ------------------------------------------Seller Control Orders------------------------------------\\
 
 // @Summary		Get Seller Order
