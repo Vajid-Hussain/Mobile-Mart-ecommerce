@@ -8,4 +8,5 @@ import (
 type ICouponRepository interface {
 	CreateCoupon(*requestmodel.Coupon) (*responsemodel.Coupon, error)
 	CheckCouponExpired(string) (*responsemodel.Coupon, error)
+	GetCoupons() (*[]responsemodel.Coupon, error)
 }

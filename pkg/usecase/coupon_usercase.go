@@ -22,3 +22,15 @@ func (r *couponUseCase) CreateCoupon(newCoupon *requestmodel.Coupon) (*responsem
 	}
 	return coupon, nil
 }
+
+func (r *couponUseCase) GetCoupons() (*[]responsemodel.Coupon, error) {
+	coupons, err := r.repo.GetCoupons()
+	if err != nil {
+		return nil, err
+	}
+	return coupons, nil
+}
+
+// func (r *couponUseCase) UpdateCouponStatus(couponID, active, block string) (*responsemodel.Coupon, error) {
+
+// }

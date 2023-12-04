@@ -44,3 +44,14 @@ func (u *CouponHandler) CreateCoupon(c *gin.Context) {
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
+
+func (u *CouponHandler) GetCoupons(c *gin.Context) {
+	coupon, err := u.useCase.GetCoupons()
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", coupon, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}

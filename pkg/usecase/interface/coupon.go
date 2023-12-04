@@ -7,4 +7,5 @@ import (
 
 type ICouponUseCase interface {
 	CreateCoupon(*requestmodel.Coupon) (*responsemodel.Coupon, error)
+	GetCoupons() (*[]responsemodel.Coupon, error)
 }

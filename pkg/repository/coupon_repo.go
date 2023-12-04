@@ -48,3 +48,22 @@ func (d *couponRepository) CheckCouponExpired(couponCode string) (*responsemodel
 	}
 	return &couponData, nil
 }
+
+func (d *couponRepository) GetCoupons() (*[]responsemodel.Coupon, error) {
+
+	var coupons []responsemodel.Coupon
+	query := "SELECT * FROM coupons"
+	result := d.DB.Raw(query).Scan(&coupons)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while get coupons")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &coupons, nil
+}
+
+// func (d *couponRepository) UpdateCouponStatus(couponID, active, block string) (*responsemodel.Coupon, error) {
+// 	query := "UPDATE coupons SET status= ? WHERE id=?"
+// 	d
+// }
