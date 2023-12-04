@@ -12,6 +12,7 @@ type OrderShowcase struct {
 	Price         uint   `json:"total-amout"`
 	Saleprice     uint   `json:"singleUnitCost"`
 	OrderStatus   string `json:"orderstatus,omitempty"`
+	PaymentStatus string `json:"paymentStatus,omitempty"`
 	Quantity      uint   `json:"quantity"`
 	ImageURL      string `json:"imageURL"`
 }
@@ -45,12 +46,12 @@ type OrderProducts struct {
 }
 
 type Order struct {
-	ID             string `json:"id"`
+	ID             string `json:"orderID"`
 	UserID         string `gorm:"column:user_id" json:"userid"`
 	Address        string `gorm:"column:address_id" json:"address_id"`
 	Payment        string `gorm:"column:payment_method" json:"payment"`
 	TotalPrice     uint   `json:"payable_amount"`
-	wallet         uint   `json:"walletBalance"`
+	Wallet         uint   `json:"walletBalance"`
 	OrderIDRazopay string `json:"razopayOrderID,omitempty"`
 	Coupon         string `json:"coupon,omitempty"`
 	Orders         []OrderProducts
@@ -80,8 +81,8 @@ type SingleOrder struct {
 
 type SalesReport struct {
 	Orders   uint `json:"total -orders"`
-	Quantity uint `json:"total-unit"`
-	Price    uint `json:"total-price"`
+	Quantity uint `json:"total-unit-saled"`
+	Price    uint `json:"total-revenue"`
 }
 
 type DashBord struct {

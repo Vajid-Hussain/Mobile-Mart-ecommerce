@@ -77,6 +77,9 @@ func Validation(data interface{}) (*[]responsemodel.Errors, error) {
 				case "uppercase":
 					err := fmt.Sprintf("%s should be  %s %s ", e.Field(), e.Tag(), e.Param())
 					result = responsemodel.Errors{Err: err}
+				case "gtcsfield":
+					err := fmt.Sprintf("%s should be grater than  %s  ", e.Field(), e.Param())
+					result = responsemodel.Errors{Err: err}
 				}
 
 				afterErrorCorection = append(afterErrorCorection, result)

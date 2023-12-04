@@ -41,7 +41,6 @@ func (d *paymentRepo) GetWalletbalance(userID string) (*uint, error) {
 		return nil, errors.New("face some issue while fetch user wallet balance")
 	}
 	if result.RowsAffected == 0 {
-
 		return nil, resCustomError.ErrNoRowAffected
 	}
 	return &currentBalance, nil

@@ -7,7 +7,7 @@ type Order struct {
 	UserID         string                        `json:"userid"`
 	Address        string                        `json:"address" validate:"required,numeric"`
 	Payment        string                        `json:"payment" validate:"required,alpha,uppercase"`
-	Coupon         string                        `json:"coupon"`
+	Coupon         string                        `json:"coupon" validate:"numeric"`
 	OrderIDRazopay string                        `json:"-"`
 	FinalPrice     uint                          `json:"-"`
 	OrderStatus    string                        `json:"-"`

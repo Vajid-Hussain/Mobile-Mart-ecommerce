@@ -51,8 +51,12 @@ func InitializeAPI(config *config.Config) (*server.ServerHttp, error) {
 	paymentUseCase := usecase.NewPaymentUseCase(paymentRepository, &config.Razopay)
 	paymentHandler := handler.NewPaymentHandler(paymentUseCase)
 
+	couponRepository := repository.NewCouponRepository(DB)
+	couponUseCase := usecase.NewCouponUseCase(couponRepository)
+	couponHandler := handler.NewCouponHandler(couponUseCase)
+
 	orderRepository := repository.NewOrderRepository(DB)
-	orderUseCase := usecase.NewOrderUseCase(orderRepository, cartRepository, sellerRepository, paymentRepository, &config.Razopay)
+	orderUseCase := usecase.NewOrderUseCase(orderRepository, cartRepository, sellerRepository, paymentRepository, couponRepository, &config.Razopay)
 	orderHandler := handler.NewOrderHandler(orderUseCase)
 
 	serverHttp := server.NewServerHttp(userHandler,
@@ -63,6 +67,7 @@ func InitializeAPI(config *config.Config) (*server.ServerHttp, error) {
 		cartHanlder,
 		orderHandler,
 		paymentHandler,
+		couponHandler,
 	)
 
 	return serverHttp, nil

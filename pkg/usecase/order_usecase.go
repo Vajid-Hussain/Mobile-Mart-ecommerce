@@ -3,6 +3,7 @@ package usecase
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -10,6 +11,7 @@ import (
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
 )
 
 type orderUseCase struct {
@@ -17,11 +19,12 @@ type orderUseCase struct {
 	cartrepo         interfaces.ICartRepository
 	sellerRepository interfaces.ISellerRepo
 	paymentRepo      interfaces.IPaymentRepository
+	couponrepo       interfaces.ICouponRepository
 	razopay          *config.Razopay
 }
 
-func NewOrderUseCase(repository interfaces.IOrderRepository, cartrepository interfaces.ICartRepository, sellerRepository interfaces.ISellerRepo, paymentRepository interfaces.IPaymentRepository, razopay *config.Razopay) interfaceUseCase.IOrderUseCase {
-	return &orderUseCase{repo: repository, cartrepo: cartrepository, sellerRepository: sellerRepository, paymentRepo: paymentRepository, razopay: razopay}
+func NewOrderUseCase(repository interfaces.IOrderRepository, cartrepository interfaces.ICartRepository, sellerRepository interfaces.ISellerRepo, paymentRepository interfaces.IPaymentRepository, coupon interfaces.ICouponRepository, razopay *config.Razopay) interfaceUseCase.IOrderUseCase {
+	return &orderUseCase{repo: repository, cartrepo: cartrepository, sellerRepository: sellerRepository, paymentRepo: paymentRepository, couponrepo: coupon, razopay: razopay}
 }
 
 func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order, error) {
@@ -44,6 +47,7 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		return nil, err
 	}
 
+	// fetch products details from cart
 	userCart, err := r.cartrepo.GetCart(order.UserID)
 	if err != nil {
 		return nil, err
@@ -57,7 +61,7 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		}
 
 		if *unit < data.Quantity {
-			return nil, fmt.Errorf("sorry for inconvinent for less stock , we have only %d units, your requirement is %d unit,of product id %s", *unit, data.Quantity, data.InventoryID)
+			return nil, fmt.Errorf("sorry for inconvinent for insafishend stock , we have only %d units, your requirement is %d unit,of product id %s", *unit, data.Quantity, data.InventoryID)
 		}
 
 		newUnit := *unit - data.Quantity
@@ -77,7 +81,29 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		order.FinalPrice += order.Cart[i].Price
 	}
 
+	// verify coupon
+	couponData, err := r.couponrepo.CheckCouponExpired(order.Coupon)
+	if err != nil {
+		return nil, err
+	}
+
+	// verify
+	rightNow := time.Now()
+	if couponData.ExpireDate.Before(rightNow) {
+		fmt.Println("hii")
+	}
+
+	if order.FinalPrice < couponData.MinimumRequired || order.FinalPrice >= couponData.MaximumAllowed {
+		return nil, errors.New("total price of order is not satisfying, for apply this coupon")
+	}
+
+	for i, data := range order.Cart {
+		order.Cart[i].Price = helper.FindDiscount(float64(data.Price), float64(couponData.Discount))
+		// order.Cart[i].Discount=couponData.Discount
+	}
+
 	// place order on payment is online
+	order.FinalPrice = helper.FindDiscount(float64(order.FinalPrice), float64(couponData.Discount))
 	if order.Payment == "ONLINE" {
 		orderID, err := service.Razopay(order.FinalPrice, r.razopay.RazopayKey, r.razopay.RazopaySecret)
 		if err != nil {
@@ -86,6 +112,7 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		order.OrderIDRazopay = orderID
 	}
 
+	// made payment using wallet
 	if order.Payment == "WALLET" {
 		userWallet, err := r.paymentRepo.GetWallet(order.UserID)
 		if err != nil {
@@ -102,6 +129,7 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		}
 	}
 
+	// order is creating
 	orderResponse, err := r.repo.CreateOrder(order)
 	if err != nil {
 		return nil, err
