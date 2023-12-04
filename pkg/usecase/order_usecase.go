@@ -28,6 +28,7 @@ func NewOrderUseCase(repository interfaces.IOrderRepository, cartrepository inte
 }
 
 func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order, error) {
+	var couponData *responsemodel.Coupon
 
 	if order.Payment == "COD" {
 		order.OrderStatus = "processing"
@@ -81,16 +82,18 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		order.FinalPrice += order.Cart[i].Price
 	}
 
-	// verify coupon
-	couponData, err := r.couponrepo.CheckCouponExpired(order.Coupon)
-	if err != nil {
-		return nil, err
-	}
+	if order.Coupon != "" {
+		// verify coupon
+		couponData, err := r.couponrepo.CheckCouponExpired(order.Coupon)
+		if err != nil {
+			return nil, err
+		}
 
-	// verify
-	rightNow := time.Now()
-	if couponData.ExpireDate.Before(rightNow) {
-		fmt.Println("hii")
+		// verify
+		rightNow := time.Now()
+		if couponData.ExpireDate.Before(rightNow) {
+			fmt.Println("hii")
+		}
 	}
 
 	if order.FinalPrice < couponData.MinimumRequired || order.FinalPrice >= couponData.MaximumAllowed {
