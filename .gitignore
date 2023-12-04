@@ -1,4 +1,4 @@
 # .gitignore
 .env
 
-api.exe
+./cmd/api/tmp/api.exe
