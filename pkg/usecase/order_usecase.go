@@ -72,18 +72,8 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		}
 	}
 
-	// find total amount
-	for i, product := range order.Cart {
-		inventotyPrice, err := r.cartrepo.GetInventoryPrice(product.InventoryID)
-		if err != nil {
-			return nil, err
-		}
-		order.Cart[i].Price = inventotyPrice * product.Quantity
-		order.FinalPrice += order.Cart[i].Price
-	}
-
+	// verify coupon
 	if order.Coupon != "" {
-		// verify coupon
 		couponData, err = r.couponrepo.CheckCouponExpired(order.Coupon)
 		if err != nil {
 			return nil, err
@@ -103,6 +93,18 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		if couponData.EndDate.Before(rightNow) {
 			return nil, errors.New("coupon exeed the expiredata, better luck next time")
 		}
+	}
+
+	// find total amount
+	for i, product := range order.Cart {
+		inventotyPrice, err := r.cartrepo.GetInventoryPrice(product.InventoryID)
+		if err != nil {
+			return nil, err
+		}
+
+		discountedPrice := helper.FindDiscount(float64(inventotyPrice), float64(product.Discount+couponData.Discount))
+		order.Cart[i].Price = inventotyPrice * product.Quantity
+		order.FinalPrice += discountedPrice
 	}
 
 	// place order on payment is online

@@ -20,21 +20,6 @@ func NewCategoryUseCase(repository interfaces.ICategoryRepository) interfaceUseC
 }
 
 func (r *categoryUseCase) NewCategory(categoryDetails *requestmodel.Category) (*responsemodel.Category, error) {
-	// var resCategory responsemodel.Category
-
-	// validate := validator.New(validator.WithRequiredStructEnabled())
-	// err := validate.Struct(categoryDetails)
-	// if err != nil {
-	// 	if ve, ok := err.(validator.ValidationErrors); ok {
-	// 		for _, e := range ve {
-	// 			switch e.Field() {
-	// 			case "Name":
-	// 				resCategory.Name = "name is medetary"
-	// 			}
-	// 		}
-	// 	}
-	// 	return &resCategory, errors.New("don't fullfill the category requirement ")
-	// }
 
 	err := r.repo.InsertCategory(categoryDetails)
 	if err != nil {
@@ -60,31 +45,12 @@ func (r *categoryUseCase) GetAllCategory(page string, limit string) (*[]response
 }
 
 func (r *categoryUseCase) EditCategory(categoryData *requestmodel.CategoryDetails) (*responsemodel.CategoryDetails, error) {
-	// var categoryRes responsemodel.CategoryDetails
 
-	// categoryData.ID = strings.TrimSpace(categoryData.ID)
-
-	// validate := validator.New(validator.WithRequiredStructEnabled())
-	// err := validate.Struct(categoryData)
-	// if err != nil {
-	// 	if ve, ok := err.(validator.ValidationErrors); ok {
-	// 		for _, e := range ve {
-	// 			switch e.Field() {
-	// 			case "Name":
-	// 				categoryRes.Name = "name is medetary"
-	// 			case "ID":
-	// 				categoryRes.ID = "id is required,as query"
-	// 			}
-	// 		}
-	// 	}
-	// 	return &categoryRes, errors.New("don't fullfill the category requirement ")
-	// }
-
-	err := r.repo.EditCategoryName(categoryData)
+	category, err := r.repo.EditCategoryName(categoryData)
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+	return category, nil
 }
 
 func (r *categoryUseCase) DeleteCategory(id string) error {

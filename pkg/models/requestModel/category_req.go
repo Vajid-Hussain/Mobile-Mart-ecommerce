@@ -1,12 +1,14 @@
 package requestmodel
 
 type Category struct {
-	Name string `json:"name" validate:"required,alpha"`
+	Name     string `json:"name" validate:"required,alpha"`
+	Discount uint   `json:"discount" validate:"min=1,max=100"`
 }
 
 type CategoryDetails struct {
-	ID   string `json:"id" validate:"required"`
-	Name string `json:"name" validate:"required"`
+	ID       string `json:"id" validate:"required"`
+	Name     string `json:"name" validate:"required"`
+	Discount uint   `json:"discount" validate:"min=1,max=100"`
 }
 
 type BrandDetails struct {

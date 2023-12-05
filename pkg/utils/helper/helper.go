@@ -97,9 +97,9 @@ func GenerateUUID() string {
 	return uuidString
 }
 
-func StringToUintConvertion(id string) (uint, error) {
+func StringToUintConvertion(value string) (uint, error) {
 
-	result, err := strconv.Atoi(id)
+	result, err := strconv.Atoi(value)
 	if err != nil {
 		return 0, errors.New("converition lead to error")
 	}

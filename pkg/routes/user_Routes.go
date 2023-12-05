@@ -10,7 +10,7 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 
 	engin.GET("/", inventory.GetInventory)
 	engin.GET("/:productid", inventory.GetAInventory)
-	engin.POST("/", inventory.FilterProduct)
+	engin.GET("/filter", inventory.FilterProduct)
 
 	engin.GET("/razopay", payment.OnlinePayment)
 

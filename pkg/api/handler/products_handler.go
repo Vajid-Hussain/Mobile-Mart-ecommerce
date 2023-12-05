@@ -272,15 +272,13 @@ func (u *InventotyHandler) EditInventory(c *gin.Context) {
 }
 
 func (u *InventotyHandler) FilterProduct(c *gin.Context) {
-
 	var criterial requestmodel.FilterCriterion
 
-	if err := c.BindJSON(&criterial); err != nil {
-		fmt.Println(err)
-		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, nil)
-		c.JSON(http.StatusBadRequest, finalReslt)
-		return
-	}
+	criterial.Category = c.Query("category")
+	criterial.Brand = c.Query("brand")
+	criterial.Product = c.Query("product")
+	criterial.MinPrice, _ = helper.StringToUintConvertion(c.Query("minprice"))
+	criterial.MaxPrice, _ = helper.StringToUintConvertion(c.Query("maxprice"))
 
 	filteredProduct, err := u.userCase.GetProductFilter(&criterial)
 	if err != nil {

@@ -109,7 +109,7 @@ func (u *CategoryHandler) UpdateCategory(c *gin.Context) {
 		return
 	}
 
-	categoryData.ID = c.Query("id")
+	// categoryData.ID = c.Query("id")
 
 	categoryRes, err := u.categoryUseCase.EditCategory(&categoryData)
 	if err != nil {

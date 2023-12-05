@@ -16,9 +16,9 @@ func NewCategoryRepository(db *gorm.DB) interfaces.ICategoryRepository {
 	return &categoryRepository{DB: db}
 }
 
-func (d *categoryRepository) InsertCategory(name *requestmodel.Category) error {
-	query := "INSERT INTO categories(name) VALUES(?)"
-	err := d.DB.Exec(query, name.Name).Error
+func (d *categoryRepository) InsertCategory(categoryDetails *requestmodel.Category) error {
+	query := "INSERT INTO categories(name,discount) VALUES(?, ?)"
+	err := d.DB.Exec(query, categoryDetails.Name, categoryDetails.Discount).Error
 	if err != nil {
 		return errors.New("canot make a new Category")
 	}
@@ -37,17 +37,18 @@ func (d *categoryRepository) GetAllCategory(offSet int, limit int) (*[]responsem
 	return &categories, nil
 }
 
-func (d *categoryRepository) EditCategoryName(category *requestmodel.CategoryDetails) error {
-	query := "UPDATE categories SET name=? WHERE id=?"
-	result := d.DB.Exec(query, category.Name, category.ID)
+func (d *categoryRepository) EditCategoryName(category *requestmodel.CategoryDetails) (*responsemodel.CategoryDetails, error) {
+	var updatedCategory responsemodel.CategoryDetails
+	query := "UPDATE categories SET name=?, discount=? WHERE id=? RETURNING*"
+	result := d.DB.Raw(query, category.Name, category.Discount, category.ID).Scan(&updatedCategory)
 
 	if result.RowsAffected == 0 {
-		return errors.New("no category exist by id, do't duplicate brand")
+		return nil, errors.New("no category exist by id, do't duplicate brand")
 	}
 	if result.Error != nil {
-		return errors.New("some problem from database for update category")
+		return nil, errors.New("some problem from database for update category")
 	}
-	return nil
+	return &updatedCategory, nil
 }
 
 func (d *categoryRepository) DeleteCategory(id string) error {

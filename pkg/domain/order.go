@@ -25,6 +25,7 @@ type OrderProducts struct {
 	Seller        Seller      `gorm:"forgienKey:SellerID;association_foreignkey:ID"`
 	Quantity      uint
 	Price         uint
+	Discount      uint `gorm:"default:0"`
 	OrderDate     time.Time
 	EndDate       time.Time
 	PaymentStatus status
