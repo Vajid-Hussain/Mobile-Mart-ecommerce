@@ -9,7 +9,7 @@ type Coupon struct {
 	Discount        uint      `json:"discount"`
 	MinimumRequired uint      `json:"minimum_required"`
 	MaximumAllowed  uint      `json:"maximum_allowed"`
-	CreateDate      time.Time `json:"createTime"`
-	ExpireDate      time.Time `json:"expire_date"`
+	StartDate       time.Time `json:"createTime,omitempty"`
+	EndDate         time.Time `json:"expire_date"`
 	Status          string    `json:"status"`
 }

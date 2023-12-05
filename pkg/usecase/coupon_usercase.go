@@ -31,6 +31,19 @@ func (r *couponUseCase) GetCoupons() (*[]responsemodel.Coupon, error) {
 	return coupons, nil
 }
 
-// func (r *couponUseCase) UpdateCouponStatus(couponID, active, block string) (*responsemodel.Coupon, error) {
-
-// }
+func (r *couponUseCase) UpdateCouponStatus(couponID, status string) (*responsemodel.Coupon, error) {
+	var coupon *responsemodel.Coupon
+	var err error
+	if status == "active" {
+		coupon, err = r.repo.UpdateCouponStatus(couponID, status, "")
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		coupon, err = r.repo.UpdateCouponStatus(couponID, "", status)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return coupon, nil
+}

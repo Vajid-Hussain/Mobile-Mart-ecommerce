@@ -84,29 +84,28 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 
 	if order.Coupon != "" {
 		// verify coupon
-		couponData, err := r.couponrepo.CheckCouponExpired(order.Coupon)
+		couponData, err = r.couponrepo.CheckCouponExpired(order.Coupon)
 		if err != nil {
 			return nil, err
 		}
 
-		// verify
+		if order.FinalPrice < couponData.MinimumRequired || order.FinalPrice >= couponData.MaximumAllowed {
+			return nil, errors.New("total price of order is not satisfying, for apply this coupon")
+		}
+
+		for i, data := range order.Cart {
+			order.Cart[i].Price = helper.FindDiscount(float64(data.Price), float64(couponData.Discount))
+		}
+
+		order.FinalPrice = helper.FindDiscount(float64(order.FinalPrice), float64(couponData.Discount))
+
 		rightNow := time.Now()
-		if couponData.ExpireDate.Before(rightNow) {
-			fmt.Println("hii")
+		if couponData.EndDate.Before(rightNow) {
+			return nil, errors.New("coupon exeed the expiredata, better luck next time")
 		}
 	}
 
-	if order.FinalPrice < couponData.MinimumRequired || order.FinalPrice >= couponData.MaximumAllowed {
-		return nil, errors.New("total price of order is not satisfying, for apply this coupon")
-	}
-
-	for i, data := range order.Cart {
-		order.Cart[i].Price = helper.FindDiscount(float64(data.Price), float64(couponData.Discount))
-		// order.Cart[i].Discount=couponData.Discount
-	}
-
 	// place order on payment is online
-	order.FinalPrice = helper.FindDiscount(float64(order.FinalPrice), float64(couponData.Discount))
 	if order.Payment == "ONLINE" {
 		orderID, err := service.Razopay(order.FinalPrice, r.razopay.RazopayKey, r.razopay.RazopaySecret)
 		if err != nil {
@@ -143,16 +142,13 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		return nil, err
 	}
 
-	for _, data := range order.Cart {
-		err = r.cartrepo.DeleteInventoryFromCart(data.InventoryID, order.UserID)
-		if err != nil {
-			return nil, err
-		}
-	}
+	// for _, data := range order.Cart {
+	// 	err = r.cartrepo.DeleteInventoryFromCart(data.InventoryID, order.UserID)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	// }
 
-	// orderResponse.UserID = order.UserID
-	// orderResponse.Address = order.Address
-	// orderResponse.Payment = order.Payment
 	orderResponse.TotalPrice = order.FinalPrice
 	return OrderSuccessDetails, nil
 }

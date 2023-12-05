@@ -63,7 +63,23 @@ func (d *couponRepository) GetCoupons() (*[]responsemodel.Coupon, error) {
 	return &coupons, nil
 }
 
-// func (d *couponRepository) UpdateCouponStatus(couponID, active, block string) (*responsemodel.Coupon, error) {
-// 	query := "UPDATE coupons SET status= ? WHERE id=?"
-// 	d
-// }
+func (d *couponRepository) UpdateCouponStatus(couponID, active, block string) (*responsemodel.Coupon, error) {
+
+	var coupon responsemodel.Coupon
+	var result *gorm.DB
+
+	query := "UPDATE coupons SET status= ? WHERE id=? RETURNING*"
+	if active != "" {
+		result = d.DB.Raw(query, active, couponID).Scan(&coupon)
+	}
+	if block != "" {
+		result = d.DB.Raw(query, block, couponID).Scan(&coupon)
+	}
+	if result.Error != nil {
+		return nil, errors.New("face some issue while update coupons status")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &coupon, nil
+}

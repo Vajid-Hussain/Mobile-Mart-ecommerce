@@ -52,6 +52,8 @@ func AdminRoutes(engin *gin.RouterGroup, admin *handler.AdminHandler, seller *ha
 		{
 			couponmanagment.POST("/", coupon.CreateCoupon)
 			couponmanagment.GET("/", coupon.GetCoupons)
+			couponmanagment.PATCH("/unblock", coupon.UnblockCoupon)
+			couponmanagment.PATCH("/block", coupon.BlockCoupon)
 		}
 	}
 }

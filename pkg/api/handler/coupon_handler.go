@@ -55,3 +55,27 @@ func (u *CouponHandler) GetCoupons(c *gin.Context) {
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
+
+func (u *CouponHandler) UnblockCoupon(c *gin.Context) {
+	couponID := c.Query("couponID")
+	coupon, err := u.useCase.UpdateCouponStatus(couponID, "active")
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", coupon, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *CouponHandler) BlockCoupon(c *gin.Context) {
+	couponID := c.Query("couponID")
+	coupon, err := u.useCase.UpdateCouponStatus(couponID, "block")
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", coupon, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}

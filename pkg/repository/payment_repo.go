@@ -51,8 +51,8 @@ func (d *paymentRepo) GetWalletbalance(userID string) (*uint, error) {
 func (d *paymentRepo) OnlinePayment(userID, orderID string) (*responsemodel.OnlinePayment, error) {
 
 	var orderDetails responsemodel.OnlinePayment
-	query := "SELECT * FROM users INNER JOIN orders ON orders.user_id = users.id INNER JOIN addresses ON addresses.id = address_id INNER JOIN order_products ON order_products.order_id=orders.id WHERE orders.user_id=? AND payment_status = 'pending' AND payment_method= 'ONLINE'"
-	result := d.DB.Raw(query, userID).Scan(&orderDetails)
+	query := "SELECT * FROM users INNER JOIN orders ON orders.user_id = users.id INNER JOIN addresses ON addresses.id = address_id INNER JOIN order_products ON order_products.order_id=orders.id WHERE orders.user_id=? AND payment_status = 'pending' AND payment_method= 'ONLINE' AND orders.id=?"
+	result := d.DB.Raw(query, userID, orderID).Scan(&orderDetails)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while processing online payment")
 	}

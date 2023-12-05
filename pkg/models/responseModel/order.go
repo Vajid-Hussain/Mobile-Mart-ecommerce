@@ -51,7 +51,7 @@ type Order struct {
 	Address        string `gorm:"column:address_id" json:"address_id"`
 	Payment        string `gorm:"column:payment_method" json:"payment"`
 	TotalPrice     uint   `json:"payable_amount"`
-	Wallet         uint   `json:"walletBalance"`
+	Wallet         uint   `json:"walletBalance,omitempty"`
 	OrderIDRazopay string `json:"razopayOrderID,omitempty"`
 	Coupon         string `json:"coupon,omitempty"`
 	Orders         []OrderProducts

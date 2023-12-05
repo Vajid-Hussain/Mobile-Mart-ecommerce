@@ -23,16 +23,9 @@ func NewOrderRepository(db *gorm.DB) interfaces.IOrderRepository {
 func (d *orderRepository) CreateOrder(order *requestmodel.Order) (*responsemodel.Order, error) {
 
 	var orderSucess = &responsemodel.Order{}
-	// var orderData responsemodel.OrderDetails
 
-	query := "INSERT INTO orders (user_id, address_id, payment_method, order_id_razopay) VALUES(?, ?, ?, ?) RETURNING*"
-	result := d.DB.Raw(query, order.UserID, order.Address, order.Payment, order.OrderIDRazopay).Scan(&orderSucess)
-	// for _, data := range order.Cart {
-	// 	query := `INSERT INTO orders (user_id, address_id, payment_method, inventory_id, seller_id, price, quantity,  order_date, order_status,  order_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING*`
-	// 	result = d.DB.Raw(query, order.UserID, order.Address, order.Payment, data.InventoryID, data.SellerID, data.Price, data.Quantity, today, order.OrderStatus, order.OrderID).Scan(&orderData)
-	// 	orderSucess.TotalWorth += orderData.Price
-	// 	orderSucess.Orders = append(orderSucess.Orders, orderData)
-	// }
+	query := "INSERT INTO orders (user_id, address_id, payment_method, order_id_razopay, coupon_code) VALUES(?, ?, ?, ?, ?) RETURNING*"
+	result := d.DB.Raw(query, order.UserID, order.Address, order.Payment, order.OrderIDRazopay, order.Coupon).Scan(&orderSucess)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while creating order")
 	}
@@ -44,7 +37,7 @@ func (d *orderRepository) CreateOrder(order *requestmodel.Order) (*responsemodel
 }
 
 func (d *orderRepository) AddProdutToOrderProductTable(order *requestmodel.Order, orderDetails *responsemodel.Order) (*responsemodel.Order, error) {
-	// price, data.Price,
+
 	var orderProduct responsemodel.OrderProducts
 	today := time.Now().Format("2006-01-02 15:04:05")
 
