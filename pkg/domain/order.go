@@ -12,7 +12,6 @@ type Order struct {
 	OrderIDRazopay string
 	CouponCode     string
 	Coupon         Coupons `gorm:"foreignkey:CouponCode;association_foreignkey:ID"`
-	// TotalPrice     uint
 }
 
 type OrderProducts struct {
@@ -26,6 +25,7 @@ type OrderProducts struct {
 	Quantity      uint
 	Price         uint
 	Discount      uint `gorm:"default:0"`
+	PayableAmount uint
 	OrderDate     time.Time
 	EndDate       time.Time
 	PaymentStatus status

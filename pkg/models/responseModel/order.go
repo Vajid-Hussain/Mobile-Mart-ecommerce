@@ -39,6 +39,7 @@ type OrderProducts struct {
 	SellerID      string    `json:"sellerID"`
 	Quantity      uint      `json:"quantity"`
 	Price         uint      `json:"price"`
+	FinalPrice    uint      `json:"payableAmount"`
 	Discount      uint      `json:"discount,omitempty"`
 	OrderDate     time.Time `json:"orderDate"`
 	DeliveryDate  string    `json:"delivaryDate,omitempty"`

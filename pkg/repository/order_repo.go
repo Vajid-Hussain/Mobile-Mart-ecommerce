@@ -42,8 +42,8 @@ func (d *orderRepository) AddProdutToOrderProductTable(order *requestmodel.Order
 	today := time.Now().Format("2006-01-02 15:04:05")
 
 	for _, data := range order.Cart {
-		query := "INSERT INTO order_products (order_id, inventory_id, seller_id, quantity, order_date, order_status,payment_status, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING*"
-		d.DB.Raw(query, orderDetails.ID, data.InventoryID, data.SellerID, data.Quantity, today, order.OrderStatus, order.PaymentStatus, data.Price).Scan(&orderProduct)
+		query := "INSERT INTO order_products (order_id, inventory_id, seller_id, quantity, order_date, order_status,payment_status, price, discount,final_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING*"
+		d.DB.Raw(query, orderDetails.ID, data.InventoryID, data.SellerID, data.Quantity, today, order.OrderStatus, order.PaymentStatus, data.Price, data.Discount, data.FinalPrice).Scan(&orderProduct)
 		orderDetails.Orders = append(orderDetails.Orders, orderProduct)
 	}
 	return orderDetails, nil

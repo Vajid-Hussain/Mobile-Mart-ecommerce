@@ -17,8 +17,8 @@ func NewCategoryRepository(db *gorm.DB) interfaces.ICategoryRepository {
 }
 
 func (d *categoryRepository) InsertCategory(categoryDetails *requestmodel.Category) error {
-	query := "INSERT INTO categories(name,discount) VALUES(?, ?)"
-	err := d.DB.Exec(query, categoryDetails.Name, categoryDetails.Discount).Error
+	query := "INSERT INTO categories(name,category_discount) VALUES(?, ?)"
+	err := d.DB.Exec(query, categoryDetails.Name, categoryDetails.CategoryDiscount).Error
 	if err != nil {
 		return errors.New("canot make a new Category")
 	}
@@ -39,8 +39,8 @@ func (d *categoryRepository) GetAllCategory(offSet int, limit int) (*[]responsem
 
 func (d *categoryRepository) EditCategoryName(category *requestmodel.CategoryDetails) (*responsemodel.CategoryDetails, error) {
 	var updatedCategory responsemodel.CategoryDetails
-	query := "UPDATE categories SET name=?, discount=? WHERE id=? RETURNING*"
-	result := d.DB.Raw(query, category.Name, category.Discount, category.ID).Scan(&updatedCategory)
+	query := "UPDATE categories SET name=?, category_discount=? WHERE id=? RETURNING*"
+	result := d.DB.Raw(query, category.Name, category.CategoryDiscount, category.ID).Scan(&updatedCategory)
 
 	if result.RowsAffected == 0 {
 		return nil, errors.New("no category exist by id, do't duplicate brand")

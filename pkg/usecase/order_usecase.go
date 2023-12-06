@@ -72,13 +72,21 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		}
 	}
 
+	for _, product := range order.Cart {
+		inventotyPrice, err := r.cartrepo.GetInventoryPrice(product.InventoryID)
+		if err != nil {
+			return nil, err
+		}
+		order.FinalPrice += inventotyPrice
+	}
+
 	// verify coupon
 	if order.Coupon != "" {
 		couponData, err = r.couponrepo.CheckCouponExpired(order.Coupon)
 		if err != nil {
 			return nil, err
 		}
-
+		fmt.Println("##", order.FinalPrice)
 		if order.FinalPrice < couponData.MinimumRequired || order.FinalPrice >= couponData.MaximumAllowed {
 			return nil, errors.New("total price of order is not satisfying, for apply this coupon")
 		}
@@ -96,14 +104,19 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 	}
 
 	// find total amount
+	order.FinalPrice = 0
 	for i, product := range order.Cart {
 		inventotyPrice, err := r.cartrepo.GetInventoryPrice(product.InventoryID)
 		if err != nil {
 			return nil, err
 		}
 
-		discountedPrice := helper.FindDiscount(float64(inventotyPrice), float64(product.Discount+couponData.Discount))
+		discountedPrice := helper.FindDiscount(float64(inventotyPrice), float64(product.CategoryDiscount+couponData.Discount))
+		fmt.Println("@@", discountedPrice)
 		order.Cart[i].Price = inventotyPrice * product.Quantity
+		order.Cart[i].Discount = product.CategoryDiscount + couponData.Discount
+		order.Cart[i].FinalPrice = discountedPrice
+		fmt.Println("**", couponData.Discount, product.CategoryDiscount)
 		order.FinalPrice += discountedPrice
 	}
 

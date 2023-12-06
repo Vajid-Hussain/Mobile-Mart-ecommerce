@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
@@ -95,15 +96,16 @@ func (r *cartUseCase) ShowCart(userID string) (*responsemodel.UserCart, error) {
 
 	cartInventories, err := r.repo.GetCart(userID)
 	if err != nil {
-		return cart, err
+		return nil, err
 	}
 
 	for _, inventory := range *cartInventories {
 
 		price, err := r.repo.GetNetAmoutOfCart(userID, inventory.InventoryID)
 		if err != nil {
-			return cart, err
+			return nil, err
 		}
+		fmt.Println("**", inventory.Discount)
 		cart.TotalPrice += price * inventory.Quantity
 	}
 
