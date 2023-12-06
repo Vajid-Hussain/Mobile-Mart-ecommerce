@@ -11,5 +11,5 @@ type Coupons struct {
 	MaximumAllowed  uint
 	StartDate       time.Time
 	EndDate         time.Time
-	Status          status `json:"status" gorm:"default:active"`
+	Status          status `gorm:"default:active"`
 }

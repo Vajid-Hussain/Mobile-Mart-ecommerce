@@ -109,8 +109,6 @@ func (u *CategoryHandler) UpdateCategory(c *gin.Context) {
 		return
 	}
 
-	// categoryData.ID = c.Query("id")
-
 	categoryRes, err := u.categoryUseCase.EditCategory(&categoryData)
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "refine request", categoryRes, nil)
@@ -226,7 +224,7 @@ func (u *CategoryHandler) UpdateBrand(c *gin.Context) {
 	var brandData requestmodel.BrandDetails
 
 	if err := c.BindJSON(&brandData); err != nil {
-		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, nil)
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
@@ -270,6 +268,112 @@ func (u *CategoryHandler) DeleteBrand(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
 		finalReslt := response.Responses(http.StatusOK, "succesfully Brand deleted", nil, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *CategoryHandler) CreateCategoryOffer(c *gin.Context) {
+
+	var categoryOffer requestmodel.CategoryOffer
+	if err := c.BindJSON(&categoryOffer); err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	categoryOffer.SellerID = c.MustGet("SellerID").(string)
+	data, err := helper.Validation(categoryOffer)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	result, err := u.categoryUseCase.CategoryOffer(&categoryOffer)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "succesfully offer added ", result, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *CategoryHandler) BlockCategoryOffer(c *gin.Context) {
+
+	categoryOfferID := c.Query("categoryOfferID")
+	result, err := u.categoryUseCase.ChangeStatusOfCategoryOffer("block", categoryOfferID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "succesfully offer block ", result, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *CategoryHandler) UnBlockCategoryOffer(c *gin.Context) {
+
+	categoryOfferID := c.Query("categoryOfferID")
+	result, err := u.categoryUseCase.ChangeStatusOfCategoryOffer("active", categoryOfferID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "succesfully offer unblock ", result, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *CategoryHandler) DeleteCategoryOffer(c *gin.Context) {
+
+	categoryOfferID := c.Query("categoryOfferID")
+	result, err := u.categoryUseCase.ChangeStatusOfCategoryOffer("delete", categoryOfferID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "succesfully offer deleted ", result, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *CategoryHandler) GetAllCategoryOffer(c *gin.Context) {
+	sellerID := c.MustGet("SellerID").(string)
+
+	result, err := u.categoryUseCase.GetAllCategoryOffer(sellerID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "succesfully offer deleted ", result, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}
+
+func (u *CategoryHandler) EditCategoryOffer(c *gin.Context) {
+
+	var categoryOffer requestmodel.EditCategoryOffer
+	if err := c.BindJSON(&categoryOffer); err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	categoryOffer.SellerID = c.MustGet("SellerID").(string)
+	data, err := helper.Validation(categoryOffer)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", data, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	result, err := u.categoryUseCase.UpdateCategoryOffer(&categoryOffer)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "succesfully offer added ", result, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }

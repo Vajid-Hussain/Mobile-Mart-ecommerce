@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"errors"
+	"fmt"
 	"strconv"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -78,21 +80,6 @@ func (r *categoryUseCase) DeleteCategory(id string) error {
 
 // Brand
 func (r *categoryUseCase) CreateBrand(brandDetails *requestmodel.Brand) (*responsemodel.BrandRes, error) {
-	// var resBrand responsemodel.BrandRes
-
-	// validate := validator.New(validator.WithRequiredStructEnabled())
-	// err := validate.Struct(brandDetails)
-	// if err != nil {
-	// 	if ve, ok := err.(validator.ValidationErrors); ok {
-	// 		for _, e := range ve {
-	// 			switch e.Field() {
-	// 			case "Name":
-	// 				resBrand.Name = "name is medetary"
-	// 			}
-	// 		}
-	// 	}
-	// 	return &resBrand, errors.New("don't fullfill the brand requirement ")
-	// }
 
 	err := r.repo.InsertBrand(brandDetails)
 	if err != nil {
@@ -118,25 +105,6 @@ func (r *categoryUseCase) GetAllBrand(page string, limit string) (*[]responsemod
 }
 
 func (r *categoryUseCase) EditBrand(brandData *requestmodel.BrandDetails) (*responsemodel.BrandRes, error) {
-	// var brandRes responsemodel.BrandRes
-
-	// brandData.ID = strings.TrimSpace(brandData.ID)
-
-	// validate := validator.New(validator.WithRequiredStructEnabled())
-	// err := validate.Struct(brandData)
-	// if err != nil {
-	// 	if ve, ok := err.(validator.ValidationErrors); ok {
-	// 		for _, e := range ve {
-	// 			switch e.Field() {
-	// 			case "Name":
-	// 				brandRes.Name = "name is medetary"
-	// 			case "ID":
-	// 				brandRes.ID = "id is required,as query"
-	// 			}
-	// 		}
-	// 	}
-	// 	return &brandRes, errors.New("don't fullfill the brand requirement ")
-	// }
 
 	err := r.repo.EditBrandName(brandData)
 	if err != nil {
@@ -166,4 +134,63 @@ func (r *categoryUseCase) DeleteBrand(id string) error {
 		return err
 	}
 	return nil
+}
+
+func (r *categoryUseCase) CategoryOffer(categoryOffer *requestmodel.CategoryOffer) (*responsemodel.CategoryOffer, error) {
+	categoryCount, err := r.repo.ChekSellerHaveCategoryOffer(categoryOffer.SellerID, categoryOffer.CategoryID)
+	if err != nil {
+		return nil, err
+	}
+	if *categoryCount > 0 {
+		fmt.Println("**", *categoryCount)
+		return nil, errors.New("the offer is currently live in the same category. Now, you can edit the category offer.")
+	}
+	fmt.Println("**", *categoryCount)
+
+	categoryOfferRes, err := r.repo.InsertCategoryOffer(categoryOffer)
+	if err != nil {
+		return nil, err
+	}
+	return categoryOfferRes, nil
+}
+
+func (r *categoryUseCase) ChangeStatusOfCategoryOffer(status, categoryOfferID string) (*responsemodel.CategoryOffer, error) {
+	if status == "block" {
+		offer, err := r.repo.ChangeStatus(status, "", "", categoryOfferID)
+		if err != nil {
+			return nil, err
+		}
+		return offer, nil
+	}
+	if status == "active" {
+		offer, err := r.repo.ChangeStatus(status, "", "", categoryOfferID)
+		if err != nil {
+			return nil, err
+		}
+		return offer, nil
+	}
+	if status == "delete" {
+		offer, err := r.repo.ChangeStatus(status, "", "", categoryOfferID)
+		if err != nil {
+			return nil, err
+		}
+		return offer, nil
+	}
+	return nil, errors.New("no status change is happens")
+}
+
+func (r *categoryUseCase) GetAllCategoryOffer(sellerID string) (*[]responsemodel.CategoryOffer, error) {
+	offers, err := r.repo.GetAllCategoryOffers(sellerID)
+	if err != nil {
+		return nil, err
+	}
+	return offers, nil
+}
+
+func (r *categoryUseCase) UpdateCategoryOffer(updateData *requestmodel.EditCategoryOffer) (*responsemodel.CategoryOffer, error) {
+	newCategoryOffer, err := r.repo.UpdateCategoryOffer(updateData)
+	if err != nil {
+		return nil, err
+	}
+	return newCategoryOffer, nil
 }

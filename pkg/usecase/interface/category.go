@@ -15,4 +15,9 @@ type ICategoryUseCase interface {
 	GetAllBrand(string, string) (*[]responsemodel.BrandRes, error)
 	EditBrand(*requestmodel.BrandDetails) (*responsemodel.BrandRes, error)
 	DeleteBrand(string) error
+
+	CategoryOffer(*requestmodel.CategoryOffer) (*responsemodel.CategoryOffer, error)
+	ChangeStatusOfCategoryOffer(string, string) (*responsemodel.CategoryOffer, error)
+	GetAllCategoryOffer(string) (*[]responsemodel.CategoryOffer, error)
+	UpdateCategoryOffer(*requestmodel.EditCategoryOffer) (*responsemodel.CategoryOffer, error)
 }

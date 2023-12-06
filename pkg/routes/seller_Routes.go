@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, inventory *handler.InventotyHandler, order *handler.OrderHandler) {
+func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, inventory *handler.InventotyHandler, order *handler.OrderHandler, category *handler.CategoryHandler) {
 
 	engin.POST("/signup", seller.SellerSignup)
 	engin.POST("/login", seller.SellerLogin)
@@ -45,6 +45,17 @@ func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, invento
 			salesreportmanagement.GET("/week", order.SalesReportByWeek)
 			salesreportmanagement.GET("/day", order.SalesReportByDay)
 			salesreportmanagement.GET("/days", order.SalesReportCustomDays)
+		}
+
+		categorymanagement := engin.Group("/categoryoffer")
+		{
+			categorymanagement.GET("/category", category.FetchAllCatogry)
+			categorymanagement.GET("/", category.GetAllCategoryOffer)
+			categorymanagement.POST("/", category.CreateCategoryOffer)
+			categorymanagement.PATCH("/", category.EditCategoryOffer)
+			categorymanagement.PATCH("/block", category.BlockCategoryOffer)
+			categorymanagement.PATCH("/unblock", category.UnBlockCategoryOffer)
+			categorymanagement.PATCH("/delete", category.DeleteCategoryOffer)
 		}
 	}
 }
