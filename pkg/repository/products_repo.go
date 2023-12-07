@@ -100,7 +100,8 @@ func (d *inventoryRepository) GetAInventory(id string) (*responsemodel.Inventory
 func (d *inventoryRepository) GetSellerInventory(offSet int, limit int, sellerID string) (*[]responsemodel.InventoryShowcase, error) {
 	var inventory []responsemodel.InventoryShowcase
 
-	query := "SELECT * FROM inventories WHERE seller_id= ? AND status = 'active' ORDER BY id OFFSET ? LIMIT ?"
+	query := "SELECT * FROM category_offers RIGHT JOIN inventories ON category_offers.category_id= inventories.category_id AND inventories.seller_id=category_offers.seller_id AND category_offers.status='active' AND category_offers.end_date>=now() WHERE inventories.seller_id= ? AND inventories.status = 'active' ORDER BY inventories.id OFFSET ? LIMIT ?"
+
 	err := d.DB.Raw(query, sellerID, offSet, limit).Scan(&inventory).Error
 	if err != nil {
 		return nil, errors.New("can't get inventory data from db")

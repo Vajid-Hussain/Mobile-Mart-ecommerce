@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -113,6 +114,12 @@ func (r *inventoryUseCase) GetSellerInventory(page string, limit string, sellerI
 		return nil, err
 	}
 
+	for i, product := range *inventories {
+		if product.CategoryDiscount != 0 {
+			(*inventories)[i].NetDiscount = product.Discount + product.CategoryDiscount
+			(*inventories)[i].PriceAfterApplyCategoryDiscount = helper.FindDiscount(float64(product.Mrp), float64((*inventories)[i].NetDiscount))
+		}
+	}
 	return inventories, nil
 }
 
