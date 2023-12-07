@@ -31,5 +31,5 @@ type EditCategoryOffer struct {
 	SellerID         string
 	Title            string `json:"title" validate:"required"`
 	CategoryDiscount uint   `json:"category_discount" validate:"required,min=1,max=99"`
-	Validity         uint   `json:"validity" validate:"required,min=0"`
+	Validity         uint   `json:"validity"`
 }

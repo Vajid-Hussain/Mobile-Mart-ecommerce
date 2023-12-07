@@ -80,6 +80,12 @@ func (r *inventoryUseCase) GetAllInventory(page string, limit string) (*[]respon
 		return nil, err
 	}
 
+	for i, product := range *inventories {
+		if product.CategoryDiscount != 0 {
+			(*inventories)[i].NetDiscount = product.Discount + product.CategoryDiscount
+			(*inventories)[i].PriceAfterApplyCategoryDiscount = helper.FindDiscount(float64(product.Mrp), float64((*inventories)[i].NetDiscount))
+		}
+	}
 	return inventories, nil
 }
 
@@ -87,6 +93,10 @@ func (r *inventoryUseCase) GetAInventory(productID string) (*responsemodel.Inven
 	inventory, err := r.repo.GetAInventory(productID)
 	if err != nil {
 		return nil, err
+	}
+	if inventory.CategoryDiscount != 0 {
+		inventory.NetDiscount = inventory.CategoryDiscount + inventory.Discount
+		inventory.FinalPrice = helper.FindDiscount(float64(inventory.Mrp), float64(inventory.NetDiscount))
 	}
 	return inventory, nil
 }
@@ -107,8 +117,6 @@ func (r *inventoryUseCase) GetSellerInventory(page string, limit string, sellerI
 }
 
 func (r *inventoryUseCase) EditInventory(editInventory *requestmodel.EditInventory) (*responsemodel.InventoryRes, error) {
-	// validate := validator.New(validator.WithRequiredStructEnabled())
-	// productID := strconv.FormatUint(uint64(editInventory.ID), 10)
 
 	inventory, err := r.repo.GetAInventory(editInventory.ID)
 	if err != nil {
@@ -117,46 +125,6 @@ func (r *inventoryUseCase) EditInventory(editInventory *requestmodel.EditInvento
 	if inventory.SellerID != editInventory.SellerID {
 		return nil, resCustomError.ErrNoRowAffected
 	}
-	// err = validate.Struct(editInventory)
-	// if err != nil {
-	// 	if ve, ok := err.(validator.ValidationErrors); ok {
-	// 		for _, e := range ve {
-	// 			fieldName := e.Field()
-	// 			switch fieldName {
-	// 			case "ID":
-	// 				editInventory.ID = inventory.ID
-	// 			case "Productname":
-	// 				editInventory.Productname = inventory.Productname
-	// 			case "Description":
-	// 				editInventory.Description = inventory.Description
-	// 			case "BrandID":
-	// 				editInventory.BrandID = inventory.BrandID
-	// 			case "CategoryID":
-	// 				editInventory.CategoryID = inventory.CategoryID
-	// 			case "SellerID":
-	// 				editInventory.SellerID = inventory.SellerID
-	// 			case "Mrp":
-	// 				editInventory.Mrp = inventory.Mrp
-	// 			case "Saleprice":
-	// 				editInventory.Discount = inventory.Discount
-	// 			case "Units":
-	// 				editInventory.Units = inventory.Units
-	// 			case "Os":
-	// 				editInventory.Os = inventory.Os
-	// 			case "CellularTechnology":
-	// 				editInventory.CellularTechnology = inventory.CellularTechnology
-	// 			case "Ram":
-	// 				editInventory.Ram = inventory.Ram
-	// 			case "Screensize":
-	// 				editInventory.Screensize = inventory.Screensize
-	// 			case "Batterycapacity":
-	// 				editInventory.Batterycapacity = inventory.Batterycapacity
-	// 			case "Processor":
-	// 				editInventory.Processor = inventory.Processor
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	// fill data if it's empty
 	if editInventory.Units == 0 {
@@ -206,6 +174,12 @@ func (r *inventoryUseCase) GetProductFilter(criterion *requestmodel.FilterCriter
 	filteredProduct, err := r.repo.GetProductFilter(criterion)
 	if err != nil {
 		return nil, err
+	}
+	for i, product := range *filteredProduct {
+		if product.CategoryDiscount != 0 {
+			(*filteredProduct)[i].NetDiscount = product.Discount + product.CategoryDiscount
+			(*filteredProduct)[i].PriceAfterApplyCategoryDiscount = helper.FindDiscount(float64(product.Mrp), float64((*filteredProduct)[i].NetDiscount))
+		}
 	}
 	return filteredProduct, nil
 }

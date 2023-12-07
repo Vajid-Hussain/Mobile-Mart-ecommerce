@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"time"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -148,7 +147,7 @@ func (d *categoryRepository) InsertCategoryOffer(categoryOffer *requestmodel.Cat
 
 func (d *categoryRepository) ChekSellerHaveCategoryOffer(sellerID, categoryID string) (*uint, error) {
 	var exist uint
-	fmt.Println(sellerID, categoryID)
+
 	query := "SELECT COUNT(*) FROM category_offers WHERE seller_id=? AND category_id= ? AND status= 'active' AND end_date> now()"
 	result := d.DB.Raw(query, sellerID, categoryID).Scan(&exist)
 	if result.Error != nil {
@@ -157,22 +156,12 @@ func (d *categoryRepository) ChekSellerHaveCategoryOffer(sellerID, categoryID st
 	return &exist, nil
 }
 
-func (d *categoryRepository) ChangeStatus(block, unblock, delete, categoryOfferID string) (*responsemodel.CategoryOffer, error) {
+func (d *categoryRepository) ChangeStatus(status, categoryOfferID string) (*responsemodel.CategoryOffer, error) {
 
 	var categoryOffer responsemodel.CategoryOffer
-	var result *gorm.DB
 
 	query := "UPDATE category_offers SET status= ? WHERE id=?  RETURNING *"
-	if block != "" {
-		result = d.DB.Raw(query, block, categoryOfferID).Scan(&categoryOffer)
-	}
-	if unblock != "" {
-		result = d.DB.Raw(query, unblock, categoryOfferID).Scan(&categoryOffer)
-	}
-	if delete != "" {
-		result = d.DB.Raw(query, delete, categoryOfferID).Scan(&categoryOffer)
-	}
-
+	result := d.DB.Raw(query, status, categoryOfferID).Scan(&categoryOffer)
 	if result.RowsAffected == 0 {
 		return nil, resCustomError.ErrNoRowAffected
 	}
@@ -185,7 +174,7 @@ func (d *categoryRepository) ChangeStatus(block, unblock, delete, categoryOfferI
 func (d *categoryRepository) GetAllCategoryOffers(sellerID string) (*[]responsemodel.CategoryOffer, error) {
 
 	var categoryOffers *[]responsemodel.CategoryOffer
-	query := "SELECT * FROM category_offers WHERE seller_id=? AND end_date>=now()"
+	query := "SELECT * FROM category_offers WHERE seller_id=? AND end_date>=now() AND status='active'"
 	result := d.DB.Raw(query, sellerID).Scan(&categoryOffers)
 	if result.RowsAffected == 0 {
 		return nil, resCustomError.ErrNoRowAffected
@@ -199,14 +188,13 @@ func (d *categoryRepository) GetAllCategoryOffers(sellerID string) (*[]responsem
 func (d *categoryRepository) UpdateCategoryOffer(updateData *requestmodel.EditCategoryOffer) (*responsemodel.CategoryOffer, error) {
 
 	var updatedCategoryOffer responsemodel.CategoryOffer
-	query := "UPDATE category_offers SET title=$1, category_discount=$2, end_date = end_date + $3 * INTERVAL '1 day' WHERE id=$4 AND seller_id=$5 RETURNING*"
+	query := "UPDATE category_offers SET title=$1, category_discount=$2, end_date = end_date + $3 * INTERVAL '1 day' WHERE id=$4 AND seller_id=$5 AND status='active' RETURNING*"
 	result := d.DB.Raw(query, updateData.Title, updateData.CategoryDiscount, updateData.Validity, updateData.ID, updateData.SellerID).Scan(&updatedCategoryOffer)
-
-	// if result.RowsAffected == 0 {
-	// 	return nil, resCustomError.ErrNoRowAffected
-	// }
 	if result.Error != nil {
 		return nil, errors.New("face issue while update category offer")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
 	}
 	return &updatedCategoryOffer, nil
 }

@@ -20,7 +20,7 @@ type ICategoryRepository interface {
 
 	InsertCategoryOffer(*requestmodel.CategoryOffer) (*responsemodel.CategoryOffer, error)
 	ChekSellerHaveCategoryOffer(string, string) (*uint, error)
-	ChangeStatus(string, string, string, string) (*responsemodel.CategoryOffer, error)
+	ChangeStatus(string, string) (*responsemodel.CategoryOffer, error)
 	GetAllCategoryOffers(string) (*[]responsemodel.CategoryOffer, error)
 	UpdateCategoryOffer(*requestmodel.EditCategoryOffer) (*responsemodel.CategoryOffer, error)
 }

@@ -55,7 +55,7 @@ func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, invento
 			categorymanagement.PATCH("/", category.EditCategoryOffer)
 			categorymanagement.PATCH("/block", category.BlockCategoryOffer)
 			categorymanagement.PATCH("/unblock", category.UnBlockCategoryOffer)
-			categorymanagement.PATCH("/delete", category.DeleteCategoryOffer)
+			categorymanagement.DELETE("/delete", category.DeleteCategoryOffer)
 		}
 	}
 }

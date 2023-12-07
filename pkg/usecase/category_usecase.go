@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -142,10 +141,8 @@ func (r *categoryUseCase) CategoryOffer(categoryOffer *requestmodel.CategoryOffe
 		return nil, err
 	}
 	if *categoryCount > 0 {
-		fmt.Println("**", *categoryCount)
-		return nil, errors.New("the offer is currently live in the same category. Now, you can edit the category offer.")
+		return nil, errors.New("the offer is currently live in the same category. Now, you can edit the category offer")
 	}
-	fmt.Println("**", *categoryCount)
 
 	categoryOfferRes, err := r.repo.InsertCategoryOffer(categoryOffer)
 	if err != nil {
@@ -155,28 +152,11 @@ func (r *categoryUseCase) CategoryOffer(categoryOffer *requestmodel.CategoryOffe
 }
 
 func (r *categoryUseCase) ChangeStatusOfCategoryOffer(status, categoryOfferID string) (*responsemodel.CategoryOffer, error) {
-	if status == "block" {
-		offer, err := r.repo.ChangeStatus(status, "", "", categoryOfferID)
-		if err != nil {
-			return nil, err
-		}
-		return offer, nil
+	offer, err := r.repo.ChangeStatus(status, categoryOfferID)
+	if err != nil {
+		return nil, err
 	}
-	if status == "active" {
-		offer, err := r.repo.ChangeStatus(status, "", "", categoryOfferID)
-		if err != nil {
-			return nil, err
-		}
-		return offer, nil
-	}
-	if status == "delete" {
-		offer, err := r.repo.ChangeStatus(status, "", "", categoryOfferID)
-		if err != nil {
-			return nil, err
-		}
-		return offer, nil
-	}
-	return nil, errors.New("no status change is happens")
+	return offer, nil
 }
 
 func (r *categoryUseCase) GetAllCategoryOffer(sellerID string) (*[]responsemodel.CategoryOffer, error) {

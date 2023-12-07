@@ -112,7 +112,7 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		}
 
 		discountedPrice := helper.FindDiscount(float64(inventotyPrice), float64(product.CategoryDiscount+couponData.Discount))
-		fmt.Println("@@", discountedPrice)
+
 		order.Cart[i].Price = inventotyPrice * product.Quantity
 		order.Cart[i].Discount = product.CategoryDiscount + couponData.Discount
 		order.Cart[i].FinalPrice = discountedPrice

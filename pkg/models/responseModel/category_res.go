@@ -17,7 +17,7 @@ type BrandRes struct {
 }
 
 type CategoryOffer struct {
-	ID               string    `json:"categoryID"`
+	ID               string    `json:"id"`
 	Title            string    `json:"title"`
 	CategoryID       uint      `json:"category_id"`
 	SellerID         uint      `json:"seller_id"`
