@@ -42,7 +42,7 @@ func (d *orderRepository) AddProdutToOrderProductTable(order *requestmodel.Order
 	today := time.Now().Format("2006-01-02 15:04:05")
 
 	for _, data := range order.Cart {
-		query := "INSERT INTO order_products (order_id, inventory_id, seller_id, quantity, order_date, order_status,payment_status, price, discount,final_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING*"
+		query := "INSERT INTO order_products (order_id, inventory_id, seller_id, quantity, order_date, order_status,payment_status, price, discount,payable_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING*"
 		d.DB.Raw(query, orderDetails.ID, data.InventoryID, data.SellerID, data.Quantity, today, order.OrderStatus, order.PaymentStatus, data.Price, data.Discount, data.FinalPrice).Scan(&orderProduct)
 		orderDetails.Orders = append(orderDetails.Orders, orderProduct)
 	}
@@ -320,4 +320,20 @@ func (d *orderRepository) GetSalesReportByDays(sellerID string, days string) (*r
 		return nil, errors.New("face some issue while get report by days")
 	}
 	return &report, nil
+}
+
+// ------------------------------------------category_offers------------------------------------\\
+
+func (d *orderRepository) GetCategoryOffers(productID string) uint {
+	var categoryDiscount uint
+	query := "SELECT category_discount FROM category_offers RIGHT JOIN inventories ON inventories.seller_id=category_offers.seller_id AND category_offers.category_id=inventories.category_id AND category_offers.status='active' AND category_offers.end_date>now() WHERE inventories.status='active'  AND inventories.id=?"
+	d.DB.Raw(query, productID).Scan(&categoryDiscount)
+	return categoryDiscount
+}
+
+func (d *orderRepository) CheckCouponAppliedOrNot(userID, couponID string) uint {
+	var exist uint
+	query := "SELECT COUNT(*) FROM orders WHERE user_id=? AND coupon_code= ?"
+	d.DB.Raw(query, userID, couponID).Scan(&exist)
+	return exist
 }

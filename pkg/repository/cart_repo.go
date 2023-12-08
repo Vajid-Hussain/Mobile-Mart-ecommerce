@@ -100,7 +100,7 @@ func (d *cartRepository) UpdateQuantity(cart *requestmodel.Cart) (*requestmodel.
 
 func (d *cartRepository) GetCart(userID string) (*[]responsemodel.CartInventory, error) {
 	var cartView *[]responsemodel.CartInventory
-	query := "SELECT * FROM carts INNER JOIN inventories ON id=inventory_id INNER JOIN categories ON categories.id=inventories.category_id WHERE carts.user_id=? AND carts.status='active'"
+	query := "SELECT * FROM carts INNER JOIN inventories ON id=inventory_id LEFT JOIN category_offers ON category_offers.seller_id=inventories.seller_id AND category_offers.category_id=inventories.category_id AND category_offers.status='active' AND category_offers.end_date>now() WHERE carts.user_id=? AND carts.status='active'"
 	result := d.DB.Raw(query, userID).Scan(&cartView)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while  get cart")

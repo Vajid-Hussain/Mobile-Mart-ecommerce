@@ -11,7 +11,7 @@ type Order struct {
 	PaymentMethod  string
 	OrderIDRazopay string
 	CouponCode     string
-	Coupon         Coupons `gorm:"foreignkey:CouponCode;association_foreignkey:ID"`
+	// Coupon         Coupons `gorm:"foreignkey:CouponCode;association_foreignkey:ID"`
 }
 
 type OrderProducts struct {

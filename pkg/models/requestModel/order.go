@@ -10,6 +10,7 @@ type Order struct {
 	Coupon         string                        `json:"coupon"`
 	OrderIDRazopay string                        `json:"-"`
 	FinalPrice     uint                          `json:"-"`
+	CouponDiscount uint                          `json:"-"`
 	OrderStatus    string                        `json:"-"`
 	PaymentStatus  string                        `json:"-"`
 	Cart           []responsemodel.CartInventory `json:"-"`

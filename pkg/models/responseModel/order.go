@@ -33,18 +33,21 @@ type OrderDetails struct {
 }
 
 type OrderProducts struct {
-	ItemID        string    `json:"itemID"`
-	OrderID       string    `json:"parentOrderID"`
-	InventoryID   string    `json:"productID"`
-	SellerID      string    `json:"sellerID"`
-	Quantity      uint      `json:"quantity"`
-	Price         uint      `json:"price"`
-	FinalPrice    uint      `json:"payableAmount"`
-	Discount      uint      `json:"discount,omitempty"`
-	OrderDate     time.Time `json:"orderDate"`
-	DeliveryDate  string    `json:"delivaryDate,omitempty"`
-	OrderStatus   string    `json:"OrderStatus,omitempty"`
-	PaymentStatus string    `json:"paymentStatus,omitempty"`
+	ItemID           string    `json:"itemID"`
+	OrderID          string    `json:"parentOrderID"`
+	InventoryID      string    `json:"productID"`
+	SellerID         string    `json:"sellerID"`
+	CategoryID       string    `json:"categoryID"`
+	Discount         uint      `json:"discount,omitempty"`
+	Price            uint      `json:"price"`
+	Quantity         uint      `json:"quantity"`
+	CategoryDiscount uint      `json:"categoryDiscount,omitempty"`
+	FinalPrice       uint      `json:"payableAmount,omitempty"`
+	PayableAmount    uint      `json:"PayableAmount"`
+	OrderDate        time.Time `json:"orderDate"`
+	DeliveryDate     string    `json:"delivaryDate,omitempty"`
+	OrderStatus      string    `json:"OrderStatus,omitempty"`
+	PaymentStatus    string    `json:"paymentStatus,omitempty"`
 }
 
 type Order struct {

@@ -2,12 +2,12 @@ package usecase
 
 import (
 	"errors"
-	"fmt"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
+	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
 )
 
 type cartUseCase struct {
@@ -99,13 +99,13 @@ func (r *cartUseCase) ShowCart(userID string) (*responsemodel.UserCart, error) {
 		return nil, err
 	}
 
-	for _, inventory := range *cartInventories {
+	for i, inventory := range *cartInventories {
 
 		price, err := r.repo.GetNetAmoutOfCart(userID, inventory.InventoryID)
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println("**", inventory.Discount)
+		(*cartInventories)[i].FinalPrice = helper.FindDiscount(float64(inventory.Price), float64(inventory.Discount+inventory.CategoryDiscount))
 		cart.TotalPrice += price * inventory.Quantity
 	}
 

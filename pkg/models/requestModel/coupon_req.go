@@ -1,7 +1,7 @@
 package requestmodel
 
 type Coupon struct {
-	Name            string `json:"name" validate:"required,alpha"`
+	Name            string `json:"name" validate:"required"`
 	Type            string `json:"type" validate:"required,alpha"`
 	Discount        uint   `json:"discount" validate:"min=1,max=100"`
 	MinimumRequired uint   `json:"minimum_required" validate:"min=0"`

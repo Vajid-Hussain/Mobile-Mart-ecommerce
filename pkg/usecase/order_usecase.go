@@ -86,38 +86,31 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println("##", order.FinalPrice)
+
 		if order.FinalPrice < couponData.MinimumRequired || order.FinalPrice >= couponData.MaximumAllowed {
-			return nil, errors.New("total price of order is not satisfying, for apply this coupon")
+			return nil, fmt.Errorf("total price of order is %d not satisfying, for apply this coupon code %s of maximum allowed %d", order.FinalPrice, order.Coupon, couponData.MaximumAllowed)
 		}
-
-		for i, data := range order.Cart {
-			order.Cart[i].Price = helper.FindDiscount(float64(data.Price), float64(couponData.Discount))
-		}
-
-		order.FinalPrice = helper.FindDiscount(float64(order.FinalPrice), float64(couponData.Discount))
 
 		rightNow := time.Now()
 		if couponData.EndDate.Before(rightNow) {
 			return nil, errors.New("coupon exeed the expiredata, better luck next time")
 		}
+
+		exist := r.repo.CheckCouponAppliedOrNot(order.UserID, order.Coupon)
+		if exist > 0 {
+			return nil, fmt.Errorf("you are alredy apply %s coupon for %d time", order.Coupon, exist)
+		}
+
+		order.CouponDiscount = couponData.Discount
 	}
 
 	// find total amount
 	order.FinalPrice = 0
 	for i, product := range order.Cart {
-		inventotyPrice, err := r.cartrepo.GetInventoryPrice(product.InventoryID)
-		if err != nil {
-			return nil, err
-		}
-
-		discountedPrice := helper.FindDiscount(float64(inventotyPrice), float64(product.CategoryDiscount+couponData.Discount))
-
-		order.Cart[i].Price = inventotyPrice * product.Quantity
-		order.Cart[i].Discount = product.CategoryDiscount + couponData.Discount
-		order.Cart[i].FinalPrice = discountedPrice
-		fmt.Println("**", couponData.Discount, product.CategoryDiscount)
-		order.FinalPrice += discountedPrice
+		order.Cart[i].Price = helper.FindDiscount(float64(product.Price), float64(product.CategoryDiscount+product.Discount))
+		order.Cart[i].Discount = product.Discount + product.CategoryDiscount
+		order.Cart[i].FinalPrice = helper.FindDiscount(float64(product.Price), float64(product.Discount+product.CategoryDiscount+order.CouponDiscount))
+		order.FinalPrice += order.Cart[i].FinalPrice
 	}
 
 	// place order on payment is online
