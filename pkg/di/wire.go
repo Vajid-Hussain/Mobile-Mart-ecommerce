@@ -23,10 +23,6 @@ func InitializeAPI(config *config.Config) (*server.ServerHttp, error) {
 	jwtUseCase := usecase.NewJwtTokenUseCase(jwtRepository)
 	middlewire.NewJwtTokenMiddleWire(jwtUseCase, config.Token)
 
-	userRepository := repository.NewUserRepository(DB)
-	userUseCase := usecase.NewUserUseCase(userRepository, &config.Token)
-	userHandler := handler.NewUserHandler(userUseCase)
-
 	sellerRepository := repository.NewSellerRepository(DB)
 	sellerUseCase := usecase.NewSellerUseCase(sellerRepository, &config.Token)
 	sellerHandler := handler.NewSellerHandler(sellerUseCase)
@@ -50,6 +46,10 @@ func InitializeAPI(config *config.Config) (*server.ServerHttp, error) {
 	paymentRepository := repository.NewPaymentRepository(DB)
 	paymentUseCase := usecase.NewPaymentUseCase(paymentRepository, &config.Razopay)
 	paymentHandler := handler.NewPaymentHandler(paymentUseCase)
+
+	userRepository := repository.NewUserRepository(DB)
+	userUseCase := usecase.NewUserUseCase(userRepository, paymentRepository, &config.Token)
+	userHandler := handler.NewUserHandler(userUseCase)
 
 	couponRepository := repository.NewCouponRepository(DB)
 	couponUseCase := usecase.NewCouponUseCase(couponRepository)

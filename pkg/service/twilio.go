@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	"github.com/twilio/twilio-go"
@@ -34,7 +33,6 @@ func SendOtp(phone string) (string, error) {
 	params.SetChannel("sms")
 	res, err := tw.VerifyV2.CreateVerification(twilioOTP.requirements.ServiceSid, params)
 	if err != nil {
-		fmt.Println("************", err)
 		return "", err
 	}
 	return *res.Sid, nil
@@ -46,7 +44,7 @@ func VerifyOtp(phone string, otp string) error {
 	params.SetCode(otp)
 	res, err := tw.VerifyV2.CreateVerificationCheck(twilioOTP.requirements.ServiceSid, params)
 	if err != nil {
-		return errors.New("eroor")
+		return err
 	}
 
 	if *res.Status == "approved" {

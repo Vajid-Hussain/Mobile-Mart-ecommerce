@@ -6,7 +6,7 @@ import (
 )
 
 type IuserUseCase interface {
-	UserSignup(*requestmodel.UserDetails) (responsemodel.SignupData, error)
+	UserSignup(*requestmodel.UserDetails) (*responsemodel.SignupData, error)
 	VerifyOtp(requestmodel.OtpVerification, string) (responsemodel.OtpValidation, error)
 	SendOtp(*requestmodel.SendOtp) (*string, error)
 	UserLogin(requestmodel.UserLogin) (responsemodel.UserLogin, error)

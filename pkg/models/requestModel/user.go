@@ -5,8 +5,9 @@ type UserDetails struct {
 	Name            string `json:"name"           validate:"required"`
 	Email           string `json:"email"          validate:"email"`
 	Phone           string `json:"phone"          validate:"len=10"`
-	Password        string `json:"password,omitempty"       validate:"min=4"`
+	Password        string `json:"-"       validate:"min=4"`
 	ConfirmPassword string `json:"confirmpassword,omitempty" validate:"eqfield=Password"`
+	ReferalCode     string `json:"referalCode"`
 }
 
 type UserEditProfile struct {
@@ -14,8 +15,9 @@ type UserEditProfile struct {
 	Name            string `json:"name" validate:"required"`
 	Email           string `json:"email" validate:"required,email"`
 	Phone           string `json:"phone,omitempty" validate:"required,len=10"`
-	Password        string `json:"password,omitempty" validate:"required,min=4"`
-	ConfirmPassword string `json:"confirmpassword,omitempty" validate:"required,eqfield=Password"`
+	Password        string `json:"-,omitempty" validate:"required"`
+	ConfirmPassword string `json:"-,omitempty"`
+	ReferalCode     string `json:"-"`
 }
 
 type Address struct {

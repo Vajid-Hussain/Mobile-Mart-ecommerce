@@ -105,12 +105,12 @@ func VerifyRefreshToken(token string, securityKey string) error {
 // }
 
 func FetchPhoneFromToken(tokenString string, secretkey string) (string, error) {
+
 	secret := []byte(secretkey)
 
 	parsedToken, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return secret, nil
 	})
-
 	if err != nil || !parsedToken.Valid {
 		return "", errors.New("wrong token or expired")
 	}

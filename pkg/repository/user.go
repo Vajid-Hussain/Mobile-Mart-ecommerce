@@ -22,9 +22,14 @@ func NewUserRepository(DB *gorm.DB) interfaces.IUserRepo {
 
 //user Repository
 
-func (d *userRepository) CreateUser(userDetails *requestmodel.UserDetails) {
-	query := "INSERT INTO users (name, email, phone, password) VALUES($1, $2, $3, $4)"
-	d.DB.Exec(query, userDetails.Name, userDetails.Email, userDetails.Phone, userDetails.Password)
+func (d *userRepository) CreateUser(userDetails *requestmodel.UserDetails) (*responsemodel.SignupData, error) {
+	var userData responsemodel.SignupData
+	query := "INSERT INTO users (name, email, phone, password, referal_code) VALUES($1, $2, $3, $4, $5) RETURNING *"
+	result := d.DB.Raw(query, userDetails.Name, userDetails.Email, userDetails.Phone, userDetails.Password, userDetails.ReferalCode).Scan(&userData)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &userData, nil
 }
 
 func (d *userRepository) IsUserExist(phone string) int {
@@ -36,6 +41,19 @@ func (d *userRepository) IsUserExist(phone string) int {
 		fmt.Println("Error for user exist, using same phone in signup")
 	}
 	return userCount
+}
+
+func (d *userRepository) CheckReferalCodeExist(referalCode string) (uint, string, error) {
+	fmt.Println("&&", referalCode)
+	var isExist uint
+	var userID string
+	query := "SELECT COUNT(*),id FROM users WHERE referal_code= ? AND status='active' GROUP BY id"
+	result := d.DB.Raw(query, referalCode)
+	result.Row().Scan(&isExist, &userID)
+	if result.Error != nil {
+		return 0, "", result.Error
+	}
+	return isExist, userID, nil
 }
 
 func (d *userRepository) UpdatePassword(phone string, password string) error {
@@ -247,8 +265,8 @@ func (d *userRepository) UpdateProfile(editedProfile *requestmodel.UserDetails) 
 
 	var profile requestmodel.UserDetails
 
-	query := "UPDATE users SET name=?, email=?, password=? WHERE id= ? RETURNING *;"
-	result := d.DB.Raw(query, editedProfile.Name, editedProfile.Email, editedProfile.Password, editedProfile.Id).Scan(&profile)
+	query := "UPDATE users SET name=?, email=? WHERE id= ? RETURNING *;"
+	result := d.DB.Raw(query, editedProfile.Name, editedProfile.Email, editedProfile.Id).Scan(&profile)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while update profile")
 	}

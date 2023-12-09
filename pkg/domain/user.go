@@ -10,12 +10,13 @@ const (
 )
 
 type Users struct {
-	ID       uint `gorm:"unique;not null; primary key"`
-	Name     string
-	Email    string
-	Phone    string
-	Password string
-	Status   status `gorm:"default:pending"`
+	ID          uint `gorm:"unique;not null; primary key"`
+	Name        string
+	Email       string
+	Phone       string
+	Password    string
+	ReferalCode string
+	Status      status `gorm:"default:pending"`
 }
 
 type Address struct {

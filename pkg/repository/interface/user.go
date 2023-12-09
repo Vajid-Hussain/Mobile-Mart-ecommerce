@@ -6,8 +6,9 @@ import (
 )
 
 type IUserRepo interface {
-	CreateUser(*requestmodel.UserDetails)
+	CreateUser(*requestmodel.UserDetails) (*responsemodel.SignupData, error)
 	IsUserExist(string) int
+	CheckReferalCodeExist(string) (uint, string, error)
 	ChangeUserStatusActive(string) error
 	FetchUserID(string) (string, error)
 	FetchPasswordUsingPhone(string) (string, error)

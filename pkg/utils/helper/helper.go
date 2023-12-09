@@ -1,6 +1,8 @@
 package helper
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"strconv"
@@ -110,4 +112,13 @@ func FindDiscount(originalPrice, percentageOffer float64) uint {
 	discountAmount := (percentageOffer / 100) * originalPrice
 	discountedPrice := originalPrice - discountAmount
 	return uint(discountedPrice)
+}
+
+func GenerateReferalCode() (string, error) {
+	bytes := make([]byte, 10)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		return "", err
+	}
+	return base64.URLEncoding.EncodeToString(bytes)[:5], nil
 }

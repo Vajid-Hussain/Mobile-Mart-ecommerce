@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
@@ -15,44 +14,57 @@ import (
 )
 
 type userUseCase struct {
-	repo  interfaces.IUserRepo
-	token config.Token
+	repo        interfaces.IUserRepo
+	paymentRepo interfaces.IPaymentRepository
+	token       config.Token
 }
 
-func NewUserUseCase(userRepository interfaces.IUserRepo, token *config.Token) interfaceUseCase.IuserUseCase {
+func NewUserUseCase(userRepository interfaces.IUserRepo, payment interfaces.IPaymentRepository, token *config.Token) interfaceUseCase.IuserUseCase {
 	return &userUseCase{repo: userRepository,
-		token: *token,
+		paymentRepo: payment,
+		token:       *token,
 	}
 }
 
 //useCases
 
-func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) (responsemodel.SignupData, error) {
+func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) (*responsemodel.SignupData, error) {
 
-	var resSignup responsemodel.SignupData
+	var resSignup *responsemodel.SignupData
 
 	if isExist := u.repo.IsUserExist(userData.Phone); isExist >= 1 {
-		resSignup.IsUserExist = "User Exist ,change phone number"
-		return resSignup, errors.New("user is exist try again , with another phone number")
+		return nil, errors.New("user is exist try again , with another phone number")
 	} else {
 		service.TwilioSetup()
 		_, err := service.SendOtp(userData.Phone)
 		if err != nil {
-			resSignup.OTP = "error of otp creation"
-			return resSignup, errors.New("error at attempt for creating new OTP")
+			return nil, errors.New("error at attempt for creating new OTP")
 		}
 
-		HashedPassword := helper.HashPassword(userData.Password)
-		userData.Password = HashedPassword
+		isExist, referalOFUserID, err := u.repo.CheckReferalCodeExist(userData.ReferalCode)
+		if err != nil {
+			return nil, err
+		}
 
-		u.repo.CreateUser(userData)
+		userData.Password = helper.HashPassword(userData.Password)
+		userData.ReferalCode, _ = helper.GenerateReferalCode()
+
+		resSignup, err = u.repo.CreateUser(userData)
+		if err != nil {
+			return nil, err
+		}
+
+		if isExist > 0 {
+			resSignup.WalletBelance, _ = u.paymentRepo.CreateOrUpdateWallet(resSignup.ID, 100)
+			u.paymentRepo.CreateOrUpdateWallet(referalOFUserID, 100)
+		}
 
 		token, err := service.TemperveryTokenForOtpVerification(u.token.TemperveryKey, userData.Phone)
 		if err != nil {
-			resSignup.Token = "error of create a token"
-			return resSignup, errors.New("creating token is error")
+			return nil, errors.New("creating token is error")
 		}
 		resSignup.Token = token
+
 	}
 
 	return resSignup, nil
@@ -283,14 +295,6 @@ func (r *userUseCase) GetProfile(userID string) (*requestmodel.UserDetails, erro
 
 func (r *userUseCase) UpdateProfile(editedProfile *requestmodel.UserEditProfile) (*requestmodel.UserDetails, error) {
 
-	if editedProfile.Password != editedProfile.ConfirmPassword || len(editedProfile.Password) < 4 {
-		return nil, errors.New("password and confirmpassword is not match, password must graterthan four")
-	}
-
-	if editedProfile.Password != "" {
-		editedProfile.Password = helper.HashPassword(editedProfile.Password)
-	}
-
 	userProfile, err := r.repo.GetProfile(editedProfile.Id)
 	if err != nil {
 		return nil, err
@@ -309,8 +313,6 @@ func (r *userUseCase) UpdateProfile(editedProfile *requestmodel.UserEditProfile)
 					editedProfile.Name = userProfile.Name
 				case "Email":
 					editedProfile.Email = userProfile.Email
-				case "Password":
-					editedProfile.Password = userProfile.Password
 				}
 			}
 		}
@@ -321,7 +323,6 @@ func (r *userUseCase) UpdateProfile(editedProfile *requestmodel.UserEditProfile)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("-----", editedProfile)
 
 	return userProfile, nil
 }
@@ -330,7 +331,7 @@ func (r *userUseCase) UpdateProfile(editedProfile *requestmodel.UserEditProfile)
 
 func (r *userUseCase) ForgotPassword(newPassword *requestmodel.ForgotPassword, token string) error {
 
-	phone, err := service.FetchPhoneFromToken(token, r.token.UserSecurityKey)
+	phone, err := service.FetchPhoneFromToken(token, r.token.TemperveryKey)
 	if err != nil {
 		return err
 	}
