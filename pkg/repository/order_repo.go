@@ -337,3 +337,44 @@ func (d *orderRepository) CheckCouponAppliedOrNot(userID, couponID string) uint 
 	d.DB.Raw(query, userID, couponID).Scan(&exist)
 	return exist
 }
+
+func (d *orderRepository) GetOrderFullDetails(orderItemID string) (*responsemodel.Invoice, error) {
+	var orderDetails responsemodel.Invoice
+	query := "SELECT * FROM orders INNER JOIN order_products ON orders.id=order_products.order_id WHERE order_products.item_id= ?;	"
+	result := d.DB.Raw(query, orderItemID).Scan(&orderDetails)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while get order details")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &orderDetails, nil
+}
+
+func (d *orderRepository) GetAddressForInvoice(addressID string) (*requestmodel.Address, error) {
+
+	var address *requestmodel.Address
+	query := "SELECT * FROM addresses WHERE id= ?"
+	result := d.DB.Raw(query, addressID).Scan(&address)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while address fetch")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return address, nil
+}
+
+func (d *orderRepository) GetAInventoryForInvoice(id string) (*responsemodel.InventoryRes, error) {
+	var inventory responsemodel.InventoryRes
+
+	query := "SELECT * FROM category_offers RIGHT JOIN inventories ON category_offers.category_id= inventories.category_id AND inventories.seller_id=category_offers.seller_id AND category_offers.status='active' AND category_offers.end_date>=now() WHERE inventories.id=? AND inventories.status='active'"
+	result := d.DB.Raw(query, id).Scan(&inventory)
+	if result.Error != nil {
+		return nil, errors.New("can't get inventory data from db or inventory is not active state")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &inventory, nil
+}

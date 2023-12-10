@@ -12,6 +12,7 @@ import (
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/service"
 	interfaceUseCase "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/usecase/interface"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/utils/helper"
+	"github.com/jung-kurt/gofpdf"
 )
 
 type orderUseCase struct {
@@ -93,7 +94,7 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 
 		rightNow := time.Now()
 		if couponData.EndDate.Before(rightNow) {
-			return nil, errors.New("coupon exeed the expiredata, better luck next time")
+			return nil, errors.New("coupon exeed the expiredata, better luck next times")
 		}
 
 		exist := r.repo.CheckCouponAppliedOrNot(order.UserID, order.Coupon)
@@ -340,4 +341,103 @@ func (r *orderUseCase) GetSalesReportByDays(sellerID string, days string) (*resp
 		return nil, err
 	}
 	return report, nil
+}
+
+// ------------------------------------------Order Invoice------------------------------------\\
+
+func (r *orderUseCase) OrderInvoiceCreation(orderItemID string) (*gofpdf.Fpdf, error) {
+	orderDetails, err := r.repo.GetOrderFullDetails(orderItemID)
+	if err != nil {
+		return nil, err
+	}
+
+	sellerDetails, err := r.sellerRepository.GetSingleSeller(orderDetails.SellerID)
+	if err != nil {
+		return nil, err
+	}
+
+	userAddresses, err := r.repo.GetAddressForInvoice(orderDetails.AddressID)
+	if err != nil {
+		return nil, err
+	}
+
+	product, err := r.repo.GetAInventoryForInvoice(orderDetails.InventoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	//create pdf
+	marginX := 10.0
+	marginY := 20.0
+	pdf := gofpdf.New("P", "mm", "A4", "")
+	pdf.SetMargins(marginX, marginY, marginX)
+	pdf.AddPage()
+
+	pdf.SetFont("Arial", "B", 16)
+	_, lineHeight := pdf.GetFontSize()
+	currentY := pdf.GetY() + lineHeight
+	pdf.SetY(currentY)
+	pdf.Cell(40, 10, "Tax Invoice")
+	pdf.Cell(40, 10, "|  Order ID: "+orderItemID)
+	pdf.Cell(40, 10, "|  Order Date: "+orderDetails.OrderDate.Format("2006-01-02 15:04:05"))
+	pdf.Ln(15)
+
+	pdf.Cell(40, 10, "Seller: "+sellerDetails.Name)
+	pdf.Ln(10)
+
+	// address
+	pdf.Cell(20, 10, "Address")
+	pdf.Ln(10)
+
+	pdf.SetFont("Helvetica", "", 12)
+	pdf.Cell(40, 10, fmt.Sprintf("Name: %s %s", userAddresses.FirstName, userAddresses.LastName))
+	pdf.Ln(10)
+	pdf.Cell(0, 10, fmt.Sprintf("Address: %s, %s, %s - %s", userAddresses.Street, userAddresses.City, userAddresses.State, userAddresses.Pincode))
+	pdf.Ln(10)
+	pdf.Cell(0, 10, fmt.Sprintf("Landmark: %s", userAddresses.LandMark))
+	pdf.Ln(10)
+	pdf.Cell(0, 10, fmt.Sprintf("Phone Number: %s", userAddresses.PhoneNumber))
+	pdf.Ln(20)
+
+	lineHt := 10.0
+	const colNumber = 5
+	header := [colNumber]string{"No", "Product", "Quantity", "Mrp", "Final-Price"}
+	colWidth := [colNumber]float64{10.0, 75.0, 25.0, 40.0, 40.0}
+
+	// Headers
+	// pdf.SetFont("Arial", "B", 16)
+	pdf.SetFontStyle("B")
+	pdf.SetFillColor(200, 200, 200)
+	for colJ := 0; colJ < colNumber; colJ++ {
+		pdf.CellFormat(colWidth[colJ], lineHt, header[colJ], "1", 0, "CM", true, 0, "")
+	}
+
+	pdf.Ln(10)
+
+	// Table data
+	pdf.CellFormat(colWidth[0], lineHt, fmt.Sprintf("%d", 1), "1", 0, "CM", false, 0, "")
+	pdf.CellFormat(colWidth[1], lineHt, product.Productname, "1", 0, "LM", false, 0, "")
+	pdf.CellFormat(colWidth[2], lineHt, fmt.Sprintf("%d", orderDetails.Quantity), "1", 0, "CM", false, 0, "")
+	pdf.CellFormat(colWidth[3], lineHt, fmt.Sprintf("%d", product.Mrp), "1", 0, "CM", false, 0, "")
+	pdf.CellFormat(colWidth[4], lineHt, fmt.Sprintf("%d", orderDetails.PayableAmount), "1", 0, "CM", false, 0, "")
+	pdf.Ln(-1)
+
+	leftIndent := 0.0
+	for i := 0; i < 3; i++ {
+		leftIndent += colWidth[i]
+	}
+
+	pdf.SetX(marginX + leftIndent)
+	pdf.CellFormat(colWidth[3], lineHt, "Grand total", "1", 0, "CM", false, 0, "")
+	pdf.CellFormat(colWidth[4], lineHt, fmt.Sprintf("%d", orderDetails.PayableAmount), "1", 0, "CM", false, 0, "")
+	pdf.Ln(20)
+
+	pdf.Cell(40, 10, "Mobile-mart: Thanks for shopping!")
+
+	err = pdf.OutputFileAndClose("invoice.pdf")
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+
+	return pdf, nil
 }

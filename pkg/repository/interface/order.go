@@ -19,6 +19,9 @@ type IOrderRepository interface {
 	GetAddressExist(string, string) error
 	AddProdutToOrderProductTable(*requestmodel.Order, *responsemodel.Order) (*responsemodel.Order, error)
 	UpdateUserOrderReturn(string, string) (*responsemodel.OrderDetails, error)
+	GetOrderFullDetails(string) (*responsemodel.Invoice, error)
+	GetAddressForInvoice(string) (*requestmodel.Address, error)
+	GetAInventoryForInvoice(id string) (*responsemodel.InventoryRes, error)
 
 	GetSellerOrders(string, string) (*[]responsemodel.OrderDetails, error)
 	UpdateOrderDelivered(string, string) (*responsemodel.OrderDetails, error)

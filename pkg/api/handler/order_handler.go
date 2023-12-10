@@ -514,3 +514,18 @@ func (u *OrderHandler) SalesReportCustomDays(c *gin.Context) {
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
+
+// ------------------------------------------Invoice------------------------------------\\
+
+func (u *OrderHandler) GetInvoice(c *gin.Context) {
+
+	orderItemID := c.Query("orderItemID")
+	invoice, err := u.useCase.OrderInvoiceCreation(orderItemID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", invoice, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}

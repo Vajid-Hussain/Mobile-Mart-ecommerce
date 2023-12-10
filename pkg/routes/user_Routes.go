@@ -53,6 +53,7 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 			ordermanagement.GET(":orderID", order.SingleOrderDetails)
 			ordermanagement.PATCH("", order.CancelUserOrder)
 			ordermanagement.PATCH("/return", order.ReturnUserOrder)
+			ordermanagement.GET("/invoice", order.GetInvoice)
 		}
 
 		paymentmanagement := engin.Group("/payment")

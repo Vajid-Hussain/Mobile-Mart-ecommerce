@@ -3,6 +3,7 @@ package interfaceUseCase
 import (
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
+	"github.com/jung-kurt/gofpdf"
 )
 
 type IOrderUseCase interface {
@@ -18,4 +19,6 @@ type IOrderUseCase interface {
 
 	GetSalesReportByYear(string, string) (*responsemodel.SalesReport, error)
 	GetSalesReportByDays(string, string) (*responsemodel.SalesReport, error)
+
+	OrderInvoiceCreation(string) (*gofpdf.Fpdf, error)
 }

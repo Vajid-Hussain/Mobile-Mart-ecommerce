@@ -65,7 +65,7 @@ func (d *paymentRepo) OnlinePayment(userID, orderID string) (*responsemodel.Onli
 
 func (d *paymentRepo) GetFinalPriceByorderID(orderID string) (uint, error) {
 	var finalPrice uint
-	query := "SELECT sum(price) FROM orders INNER JOIN order_products ON order_products.order_id= orders.id WHERE orders.id= ?"
+	query := "SELECT sum(payable_amount) FROM orders INNER JOIN order_products ON order_products.order_id= orders.id WHERE orders.id= ?"
 	result := d.DB.Raw(query, orderID).Scan(&finalPrice)
 	if result.Error != nil {
 		return 0, errors.New("face some issue while getting tatal amount of order by using order id")

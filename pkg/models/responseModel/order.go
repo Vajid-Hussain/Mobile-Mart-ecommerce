@@ -108,3 +108,14 @@ type OnlinePayment struct {
 	FinalPrice  uint   `json:"finalPrice"`
 	PhoneNumber uint   `json:"phoneNumber" `
 }
+
+type Invoice struct {
+	AddressID     string
+	UserID        string
+	PaymentMethod string
+	InventoryID   string
+	SellerID      string
+	Quantity      uint
+	PayableAmount uint
+	OrderDate     time.Time
+}
