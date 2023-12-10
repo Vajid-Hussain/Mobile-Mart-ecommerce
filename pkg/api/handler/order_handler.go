@@ -520,12 +520,15 @@ func (u *OrderHandler) SalesReportCustomDays(c *gin.Context) {
 func (u *OrderHandler) GetInvoice(c *gin.Context) {
 
 	orderItemID := c.Query("orderItemID")
-	invoice, err := u.useCase.OrderInvoiceCreation(orderItemID)
+	_, err := u.useCase.OrderInvoiceCreation(orderItemID)
+	pdfLink := "file:///home/vajid/Brocamp/Mobile-mart/invoice.pdf"
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
-		finalReslt := response.Responses(http.StatusOK, "", invoice, nil)
+		finalReslt := response.Responses(http.StatusOK, "invoice successfully created", pdfLink, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
+
+// ------------------------------------------Sales Report in xl------------------------------------\\
