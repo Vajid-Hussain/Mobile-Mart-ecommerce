@@ -322,6 +322,20 @@ func (d *orderRepository) GetSalesReportByDays(sellerID string, days string) (*r
 	return &report, nil
 }
 
+func (d *orderRepository) GetOrderXlSalesReport(sellerID string) (*[]responsemodel.XlSalesReport, error) {
+	var order []responsemodel.XlSalesReport
+
+	query := "SELECT * FROM orders INNER JOIN order_products ON order_products.order_id=orders.id INNER JOIN inventories ON inventories.id=order_products.inventory_id WHERE order_products.order_status='delivered' AND order_products.seller_id=? "
+	result := d.DB.Raw(query, sellerID).Scan(&order)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while order is cancel")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrProductOrderCompleted
+	}
+	return &order, nil
+}
+
 // ------------------------------------------category_offers------------------------------------\\
 
 func (d *orderRepository) GetCategoryOffers(productID string) uint {

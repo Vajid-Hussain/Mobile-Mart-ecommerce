@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
@@ -440,4 +441,46 @@ func (r *orderUseCase) OrderInvoiceCreation(orderItemID string) (*gofpdf.Fpdf, e
 	}
 
 	return pdf, nil
+}
+
+// ------------------------------------------Sales Report in xl------------------------------------\\
+
+func (r *orderUseCase) GenerateXlOfSalesReport(sellerID string) {
+
+	orders, err := r.repo.GetOrderXlSalesReport(sellerID)
+
+	f := excelize.NewFile()
+	sheetName := "SalesReport"
+	f.NewSheet(sheetName)
+
+	// Set column headers
+	headers := []string{"ItemID", "InventoryID", "Productname", "Quantity", "PayedAmount", "OrderDate", "EndDate"}
+	for colIndex, header := range headers {
+		cell := excelize.ToAlphaString(colIndex+1) + "1"
+		f.SetCellValue(sheetName, cell, header)
+	}
+
+	// Populate the sheet with data
+	for rowIndex, record := range *orders {
+		colIndex := 1
+		f.SetCellValue(sheetName, excelize.ToAlphaString(colIndex)+fmt.Sprint(rowIndex+2), record.ItemID)
+		colIndex++
+		f.SetCellValue(sheetName, excelize.ToAlphaString(colIndex)+fmt.Sprint(rowIndex+2), record.InventoryID)
+		colIndex++
+		f.SetCellValue(sheetName, excelize.ToAlphaString(colIndex)+fmt.Sprint(rowIndex+2), record.Productname)
+		colIndex++
+		f.SetCellValue(sheetName, excelize.ToAlphaString(colIndex)+fmt.Sprint(rowIndex+2), record.Quantity)
+		colIndex++
+		f.SetCellValue(sheetName, excelize.ToAlphaString(colIndex)+fmt.Sprint(rowIndex+2), record.PayableAmount)
+		colIndex++
+		f.SetCellValue(sheetName, excelize.ToAlphaString(colIndex)+fmt.Sprint(rowIndex+2), record.OrderDate.Format("2006-01-02 15:04:05"))
+		colIndex++
+		f.SetCellValue(sheetName, excelize.ToAlphaString(colIndex)+fmt.Sprint(rowIndex+2), record.EndDate.Format("2006-01-02 15:04:05"))
+	}
+
+	// Save the Excel file
+	err = f.SaveAs("salesReport.xlsx")
+	if err != nil {
+		fmt.Println("er", err)
+	}
 }

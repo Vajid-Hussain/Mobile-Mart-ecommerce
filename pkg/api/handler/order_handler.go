@@ -532,3 +532,14 @@ func (u *OrderHandler) GetInvoice(c *gin.Context) {
 }
 
 // ------------------------------------------Sales Report in xl------------------------------------\\
+
+func (u *OrderHandler) SalesReportXlSX(c *gin.Context) {
+	sellerID, exist := c.MustGet("SellerID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	u.useCase.GenerateXlOfSalesReport(sellerID)
+}

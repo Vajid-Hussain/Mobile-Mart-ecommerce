@@ -119,3 +119,13 @@ type Invoice struct {
 	PayableAmount uint
 	OrderDate     time.Time
 }
+
+type XlSalesReport struct {
+	ItemID        string
+	InventoryID   string
+	Productname   string
+	Quantity      uint
+	PayableAmount uint
+	OrderDate     time.Time
+	EndDate       time.Time
+}

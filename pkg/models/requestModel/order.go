@@ -1,6 +1,8 @@
 package requestmodel
 
-import responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
+import (
+	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
+)
 
 type Order struct {
 	ID             uint                          `json:"-"`

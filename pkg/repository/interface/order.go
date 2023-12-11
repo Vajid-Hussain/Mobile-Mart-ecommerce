@@ -22,6 +22,7 @@ type IOrderRepository interface {
 	GetOrderFullDetails(string) (*responsemodel.Invoice, error)
 	GetAddressForInvoice(string) (*requestmodel.Address, error)
 	GetAInventoryForInvoice(id string) (*responsemodel.InventoryRes, error)
+	GetOrderXlSalesReport(string) (*[]responsemodel.XlSalesReport, error)
 
 	GetSellerOrders(string, string) (*[]responsemodel.OrderDetails, error)
 	UpdateOrderDelivered(string, string) (*responsemodel.OrderDetails, error)
