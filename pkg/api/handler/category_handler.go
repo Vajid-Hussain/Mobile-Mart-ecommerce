@@ -254,6 +254,7 @@ func (u *CategoryHandler) UpdateBrand(c *gin.Context) {
 // @Accept			json
 // @Produce		json
 // @Security		BearerTokenAuth
+// @security		Refreshtoken
 // @Param			id	path	int	true	"ID of the brand to delete"
 // @Success		204	"Brand deleted successfully"
 // @Failure		400	{object}	response.Response{}	"Invalid input or validation error"
@@ -272,6 +273,17 @@ func (u *CategoryHandler) DeleteBrand(c *gin.Context) {
 	}
 }
 
+// @Summary Create Category Offer
+// @Description Create a new offer for a category by the seller.
+// @Tags Seller category offers
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param categoryOffer body requestmodel.CategoryOffer true "Details for creating a category offer"
+// @Success 201 {object} response.Response "Category offer created successfully"
+// @Failure 400 {object} response.Response "Bad request. Please provide valid details for creating a category offer."
+// @Router /seller/categoryoffer [post]
 func (u *CategoryHandler) CreateCategoryOffer(c *gin.Context) {
 
 	var categoryOffer requestmodel.CategoryOffer
@@ -299,6 +311,17 @@ func (u *CategoryHandler) CreateCategoryOffer(c *gin.Context) {
 	}
 }
 
+// @Summary Block Category Offer
+// @Description Block or disable a category offer by the seller.
+// @Tags Seller category offers
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param categoryOfferID query int true "ID of the category offer to be blocked"
+// @Success 200 {object} response.Response "Category offer blocked successfully"
+// @Failure 400 {object} response.Response "Bad request. Please provide a valid category offer ID."
+// @Router /seller/categoryoffer/block [patch]
 func (u *CategoryHandler) BlockCategoryOffer(c *gin.Context) {
 
 	categoryOfferID := c.Query("categoryOfferID")
@@ -312,6 +335,17 @@ func (u *CategoryHandler) BlockCategoryOffer(c *gin.Context) {
 	}
 }
 
+// @Summary Unblock Category Offer
+// @Description Unblock or enable a previously blocked category offer by the seller.
+// @Tags Seller category offers
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param categoryOfferID query int true "ID of the category offer to be unblocked"
+// @Success 200 {object} response.Response "Category offer unblocked successfully"
+// @Failure 400 {object} response.Response "Bad request. Please provide a valid category offer ID."
+// @Router /seller/categoryoffer/unblock [patch]
 func (u *CategoryHandler) UnBlockCategoryOffer(c *gin.Context) {
 
 	categoryOfferID := c.Query("categoryOfferID")
@@ -325,6 +359,17 @@ func (u *CategoryHandler) UnBlockCategoryOffer(c *gin.Context) {
 	}
 }
 
+// @Summary Delete Category Offer
+// @Description Delete a category offer by the seller.
+// @Tags Seller category offers
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param categoryOfferID query int true "ID of the category offer to be deleted"
+// @Success 200 {object} response.Response "Category offer deleted successfully"
+// @Failure 400 {object} response.Response "Bad request. Please provide a valid category offer ID."
+// @Router /seller/categoryoffer/delete [patch]
 func (u *CategoryHandler) DeleteCategoryOffer(c *gin.Context) {
 
 	categoryOfferID := c.Query("categoryOfferID")
@@ -338,6 +383,16 @@ func (u *CategoryHandler) DeleteCategoryOffer(c *gin.Context) {
 	}
 }
 
+// @Summary Get Seller Category Offers
+// @Description Retrieve all category offers by the seller.
+// @Tags Seller category offers
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Success 200 {object} response.Response "Category offers retrieved successfully"
+// @Failure 400 {object} response.Response "Bad request. Unable to retrieve category offers."
+// @Router /seller/categoryoffer [get]
 func (u *CategoryHandler) GetAllCategoryOffer(c *gin.Context) {
 	sellerID := c.MustGet("SellerID").(string)
 
@@ -351,6 +406,17 @@ func (u *CategoryHandler) GetAllCategoryOffer(c *gin.Context) {
 	}
 }
 
+// @Summary Edit Category Offer
+// @Description Edit details of a category offer by the seller.
+// @Tags Seller category offers
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param editDetails body requestmodel.EditCategoryOffer true "Details for editing a category offer"
+// @Success 200 {object} response.Response "Category offer edited successfully"
+// @Failure 400 {object} response.Response "Bad request. Please provide valid edit details."
+// @Router /seller/categoryoffer [patch]
 func (u *CategoryHandler) EditCategoryOffer(c *gin.Context) {
 
 	var categoryOffer requestmodel.EditCategoryOffer
