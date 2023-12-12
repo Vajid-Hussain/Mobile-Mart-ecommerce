@@ -56,19 +56,16 @@ func VerifyAcessToken(token string, secretkey string) (string, error) {
 		return key, nil
 	})
 
+	if len(parsedToken.Header) == 0 {
+		return "", errors.New("token tamberd include header")
+	}
+
 	if parsedToken == nil {
 		return "", err
 	}
 
 	claims := parsedToken.Claims.(jwt.MapClaims)
 	id, ok := claims["id"].(string)
-
-	// defer func() {
-	// 	if err != nil {
-	// 		fmt.Println("$$$$$$", id, err)
-	// 	}
-	// 	err = nil
-	// }()
 
 	if !ok {
 		return "", errors.New("id is not in accessToken. access denied")

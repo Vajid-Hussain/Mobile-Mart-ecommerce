@@ -6,10 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, inventory *handler.InventotyHandler, order *handler.OrderHandler, category *handler.CategoryHandler) {
+func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, inventory *handler.InventotyHandler, order *handler.OrderHandler, category *handler.CategoryHandler, jwt *handler.TokenRequirement) {
 
 	engin.POST("/signup", seller.SellerSignup)
 	engin.POST("/login", seller.SellerLogin)
+
+	engin.GET("/accesstoken", jwt.NewSellerAcessToken)
 
 	engin.Use(middlewire.SellerAuthorization)
 	{

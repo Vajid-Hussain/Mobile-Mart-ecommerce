@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *handler.InventotyHandler, cart *handler.CartHandler, order *handler.OrderHandler, payment *handler.PaymentHandler) {
+func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *handler.InventotyHandler, cart *handler.CartHandler, order *handler.OrderHandler, payment *handler.PaymentHandler, jwt *handler.TokenRequirement) {
 
 	engin.GET("/", inventory.GetInventory)
 	engin.GET("/:productid", inventory.GetAInventory)
@@ -19,6 +19,8 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 	engin.POST("/sendotp", user.SendOtp)
 	engin.POST("/login", user.UserLogin)
 	engin.POST("/forgotpassword", user.ForgotPassword)
+
+	engin.GET("/accesstoken", jwt.NewUserAcessToken)
 
 	engin.Use(middlewire.UserAuthorization)
 	{

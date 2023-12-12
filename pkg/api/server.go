@@ -24,6 +24,7 @@ func NewServerHttp(user *handler.UserHandler,
 	order *handler.OrderHandler,
 	payment *handler.PaymentHandler,
 	coupon *handler.CouponHandler,
+	jwt *handler.TokenRequirement,
 ) *ServerHttp {
 	engin := gin.New()
 	engin.Use(gin.Logger())
@@ -34,8 +35,8 @@ func NewServerHttp(user *handler.UserHandler,
 	// use ginSwagger middleware to serve the API docs
 	engin.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	routes.UserRoutes(engin.Group("/"), user, inventory, cart, order, payment)
-	routes.SellerRoutes(engin.Group("/seller"), seller, inventory, order, category)
+	routes.UserRoutes(engin.Group("/"), user, inventory, cart, order, payment, jwt)
+	routes.SellerRoutes(engin.Group("/seller"), seller, inventory, order, category, jwt)
 	routes.AdminRoutes(engin.Group("/admin"), admin, seller, user, category, coupon)
 
 	return &ServerHttp{engin: engin}

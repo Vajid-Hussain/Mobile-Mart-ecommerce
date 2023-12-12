@@ -23,15 +23,6 @@ func NewJwtTokenMiddleWire(jwtUseCase interfaceUseCase.IJwtTokenUseCase, keys co
 
 func SellerAuthorization(c *gin.Context) {
 
-	// defer func() (string, error, error) {
-	// 	if r := recover(); r != nil {
-	// 		finalReslt := response.Responses(http.StatusUnauthorized, "", "", "token fully tamperd , can't decople id from token,for further process login")
-	// 		c.JSON(http.StatusUnauthorized, finalReslt)
-	// 		c.Abort()
-	// 	}
-	// 	return "", nil, nil
-	// }()
-
 	accessToken := c.Request.Header.Get("authorization")
 	refreshToken := c.Request.Header.Get("refreshtoken")
 	if accessToken == "" {
@@ -47,6 +38,7 @@ func SellerAuthorization(c *gin.Context) {
 		return
 	}
 	fmt.Println("seller ID:-", id)
+
 	if err != nil {
 		err := service.VerifyRefreshToken(refreshToken, token.securityKeys.SellerSecurityKey)
 		if err != nil {
@@ -63,7 +55,8 @@ func SellerAuthorization(c *gin.Context) {
 					c.JSON(http.StatusUnauthorized, err.Error())
 					c.Abort()
 				} else {
-					c.JSON(http.StatusOK, gin.H{"token": token})
+					// c.JSON(http.StatusOK, gin.H{"token": token})
+					fmt.Println("accessToken", token)
 					c.Set("SellerID", id)
 					c.Next()
 				}
@@ -79,14 +72,6 @@ func SellerAuthorization(c *gin.Context) {
 }
 
 func UserAuthorization(c *gin.Context) {
-
-	// defer func() {
-	// 	if r := recover(); r != nil {
-	// 		finalReslt := response.Responses(http.StatusUnauthorized, "", "", "Token fully tamperd , can't decople id from token,for further process login")
-	// 		c.JSON(http.StatusUnauthorized, finalReslt)
-	// 		c.Abort()
-	// 	}
-	// }()
 
 	accessToken := c.Request.Header.Get("authorization")
 	refreshToken := c.Request.Header.Get("refreshtoken")
@@ -108,7 +93,8 @@ func UserAuthorization(c *gin.Context) {
 					c.JSON(http.StatusUnauthorized, err.Error())
 					c.Abort()
 				} else {
-					c.JSON(http.StatusOK, gin.H{"token": token})
+					// c.JSON(http.StatusOK, gin.H{"token": token})
+					fmt.Println("accessToken", token)
 					c.Set("UserID", id)
 					c.Next()
 				}

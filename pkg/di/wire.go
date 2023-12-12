@@ -22,6 +22,7 @@ func InitializeAPI(config *config.Config) (*server.ServerHttp, error) {
 	jwtRepository := repository.NewJwtTokenRepository(DB)
 	jwtUseCase := usecase.NewJwtTokenUseCase(jwtRepository)
 	middlewire.NewJwtTokenMiddleWire(jwtUseCase, config.Token)
+	jwtHandler := handler.NewJwtTokenHandler(jwtUseCase, config.Token)
 
 	sellerRepository := repository.NewSellerRepository(DB)
 	sellerUseCase := usecase.NewSellerUseCase(sellerRepository, &config.Token)
@@ -68,6 +69,7 @@ func InitializeAPI(config *config.Config) (*server.ServerHttp, error) {
 		orderHandler,
 		paymentHandler,
 		couponHandler,
+		jwtHandler,
 	)
 
 	return serverHttp, nil
