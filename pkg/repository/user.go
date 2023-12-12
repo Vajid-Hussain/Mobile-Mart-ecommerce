@@ -250,7 +250,7 @@ func (d *userRepository) GetProfile(userID string) (*requestmodel.UserDetails, e
 
 	var userDetails requestmodel.UserDetails
 
-	query := "SELECT id, name , email, phone, password FROM users WHERE id= ?"
+	query := "SELECT id, name , email, phone, referal_code FROM users WHERE id= ?"
 	result := d.DB.Raw(query, userID).Scan(&userDetails)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while get user profile ")

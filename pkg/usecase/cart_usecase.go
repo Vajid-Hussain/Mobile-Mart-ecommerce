@@ -101,12 +101,12 @@ func (r *cartUseCase) ShowCart(userID string) (*responsemodel.UserCart, error) {
 
 	for i, inventory := range *cartInventories {
 
-		price, err := r.repo.GetNetAmoutOfCart(userID, inventory.InventoryID)
-		if err != nil {
-			return nil, err
-		}
+		// price, err := r.repo.GetNetAmoutOfCart(userID, inventory.InventoryID)
+		// if err != nil {
+		// 	return nil, err
+		// }
 		(*cartInventories)[i].FinalPrice = helper.FindDiscount(float64(inventory.Price), float64(inventory.Discount+inventory.CategoryDiscount))
-		cart.TotalPrice += price * inventory.Quantity
+		cart.TotalPrice += (*cartInventories)[i].FinalPrice * inventory.Quantity
 	}
 
 	cart.Cart = *cartInventories

@@ -445,9 +445,12 @@ func (r *orderUseCase) OrderInvoiceCreation(orderItemID string) (*gofpdf.Fpdf, e
 
 // ------------------------------------------Sales Report in xl------------------------------------\\
 
-func (r *orderUseCase) GenerateXlOfSalesReport(sellerID string) {
+func (r *orderUseCase) GenerateXlOfSalesReport(sellerID string) (string, error) {
 
 	orders, err := r.repo.GetOrderXlSalesReport(sellerID)
+	if orders == nil {
+		return "", errors.New("seller have no sales for creating a sales report")
+	}
 
 	f := excelize.NewFile()
 	sheetName := "SalesReport"
@@ -483,4 +486,5 @@ func (r *orderUseCase) GenerateXlOfSalesReport(sellerID string) {
 	if err != nil {
 		fmt.Println("er", err)
 	}
+	return "succesfully created", nil
 }

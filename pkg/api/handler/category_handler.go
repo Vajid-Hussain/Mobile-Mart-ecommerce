@@ -346,7 +346,7 @@ func (u *CategoryHandler) GetAllCategoryOffer(c *gin.Context) {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
-		finalReslt := response.Responses(http.StatusOK, "succesfully offer deleted ", result, nil)
+		finalReslt := response.Responses(http.StatusOK, "category offers", result, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
@@ -373,7 +373,7 @@ func (u *CategoryHandler) EditCategoryOffer(c *gin.Context) {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
-		finalReslt := response.Responses(http.StatusOK, "succesfully offer added ", result, nil)
+		finalReslt := response.Responses(http.StatusOK, "succesfully offer updated ", result, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }

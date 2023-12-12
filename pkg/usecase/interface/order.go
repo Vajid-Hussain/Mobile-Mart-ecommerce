@@ -21,5 +21,5 @@ type IOrderUseCase interface {
 	GetSalesReportByDays(string, string) (*responsemodel.SalesReport, error)
 
 	OrderInvoiceCreation(string) (*gofpdf.Fpdf, error)
-	GenerateXlOfSalesReport(string)
+	GenerateXlOfSalesReport(string) (string, error)
 }

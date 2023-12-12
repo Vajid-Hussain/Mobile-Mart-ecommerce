@@ -541,5 +541,13 @@ func (u *OrderHandler) SalesReportXlSX(c *gin.Context) {
 		return
 	}
 
-	u.useCase.GenerateXlOfSalesReport(sellerID)
+	result, err := u.useCase.GenerateXlOfSalesReport(sellerID)
+	xllink := "file:///home/vajid/Brocamp/Mobile-mart/salesReport.xlsx"
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, result, xllink, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
 }
