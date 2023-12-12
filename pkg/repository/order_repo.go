@@ -300,9 +300,22 @@ func (d *orderRepository) GetOrderExistOfSeller(orderID, sellerID string) error 
 
 // ------------------------------------------Sales Report------------------------------------\\
 
-func (d *orderRepository) GetSalesReportByYear(sellerID string, balanceQuery string) (*responsemodel.SalesReport, error) {
+func (d *orderRepository) GetSalesReport(sellerID, year, month, day string) (*responsemodel.SalesReport, error) {
+
+	var remainingQuery string
+
+	if year != "" {
+		remainingQuery = " EXTRACT(YEAR FROM order_date)=" + year
+	}
+	if year != "" && month != "" {
+		remainingQuery = " EXTRACT(YEAR FROM order_date)=" + year + " AND EXTRACT(Month FROM order_date)=" + month
+	}
+	if year != "" && month != "" && day != "" {
+		remainingQuery = " EXTRACT(YEAR FROM order_date)=" + year + " AND EXTRACT(Month FROM order_date)=" + month + " AND EXTRACT(Day FROM order_date)=" + day
+	}
+
 	var report responsemodel.SalesReport
-	query := "SELECT COUNT(*) AS Orders, SUM(quantity) AS Quantity, SUM(price) AS Price FROM order_products WHERE seller_id= ? AND order_status='delivered' AND" + balanceQuery
+	query := "SELECT COUNT(*) AS Orders, SUM(quantity) AS Quantity, SUM(price) AS Price FROM order_products WHERE seller_id= ? AND order_status='delivered' AND" + remainingQuery
 	result := d.DB.Raw(query, sellerID).Scan(&report)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while get report")

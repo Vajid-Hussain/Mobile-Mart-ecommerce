@@ -54,3 +54,11 @@ func (r *paymentUseCase) GetUserWallet(userID string) (*responsemodel.UserWallet
 	}
 	return userWallet, err
 }
+
+func (r *paymentUseCase) GetWalletTransaction(userID string) (*[]responsemodel.WalletTransaction, error) {
+	transaction, err := r.repo.GetWalletTransaction(userID)
+	if err != nil {
+		return nil, err
+	}
+	return transaction, nil
+}

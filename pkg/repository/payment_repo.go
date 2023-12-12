@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
 	resCustomError "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel/custom_error"
 	interfaces "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/repository/interface"
@@ -35,7 +36,7 @@ func (d *paymentRepo) CreateOrUpdateWallet(userID string, creditAmount uint) (ui
 func (d *paymentRepo) GetWalletbalance(userID string) (*uint, error) {
 
 	var currentBalance uint
-	query := "SELECT balance FROM wallet WHERE user_id= ?"
+	query := "SELECT balance FROM wallets WHERE user_id= ?"
 	result := d.DB.Raw(query, userID).Scan(&currentBalance)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while fetch user wallet balance")
@@ -44,6 +45,29 @@ func (d *paymentRepo) GetWalletbalance(userID string) (*uint, error) {
 		return nil, resCustomError.ErrNoRowAffected
 	}
 	return &currentBalance, nil
+}
+
+func (d *paymentRepo) WalletTransaction(transaction requestmodel.WalletTransaction) error {
+	fmt.Println("**", transaction)
+	query := "INSERT INTO wallet_transactions (user_id, credit, debit, event_date, total_amount) VALUES (?,?,?,now(),?)"
+	result := d.DB.Exec(query, transaction.UserID, transaction.Credit, transaction.Debit, transaction.TotalAmount)
+	if result.Error != nil {
+		return errors.New("face some issue while add transaction on wallet")
+	}
+	return nil
+}
+
+func (d *paymentRepo) GetWalletTransaction(userID string) (*[]responsemodel.WalletTransaction, error) {
+	var transaction []responsemodel.WalletTransaction
+	query := "SELECT * FROM wallet_transactions WHERE user_id= ? ORDER BY transaction_id DESC"
+	result := d.DB.Raw(query, userID).Scan(&transaction)
+	if result.Error != nil {
+		return nil, errors.New("face some issue while fetch user wallet transaction")
+	}
+	if result.RowsAffected == 0 {
+		return nil, resCustomError.ErrNoRowAffected
+	}
+	return &transaction, nil
 }
 
 // ------------------------------------------Online Payment------------------------------------\\

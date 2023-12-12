@@ -32,7 +32,7 @@ type IOrderRepository interface {
 	GetOrderExistOfSeller(string, string) error
 	CheckCouponAppliedOrNot(string, string) uint
 
-	GetSalesReportByYear(string, string) (*responsemodel.SalesReport, error)
+	GetSalesReport(string, string, string, string) (*responsemodel.SalesReport, error)
 	GetSalesReportByDays(string, string) (*responsemodel.SalesReport, error)
 
 	GetCategoryOffers(string) uint

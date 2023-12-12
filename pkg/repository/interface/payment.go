@@ -1,6 +1,9 @@
 package interfaces
 
-import responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
+import (
+	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
+	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
+)
 
 type IPaymentRepository interface {
 	CreateOrUpdateWallet(string, uint) (uint, error)
@@ -9,4 +12,7 @@ type IPaymentRepository interface {
 	UpdateOnlinePaymentSucess(string) (*[]responsemodel.OrderDetails, error)
 	GetWallet(string) (*responsemodel.UserWallet, error)
 	UpdateWalletReduceBalance(string, uint) error
+	GetWalletbalance(userID string) (*uint, error)
+	WalletTransaction(requestmodel.WalletTransaction) error
+	GetWalletTransaction(string) (*[]responsemodel.WalletTransaction, error)
 }

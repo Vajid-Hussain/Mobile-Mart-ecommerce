@@ -132,13 +132,24 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		}
 
 		if userWallet.Balance < order.FinalPrice {
-			return nil, errors.New("no sufficient balance in the wallet")
+			return nil, fmt.Errorf("no sufficient balance in the wallet have %d wand %d", userWallet.Balance, order.FinalPrice)
 		}
 
 		err = r.paymentRepo.UpdateWalletReduceBalance(order.UserID, order.FinalPrice)
 		if err != nil {
 			return nil, err
 		}
+
+		var walletTransactions requestmodel.WalletTransaction
+		walletTransactions.UserID = order.UserID
+		walletTransactions.Debit = order.FinalPrice
+		walletTransactions.TotalAmount = userWallet.Balance - order.FinalPrice
+
+		err = r.paymentRepo.WalletTransaction(walletTransactions)
+		if err != nil {
+			return nil, err
+		}
+
 	}
 
 	// order is creating
@@ -197,7 +208,24 @@ func (r *orderUseCase) CancelUserOrder(orderItemID string, userID string) (*resp
 	}
 
 	if paymentType == "ONLINE" || paymentType == "WALLET" {
+
 		orderDetails.WalletBalance, err = r.paymentRepo.CreateOrUpdateWallet(userID, orderDetails.Price)
+		if err != nil {
+			return nil, err
+		}
+
+		currentBalance, err := r.paymentRepo.GetWalletbalance(userID)
+		if err != nil {
+			return nil, err
+		}
+
+		var walletTransactions requestmodel.WalletTransaction
+
+		walletTransactions.UserID = userID
+		walletTransactions.Credit = orderDetails.Price
+		walletTransactions.TotalAmount = *currentBalance
+		fmt.Println("****", walletTransactions, *currentBalance, orderDetails.Price)
+		err = r.paymentRepo.WalletTransaction(walletTransactions)
 		if err != nil {
 			return nil, err
 		}
@@ -225,6 +253,26 @@ func (r *orderUseCase) ReturnUserOrder(orderItemID, userID string) (*responsemod
 	}
 
 	orderDetails.WalletBalance, err = r.paymentRepo.CreateOrUpdateWallet(userID, orderDetails.Price)
+	if err != nil {
+		return nil, err
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	currentBalance, err := r.paymentRepo.GetWalletbalance(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	var walletTransactions requestmodel.WalletTransaction
+
+	walletTransactions.UserID = userID
+	walletTransactions.Credit = orderDetails.Price
+	walletTransactions.TotalAmount = *currentBalance
+
+	err = r.paymentRepo.WalletTransaction(walletTransactions)
 	if err != nil {
 		return nil, err
 	}
@@ -328,8 +376,8 @@ func (r *orderUseCase) CancelOrder(orderID string, sellerID string) (*responsemo
 
 // ------------------------------------------Seller Sales Report------------------------------------\\
 
-func (r *orderUseCase) GetSalesReportByYear(sellerID string, year string) (*responsemodel.SalesReport, error) {
-	report, err := r.repo.GetSalesReportByYear(sellerID, year)
+func (r *orderUseCase) GetSalesReport(sellerID, year, month, days string) (*responsemodel.SalesReport, error) {
+	report, err := r.repo.GetSalesReport(sellerID, year, month, days)
 	if err != nil {
 		return nil, err
 	}
@@ -457,7 +505,7 @@ func (r *orderUseCase) GenerateXlOfSalesReport(sellerID string) (string, error) 
 	f.NewSheet(sheetName)
 
 	// Set column headers
-	headers := []string{"ItemID", "InventoryID", "Productname", "Quantity", "PayedAmount", "OrderDate", "EndDate"}
+	headers := []string{"SingleOrderID", "InventoryID", "Productname", "Quantity", "PayedAmount", "OrderDate", "EndDate"}
 	for colIndex, header := range headers {
 		cell := excelize.ToAlphaString(colIndex+1) + "1"
 		f.SetCellValue(sheetName, cell, header)

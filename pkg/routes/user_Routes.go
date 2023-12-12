@@ -64,6 +64,7 @@ func UserRoutes(engin *gin.RouterGroup, user *handler.UserHandler, inventory *ha
 		walletmenagement := engin.Group("/wallet")
 		{
 			walletmenagement.GET("/", payment.ViewWallet)
+			walletmenagement.GET("/transaction", payment.GetWalletTransaction)
 		}
 	}
 }

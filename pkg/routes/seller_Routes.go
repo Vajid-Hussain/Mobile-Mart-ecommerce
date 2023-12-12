@@ -40,10 +40,10 @@ func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, invento
 
 		salesreportmanagement := engin.Group("/report")
 		{
-			salesreportmanagement.GET("", order.SalesReportByYear)
-			salesreportmanagement.GET("/month", order.SalesReportByMonth)
-			salesreportmanagement.GET("/week", order.SalesReportByWeek)
-			salesreportmanagement.GET("/day", order.SalesReportByDay)
+			// salesreportmanagement.GET("", order.SalesReportByYear)
+			// salesreportmanagement.GET("/month", order.SalesReportByMonth)
+			// salesreportmanagement.GET("/week", order.SalesReportByWeek)
+			salesreportmanagement.GET("/day", order.SalesReport)
 			salesreportmanagement.GET("/days", order.SalesReportCustomDays)
 			salesreportmanagement.GET("xlsx", order.SalesReportXlSX)
 		}

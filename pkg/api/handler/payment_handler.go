@@ -94,3 +94,21 @@ func (u *PaymentHandler) ViewWallet(c *gin.Context) {
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }
+
+func (u *PaymentHandler) GetWalletTransaction(c *gin.Context) {
+	userID, exist := c.MustGet("UserID").(string)
+	if !exist {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, resCustomError.NotGetUserIdInContexr)
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	walletTransactions, err := u.useCase.GetWalletTransaction(userID)
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+	} else {
+		finalReslt := response.Responses(http.StatusOK, "", walletTransactions, nil)
+		c.JSON(http.StatusOK, finalReslt)
+	}
+}

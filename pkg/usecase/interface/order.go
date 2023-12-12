@@ -17,7 +17,7 @@ type IOrderUseCase interface {
 	ConfirmDeliverd(string, string) (*responsemodel.OrderDetails, error)
 	CancelOrder(string, string) (*responsemodel.OrderDetails, error)
 
-	GetSalesReportByYear(string, string) (*responsemodel.SalesReport, error)
+	GetSalesReport(string, string, string, string) (*responsemodel.SalesReport, error)
 	GetSalesReportByDays(string, string) (*responsemodel.SalesReport, error)
 
 	OrderInvoiceCreation(string) (*gofpdf.Fpdf, error)
