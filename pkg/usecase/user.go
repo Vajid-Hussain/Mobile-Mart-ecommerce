@@ -26,8 +26,6 @@ func NewUserUseCase(userRepository interfaces.IUserRepo, payment interfaces.IPay
 	}
 }
 
-//useCases
-
 func (u *userUseCase) UserSignup(userData *requestmodel.UserDetails) (*responsemodel.SignupData, error) {
 
 	var resSignup *responsemodel.SignupData

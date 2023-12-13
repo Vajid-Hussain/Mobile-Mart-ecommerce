@@ -42,7 +42,7 @@ func UploadImageToS3(file *multipart.FileHeader, sess *session.Session) (string,
 
 	uploader := s3manager.NewUploader(sess)
 	upload, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String("mobile-mart-image"),
+		Bucket: aws.String("mobile-mart/ product images"),
 		Key:    aws.String(file.Filename),
 		Body:   image,
 		ACL:    aws.String("public-read"),
