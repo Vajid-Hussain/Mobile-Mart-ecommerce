@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/google/uuid"
 )
 
 func CreateSession(cfg *config.S3Bucket) *session.Session {
@@ -40,58 +41,17 @@ func UploadImageToS3(file *multipart.FileHeader, sess *session.Session) (string,
 	}
 	defer image.Close()
 
+	fileName := uuid.New().String()
+
 	uploader := s3manager.NewUploader(sess)
 	upload, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String("mobile-mart/ product images"),
-		Key:    aws.String(file.Filename),
+		Bucket: aws.String("mobile-mart"),
+		Key:    aws.String("product images/" + fileName),
 		Body:   image,
 		ACL:    aws.String("public-read"),
 	})
 	if err != nil {
-		fmt.Println(err)
 		return "", err
 	}
 	return upload.Location, nil
 }
-
-// func DownloadObject(url string, sess *session.Session, cfg *config.S3Bucket) error {
-
-// 	file, err := os.Open(fileName)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return err
-// 	}
-// 	defer file.Close()
-
-// 	downloader := s3manager.NewDownloader(sess)
-// 	numBytes, err := downloader.Download(file,
-// 		&s3.GetObjectInput{
-// 			Bucket: aws.String(bucket),
-// 			Key:    aws.String(item),
-// 		},
-// 	)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return err
-// 	}
-
-// 	fmt.Println("Downloaded", file.Name(), numBytes, "bytes")
-// 	return nil
-// }
-
-// func FileUpload(s3Session *s3.S3, img *multipart.FileHeader) {
-// 	file, err := os.Open(string(img))
-
-// 	_, err := s3Session.PutObject(&s3.PutObjectInput{
-// 		Bucket: aws.String("mobile-mart-image"),
-// 		Key:    aws.String("product/image.jpg"),
-// 		Body:   img,
-// 	})
-
-// 	if err != nil {
-// 		fmt.Println("Error uploading file to S3:", err)
-// 		return
-// 	}
-
-// 	fmt.Println("File uploaded successfully.")
-// }

@@ -52,7 +52,6 @@ func (u *InventotyHandler) AddInventory(c *gin.Context) {
 
 	sellerID, _ := strconv.ParseUint(sellerid, 16, 16)
 	inventoryDetails.SellerID = uint(sellerID)
-	fmt.Println("****", sellerID)
 
 	data, err := helper.Validation(inventoryDetails)
 	if err != nil {
