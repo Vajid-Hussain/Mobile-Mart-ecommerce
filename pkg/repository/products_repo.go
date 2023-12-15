@@ -128,7 +128,7 @@ func (d *inventoryRepository) GetProductFilter(criterion *requestmodel.FilterCri
 	fmt.Println("##", criterion.MinPrice)
 	var sortedProduct []responsemodel.FilterProduct
 
-	query := "SELECT inventories.id AS productID, * FROM inventories INNER JOIN categories ON categories.id= inventories.category_id INNER JOIN brands ON brands.id= inventories.brand_id RIGHT JOIN category_offers ON category_offers.category_id=inventories.category_id AND inventories.seller_id=category_offers.seller_id AND category_offers.status='active' AND category_offers.end_date>=now()  WHERE categories.name ILIKE '%' || $1 || '%' AND brands.name ILIKE '%' || $2 || '%' AND inventories.productname ILIKE '%' || $3 || '%' AND ($4 = 0 OR $4 < inventories.saleprice AND ($5 = 0 OR $5 >= inventories.saleprice))"
+	query := "SELECT inventories.id AS productID, * FROM inventories INNER JOIN categories ON categories.id= inventories.category_id INNER JOIN brands ON brands.id= inventories.brand_id LEFT JOIN category_offers ON category_offers.category_id=inventories.category_id AND inventories.seller_id=category_offers.seller_id AND category_offers.status='active' AND category_offers.end_date>=now()  WHERE categories.name ILIKE '%' || $1 || '%' AND brands.name ILIKE '%' || $2 || '%' AND inventories.productname ILIKE '%' || $3 || '%' AND ($4 = 0 OR $4 < inventories.saleprice AND ($5 = 0 OR $5 >= inventories.saleprice))"
 	result := d.DB.Raw(query, criterion.Category, criterion.Brand, criterion.Product, criterion.MinPrice, criterion.MaxPrice).Scan(&sortedProduct)
 	if result.Error != nil {
 		return nil, errors.New("face some issue while filter product")
@@ -136,5 +136,6 @@ func (d *inventoryRepository) GetProductFilter(criterion *requestmodel.FilterCri
 	if result.RowsAffected == 0 {
 		return nil, resCustomError.ErrNoRowAffected
 	}
+	fmt.Println("**", sortedProduct)
 	return &sortedProduct, nil
 }

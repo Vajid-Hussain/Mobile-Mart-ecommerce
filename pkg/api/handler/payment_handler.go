@@ -77,6 +77,16 @@ func (u *PaymentHandler) VerifyOnlinePayment(c *gin.Context) {
 	}
 }
 
+// @Summary Get User Wallet
+// @Description Retrieve details of the user's wallet.
+// @Tags User Wallet
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Success 200 {object} response.Response "User wallet details retrieved successfully"
+// @Failure 400 {object} response.Response "Bad request. Unable to retrieve user wallet details."
+// @Router /wallet [get]
 func (u *PaymentHandler) ViewWallet(c *gin.Context) {
 	userID, exist := c.MustGet("UserID").(string)
 	if !exist {
@@ -95,6 +105,16 @@ func (u *PaymentHandler) ViewWallet(c *gin.Context) {
 	}
 }
 
+// @Summary Get User Wallet Transactions
+// @Description Retrieve the transactions history of the user's wallet.
+// @Tags User Wallet
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Success 200 {object} response.Response "User wallet transactions retrieved successfully"
+// @Failure 400 {object} response.Response "Bad request. Unable to retrieve user wallet transactions."
+// @Router /wallet/transaction [get]
 func (u *PaymentHandler) GetWalletTransaction(c *gin.Context) {
 	userID, exist := c.MustGet("UserID").(string)
 	if !exist {

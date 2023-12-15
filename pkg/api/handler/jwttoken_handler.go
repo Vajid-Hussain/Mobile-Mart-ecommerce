@@ -20,6 +20,15 @@ func NewJwtTokenHandler(jwtUseCase interfaceUseCase.IJwtTokenUseCase, keys confi
 	return &TokenRequirement{JwtTokenUseCase: jwtUseCase, securityKeys: keys}
 }
 
+// @Summary Verify Access Token (User)
+// @Description Verify the validity of an access token.
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param accesstoken query string true "Access token to be verified"
+// @Success 200 {object} response.Response "Access token is valid"
+// @Failure 400 {object} response.Response "Bad request. Please provide a valid access token."
+// @Router /accesstoken [get]
 func (u *TokenRequirement) NewUserAcessToken(c *gin.Context) {
 	token := c.Query("accesstoken")
 	var newToken string
@@ -53,6 +62,15 @@ func (u *TokenRequirement) NewUserAcessToken(c *gin.Context) {
 	c.JSON(http.StatusOK, finalReslt)
 }
 
+// @Summary Verify Access Token (Seller)
+// @Description Verify the validity of a seller's access token.
+// @Tags Seller
+// @Accept json
+// @Produce json
+// @Param accesstoken query string true "Access token to be verified"
+// @Success 200 {object} response.Response "Access token is valid"
+// @Failure 400 {object} response.Response "Bad request. Please provide a valid access token."
+// @Router /seller/accesstoken [get]
 func (u *TokenRequirement) NewSellerAcessToken(c *gin.Context) {
 	token := c.Query("accesstoken")
 	var newToken string

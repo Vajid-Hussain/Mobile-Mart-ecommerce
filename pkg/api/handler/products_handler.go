@@ -270,6 +270,19 @@ func (u *InventotyHandler) EditInventory(c *gin.Context) {
 	}
 }
 
+// @Summary Filter Products
+// @Description Filter products based on category, brand, product name, and price range.
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param category query string false "Category filter"
+// @Param brand query string false "Brand filter"
+// @Param product query string false "Product name filter"
+// @Param minprice query int false "Minimum price filter"
+// @Param maxprice query int false "Maximum price filter"
+// @Success 200 {object} response.Response "Products filtered successfully"
+// @Failure 400 {object} response.Response "Bad request. Please provide valid filter criteria."
+// @Router /filter [get]
 func (u *InventotyHandler) FilterProduct(c *gin.Context) {
 	var criterial requestmodel.FilterCriterion
 

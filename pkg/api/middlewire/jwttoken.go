@@ -76,6 +76,12 @@ func UserAuthorization(c *gin.Context) {
 	accessToken := c.Request.Header.Get("authorization")
 	refreshToken := c.Request.Header.Get("refreshtoken")
 
+	if accessToken == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"err": "there is no access token"})
+		c.Abort()
+		return
+	}
+
 	id, err := service.VerifyAcessToken(accessToken, token.securityKeys.UserSecurityKey)
 	if err != nil {
 		err := service.VerifyRefreshToken(refreshToken, token.securityKeys.UserSecurityKey)

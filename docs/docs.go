@@ -65,6 +65,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/accesstoken": {
+            "get": {
+                "description": "Verify the validity of an access token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Verify Access Token (User)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Access token to be verified",
+                        "name": "accesstoken",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Access token is valid",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide a valid access token.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/address": {
             "get": {
                 "security": [
@@ -402,6 +440,9 @@ const docTemplate = `{
                 "security": [
                     {
                         "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
                     }
                 ],
                 "description": "Delete an existing brand using this handler.",
@@ -681,6 +722,169 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Category not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/coupon": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Retrieve a list of coupons for the admin.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Coupons"
+                ],
+                "summary": "Get Coupons (Admin)",
+                "responses": {
+                    "200": {
+                        "description": "Coupons retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Unable to retrieve coupons.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Create a new coupon by the admin.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Coupons"
+                ],
+                "summary": "Create Coupon (Admin)",
+                "parameters": [
+                    {
+                        "description": "Coupon details to be created",
+                        "name": "coupon",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.Coupon"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Coupon created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Unable to create the coupon.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/coupon/block": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Block a coupon by the admin.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Coupons"
+                ],
+                "summary": "Block Coupon (Admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the coupon to be blocked",
+                        "name": "couponID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Coupon blocked successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide a valid coupon ID.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/coupon/unblock": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Unblock a coupon by the admin.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Coupons"
+                ],
+                "summary": "Unblock Coupon (Admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the coupon to be unblocked",
+                        "name": "couponID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Coupon unblocked successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide a valid coupon ID.",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -1348,6 +1552,67 @@ const docTemplate = `{
                 }
             }
         },
+        "/filter": {
+            "get": {
+                "description": "Filter products based on category, brand, product name, and price range.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Filter Products",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Category filter",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Brand filter",
+                        "name": "brand",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Product name filter",
+                        "name": "product",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Minimum price filter",
+                        "name": "minprice",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum price filter",
+                        "name": "maxprice",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Products filtered successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide valid filter criteria.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/forgotpassword": {
             "post": {
                 "description": "Initiate the process for resetting the password.",
@@ -1548,6 +1813,98 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/invoice": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve the invoice for a specific order item.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserOrders"
+                ],
+                "summary": "Get Order Invoice",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the order item for which the invoice is requested",
+                        "name": "orderItemID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order invoice retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide a valid order item ID.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/return": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Initiate a return request for a specific order.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserOrders"
+                ],
+                "summary": "Initiate Return Request (User)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the order for which return is requested",
+                        "name": "orderID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return request initiated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide a valid order ID.",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -1804,6 +2161,311 @@ const docTemplate = `{
                 }
             }
         },
+        "/seller/accesstoken": {
+            "get": {
+                "description": "Verify the validity of a seller's access token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller"
+                ],
+                "summary": "Verify Access Token (Seller)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Access token to be verified",
+                        "name": "accesstoken",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Access token is valid",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide a valid access token.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/categoryoffer": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve all category offers by the seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller category offers"
+                ],
+                "summary": "Get Seller Category Offers",
+                "responses": {
+                    "200": {
+                        "description": "Category offers retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Unable to retrieve category offers.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Create a new offer for a category by the seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller category offers"
+                ],
+                "summary": "Create Category Offer",
+                "parameters": [
+                    {
+                        "description": "Details for creating a category offer",
+                        "name": "categoryOffer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.CategoryOffer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Category offer created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide valid details for creating a category offer.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Edit details of a category offer by the seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller category offers"
+                ],
+                "summary": "Edit Category Offer",
+                "parameters": [
+                    {
+                        "description": "Details for editing a category offer",
+                        "name": "editDetails",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.EditCategoryOffer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category offer edited successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide valid edit details.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/categoryoffer/block": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Block or disable a category offer by the seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller category offers"
+                ],
+                "summary": "Block Category Offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the category offer to be blocked",
+                        "name": "categoryOfferID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category offer blocked successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide a valid category offer ID.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/categoryoffer/delete": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Delete a category offer by the seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller category offers"
+                ],
+                "summary": "Delete Category Offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the category offer to be deleted",
+                        "name": "categoryOfferID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category offer deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide a valid category offer ID.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/categoryoffer/unblock": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Unblock or enable a previously blocked category offer by the seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller category offers"
+                ],
+                "summary": "Unblock Category Offer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the category offer to be unblocked",
+                        "name": "categoryOfferID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category offer unblocked successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Please provide a valid category offer ID.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/seller/login": {
             "post": {
                 "description": "using this handler Seller can Login",
@@ -1918,6 +2580,43 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller/order/cancelled": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve a list of cancelled orders by the seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SellerOrders"
+                ],
+                "summary": "Get Cancelled Orders (Seller)",
+                "responses": {
+                    "200": {
+                        "description": "Cancelled orders retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Unable to retrieve cancelled orders.",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -2419,52 +3118,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/seller/report": {
-            "get": {
-                "security": [
-                    {
-                        "BearerTokenAuth": []
-                    },
-                    {
-                        "Refreshtoken": []
-                    }
-                ],
-                "description": "Retrieve the seller sales report for the specified year.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Seller Sales Report"
-                ],
-                "summary": "Get Seller Sales Report",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Year for which the report is requested",
-                        "name": "year",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Seller sales report retrieved successfully",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request. Please provide a valid year.",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/seller/report/day": {
             "get": {
                 "security": [
@@ -2543,7 +3196,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "SellerSalesReport"
+                    "Seller Sales Report"
                 ],
                 "summary": "Get Seller Sales Report for Custom Number of Days",
                 "parameters": [
@@ -2571,7 +3224,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/seller/report/month": {
+        "/seller/report/xlsx": {
             "get": {
                 "security": [
                     {
@@ -2581,7 +3234,7 @@ const docTemplate = `{
                         "Refreshtoken": []
                     }
                 ],
-                "description": "Retrieve the seller sales report for the specified year and month.",
+                "description": "Generate and download a seller report in XLSX format.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2591,85 +3244,16 @@ const docTemplate = `{
                 "tags": [
                     "Seller Sales Report"
                 ],
-                "summary": "Get Seller Sales Report for a Specific Month",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Year for which the report is requested",
-                        "name": "year",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Month for which the report is requested (1-12)",
-                        "name": "month",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
+                "summary": "Generate Seller Report in XLSX Format",
                 "responses": {
                     "200": {
-                        "description": "Seller sales report retrieved successfully",
+                        "description": "Seller report generated successfully",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "type": "file"
                         }
                     },
                     "400": {
-                        "description": "Bad request. Please provide a valid year and month.",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/seller/report/week": {
-            "get": {
-                "security": [
-                    {
-                        "BearerTokenAuth": []
-                    },
-                    {
-                        "Refreshtoken": []
-                    }
-                ],
-                "description": "Retrieve the seller sales report for the specified year and week.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Seller Sales Report"
-                ],
-                "summary": "Get Seller Sales Report for a Specific Week",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Year for which the report is requested",
-                        "name": "year",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Week for which the report is requested",
-                        "name": "week",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Seller sales report retrieved successfully",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request. Please provide a valid year and week.",
+                        "description": "Bad request. Unable to generate seller report.",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -2836,6 +3420,80 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/wallet": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve details of the user's wallet.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Wallet"
+                ],
+                "summary": "Get User Wallet",
+                "responses": {
+                    "200": {
+                        "description": "User wallet details retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Unable to retrieve user wallet details.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallet/transaction": {
+            "get": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Retrieve the transactions history of the user's wallet.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Wallet"
+                ],
+                "summary": "Get User Wallet Transactions",
+                "responses": {
+                    "200": {
+                        "description": "User wallet transactions retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Unable to retrieve user wallet transactions.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2915,6 +3573,66 @@ const docTemplate = `{
                 }
             }
         },
+        "requestmodel.CategoryOffer": {
+            "type": "object",
+            "required": [
+                "category_discount",
+                "category_id",
+                "title",
+                "validity"
+            ],
+            "properties": {
+                "category_discount": {
+                    "type": "integer",
+                    "maximum": 99,
+                    "minimum": 1
+                },
+                "category_id": {
+                    "type": "string"
+                },
+                "seller_id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "validity": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "requestmodel.Coupon": {
+            "type": "object",
+            "required": [
+                "name",
+                "type"
+            ],
+            "properties": {
+                "discount": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "expire_date": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "maximum_allowed": {
+                    "type": "integer"
+                },
+                "minimum_required": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "requestmodel.EditAddress": {
             "type": "object",
             "required": [
@@ -2963,75 +3681,55 @@ const docTemplate = `{
                 }
             }
         },
+        "requestmodel.EditCategoryOffer": {
+            "type": "object",
+            "required": [
+                "category_discount",
+                "title"
+            ],
+            "properties": {
+                "category_discount": {
+                    "type": "integer",
+                    "maximum": 99,
+                    "minimum": 1
+                },
+                "id": {
+                    "type": "string"
+                },
+                "sellerID": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "validity": {
+                    "type": "integer"
+                }
+            }
+        },
         "requestmodel.EditInventory": {
             "type": "object",
             "required": [
-                "batterycapacity",
-                "brandID",
-                "categoryID",
-                "cellerID",
-                "cellularTechnology",
-                "description",
+                "discount",
                 "id",
                 "mrp",
-                "os",
-                "processor",
-                "productname",
-                "ram",
-                "saleprice",
-                "screensize",
                 "units"
             ],
             "properties": {
-                "batterycapacity": {
+                "discount": {
                     "type": "integer",
-                    "minimum": 500
-                },
-                "brandID": {
-                    "type": "integer"
-                },
-                "categoryID": {
-                    "type": "integer"
-                },
-                "cellerID": {
-                    "type": "string"
-                },
-                "cellularTechnology": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string",
-                    "minLength": 5
+                    "maximum": 99,
+                    "minimum": 0
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "mrp": {
                     "type": "integer",
                     "minimum": 0
                 },
-                "os": {
-                    "type": "string"
-                },
-                "processor": {
-                    "type": "string"
-                },
-                "productname": {
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 3
-                },
-                "ram": {
-                    "type": "integer",
-                    "minimum": 0
-                },
                 "saleprice": {
-                    "type": "integer",
-                    "minimum": 0
-                },
-                "screensize": {
-                    "type": "number",
-                    "minimum": 0
+                    "type": "integer"
                 },
                 "units": {
                     "type": "integer",
@@ -3081,6 +3779,9 @@ const docTemplate = `{
             ],
             "properties": {
                 "address": {
+                    "type": "string"
+                },
+                "coupon": {
                     "type": "string"
                 },
                 "payment": {
@@ -3210,32 +3911,26 @@ const docTemplate = `{
                 },
                 "phone": {
                     "type": "string"
+                },
+                "referalCode": {
+                    "type": "string"
                 }
             }
         },
         "requestmodel.UserEditProfile": {
             "type": "object",
             "required": [
-                "confirmpassword",
                 "email",
                 "name",
-                "password",
                 "phone",
                 "userid"
             ],
             "properties": {
-                "confirmpassword": {
-                    "type": "string"
-                },
                 "email": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
-                },
-                "password": {
-                    "type": "string",
-                    "minLength": 4
                 },
                 "phone": {
                     "type": "string"
@@ -3276,9 +3971,6 @@ const docTemplate = `{
         "responsemodel.SignupData": {
             "type": "object",
             "properties": {
-                "confirmPassword": {
-                    "type": "string"
-                },
                 "email": {
                     "type": "string"
                 },
@@ -3291,14 +3983,20 @@ const docTemplate = `{
                 "otp": {
                     "type": "string"
                 },
-                "password": {
+                "phone": {
                     "type": "string"
                 },
-                "phone": {
+                "referalCode": {
                     "type": "string"
                 },
                 "token": {
                     "type": "string"
+                },
+                "userID": {
+                    "type": "string"
+                },
+                "walletBelance": {
+                    "type": "integer"
                 }
             }
         }

@@ -158,6 +158,17 @@ func (u *OrderHandler) CancelUserOrder(c *gin.Context) {
 	}
 }
 
+// @Summary Initiate Return Request (User)
+// @Description Initiate a return request for a specific order.
+// @Tags UserOrders
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param orderID query int true "ID of the order for which return is requested"
+// @Success 200 {object} response.Response "Return request initiated successfully"
+// @Failure 400 {object} response.Response "Bad request. Please provide a valid order ID."
+// @Router /order/return [get]
 func (u *OrderHandler) ReturnUserOrder(c *gin.Context) {
 
 	userID, exist := c.MustGet("UserID").(string)
@@ -267,6 +278,16 @@ func (u *OrderHandler) GetSellerOrdersDeliverd(c *gin.Context) {
 	}
 }
 
+// @Summary Get Cancelled Orders (Seller)
+// @Description Retrieve a list of cancelled orders by the seller.
+// @Tags SellerOrders
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Success 200 {object} response.Response "Cancelled orders retrieved successfully"
+// @Failure 400 {object} response.Response "Bad request. Unable to retrieve cancelled orders."
+// @Router /seller/order/cancelled [get]
 func (u *OrderHandler) GetSellerOrdersCancelled(c *gin.Context) {
 	sellerID, exist := c.MustGet("SellerID").(string)
 	if !exist {
@@ -386,7 +407,7 @@ func (u *OrderHandler) SalesReport(c *gin.Context) {
 
 // @Summary		Get Seller Sales Report for Custom Number of Days
 // @Description	Retrieve the seller sales report for a custom number of days.
-// @Tags			SellerSalesReport
+// @Tags			Seller Sales Report
 // @Accept			json
 // @Produce		json
 // @Security		BearerTokenAuth
@@ -414,6 +435,16 @@ func (u *OrderHandler) SalesReportCustomDays(c *gin.Context) {
 	}
 }
 
+// @Summary Generate Seller Report in XLSX Format
+// @Description Generate and download a seller report in XLSX format.
+// @Tags Seller Sales Report
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Success 200 {file} response.Response "Seller report generated successfully"
+// @Failure 400 {object} response.Response "Bad request. Unable to generate seller report."
+// @Router /seller/report/xlsx [get]
 func (u *OrderHandler) SalesReportXlSX(c *gin.Context) {
 	sellerID, exist := c.MustGet("SellerID").(string)
 	if !exist {
@@ -435,6 +466,17 @@ func (u *OrderHandler) SalesReportXlSX(c *gin.Context) {
 
 // ------------------------------------------Invoice------------------------------------\\
 
+// @Summary Get Order Invoice
+// @Description Retrieve the invoice for a specific order item.
+// @Tags UserOrders
+// @Accept json
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param orderItemID query int true "ID of the order item for which the invoice is requested"
+// @Success 200 {object} response.Response "Order invoice retrieved successfully"
+// @Failure 400 {object} response.Response "Bad request. Please provide a valid order item ID."
+// @Router /order/invoice [get]
 func (u *OrderHandler) GetInvoice(c *gin.Context) {
 
 	orderItemID := c.Query("orderItemID")

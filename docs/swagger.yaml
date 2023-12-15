@@ -51,6 +51,49 @@ definitions:
     required:
     - inventoryid
     type: object
+  requestmodel.CategoryOffer:
+    properties:
+      category_discount:
+        maximum: 99
+        minimum: 1
+        type: integer
+      category_id:
+        type: string
+      seller_id:
+        type: string
+      title:
+        type: string
+      validity:
+        minimum: 0
+        type: integer
+    required:
+    - category_discount
+    - category_id
+    - title
+    - validity
+    type: object
+  requestmodel.Coupon:
+    properties:
+      discount:
+        maximum: 100
+        minimum: 1
+        type: integer
+      expire_date:
+        minimum: 1
+        type: integer
+      maximum_allowed:
+        type: integer
+      minimum_required:
+        minimum: 0
+        type: integer
+      name:
+        type: string
+      type:
+        type: string
+    required:
+    - name
+    - type
+    type: object
   requestmodel.EditAddress:
     properties:
       city:
@@ -86,62 +129,44 @@ definitions:
     - street
     - userid
     type: object
+  requestmodel.EditCategoryOffer:
+    properties:
+      category_discount:
+        maximum: 99
+        minimum: 1
+        type: integer
+      id:
+        type: string
+      sellerID:
+        type: string
+      title:
+        type: string
+      validity:
+        type: integer
+    required:
+    - category_discount
+    - title
+    type: object
   requestmodel.EditInventory:
     properties:
-      batterycapacity:
-        minimum: 500
+      discount:
+        maximum: 99
+        minimum: 0
         type: integer
-      brandID:
-        type: integer
-      categoryID:
-        type: integer
-      cellerID:
-        type: string
-      cellularTechnology:
-        type: string
-      description:
-        minLength: 5
-        type: string
       id:
-        type: integer
+        type: string
       mrp:
         minimum: 0
         type: integer
-      os:
-        type: string
-      processor:
-        type: string
-      productname:
-        maxLength: 100
-        minLength: 3
-        type: string
-      ram:
-        minimum: 0
-        type: integer
       saleprice:
-        minimum: 0
         type: integer
-      screensize:
-        minimum: 0
-        type: number
       units:
         minimum: 0
         type: integer
     required:
-    - batterycapacity
-    - brandID
-    - categoryID
-    - cellerID
-    - cellularTechnology
-    - description
+    - discount
     - id
     - mrp
-    - os
-    - processor
-    - productname
-    - ram
-    - saleprice
-    - screensize
     - units
     type: object
   requestmodel.ForgotPassword:
@@ -170,6 +195,8 @@ definitions:
   requestmodel.Order:
     properties:
       address:
+        type: string
+      coupon:
         type: string
       payment:
         type: string
@@ -259,29 +286,24 @@ definitions:
         type: string
       phone:
         type: string
+      referalCode:
+        type: string
     required:
     - name
     type: object
   requestmodel.UserEditProfile:
     properties:
-      confirmpassword:
-        type: string
       email:
         type: string
       name:
-        type: string
-      password:
-        minLength: 4
         type: string
       phone:
         type: string
       userid:
         type: string
     required:
-    - confirmpassword
     - email
     - name
-    - password
     - phone
     - userid
     type: object
@@ -306,8 +328,6 @@ definitions:
     type: object
   responsemodel.SignupData:
     properties:
-      confirmPassword:
-        type: string
       email:
         type: string
       isUserExist:
@@ -316,12 +336,16 @@ definitions:
         type: string
       otp:
         type: string
-      password:
-        type: string
       phone:
+        type: string
+      referalCode:
         type: string
       token:
         type: string
+      userID:
+        type: string
+      walletBelance:
+        type: integer
     type: object
 info:
   contact:
@@ -359,6 +383,31 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       summary: Get Seller Products
+      tags:
+      - User
+  /accesstoken:
+    get:
+      consumes:
+      - application/json
+      description: Verify the validity of an access token.
+      parameters:
+      - description: Access token to be verified
+        in: query
+        name: accesstoken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Access token is valid
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid access token.
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Verify Access Token (User)
       tags:
       - User
   /address:
@@ -590,6 +639,7 @@ paths:
             $ref: '#/definitions/response.Response'
       security:
       - BearerTokenAuth: []
+      - Refreshtoken: []
       summary: Delete a Brand by ID
       tags:
       - Brand
@@ -754,6 +804,108 @@ paths:
       summary: Edit a Category by ID
       tags:
       - Category
+  /admin/coupon:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of coupons for the admin.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Coupons retrieved successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Unable to retrieve coupons.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Get Coupons (Admin)
+      tags:
+      - Admin Coupons
+    post:
+      consumes:
+      - application/json
+      description: Create a new coupon by the admin.
+      parameters:
+      - description: Coupon details to be created
+        in: body
+        name: coupon
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.Coupon'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Coupon created successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Unable to create the coupon.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Create Coupon (Admin)
+      tags:
+      - Admin Coupons
+  /admin/coupon/block:
+    patch:
+      consumes:
+      - application/json
+      description: Block a coupon by the admin.
+      parameters:
+      - description: ID of the coupon to be blocked
+        in: query
+        name: couponID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Coupon blocked successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid coupon ID.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Block Coupon (Admin)
+      tags:
+      - Admin Coupons
+  /admin/coupon/unblock:
+    patch:
+      consumes:
+      - application/json
+      description: Unblock a coupon by the admin.
+      parameters:
+      - description: ID of the coupon to be unblocked
+        in: query
+        name: couponID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Coupon unblocked successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid coupon ID.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Unblock Coupon (Admin)
+      tags:
+      - Admin Coupons
   /admin/login/:
     post:
       consumes:
@@ -1166,6 +1318,47 @@ paths:
       summary: Increment Product Count in User Cart
       tags:
       - UserCart
+  /filter:
+    get:
+      consumes:
+      - application/json
+      description: Filter products based on category, brand, product name, and price
+        range.
+      parameters:
+      - description: Category filter
+        in: query
+        name: category
+        type: string
+      - description: Brand filter
+        in: query
+        name: brand
+        type: string
+      - description: Product name filter
+        in: query
+        name: product
+        type: string
+      - description: Minimum price filter
+        in: query
+        name: minprice
+        type: integer
+      - description: Maximum price filter
+        in: query
+        name: maxprice
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Products filtered successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide valid filter criteria.
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Filter Products
+      tags:
+      - User
   /forgotpassword:
     post:
       consumes:
@@ -1323,6 +1516,62 @@ paths:
       summary: Get User Order Details
       tags:
       - UserOrders
+  /order/invoice:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the invoice for a specific order item.
+      parameters:
+      - description: ID of the order item for which the invoice is requested
+        in: query
+        name: orderItemID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order invoice retrieved successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid order item ID.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Get Order Invoice
+      tags:
+      - UserOrders
+  /order/return:
+    get:
+      consumes:
+      - application/json
+      description: Initiate a return request for a specific order.
+      parameters:
+      - description: ID of the order for which return is requested
+        in: query
+        name: orderID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Return request initiated successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid order ID.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Initiate Return Request (User)
+      tags:
+      - UserOrders
   /payment/verify:
     post:
       consumes:
@@ -1448,6 +1697,194 @@ paths:
       summary: Get Seller Details
       tags:
       - Seller
+  /seller/accesstoken:
+    get:
+      consumes:
+      - application/json
+      description: Verify the validity of a seller's access token.
+      parameters:
+      - description: Access token to be verified
+        in: query
+        name: accesstoken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Access token is valid
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid access token.
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Verify Access Token (Seller)
+      tags:
+      - Seller
+  /seller/categoryoffer:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all category offers by the seller.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Category offers retrieved successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Unable to retrieve category offers.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Get Seller Category Offers
+      tags:
+      - Seller category offers
+    patch:
+      consumes:
+      - application/json
+      description: Edit details of a category offer by the seller.
+      parameters:
+      - description: Details for editing a category offer
+        in: body
+        name: editDetails
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.EditCategoryOffer'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Category offer edited successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide valid edit details.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Edit Category Offer
+      tags:
+      - Seller category offers
+    post:
+      consumes:
+      - application/json
+      description: Create a new offer for a category by the seller.
+      parameters:
+      - description: Details for creating a category offer
+        in: body
+        name: categoryOffer
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.CategoryOffer'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Category offer created successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide valid details for creating a category
+            offer.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Create Category Offer
+      tags:
+      - Seller category offers
+  /seller/categoryoffer/block:
+    patch:
+      consumes:
+      - application/json
+      description: Block or disable a category offer by the seller.
+      parameters:
+      - description: ID of the category offer to be blocked
+        in: query
+        name: categoryOfferID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Category offer blocked successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid category offer ID.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Block Category Offer
+      tags:
+      - Seller category offers
+  /seller/categoryoffer/delete:
+    patch:
+      consumes:
+      - application/json
+      description: Delete a category offer by the seller.
+      parameters:
+      - description: ID of the category offer to be deleted
+        in: query
+        name: categoryOfferID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Category offer deleted successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid category offer ID.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Delete Category Offer
+      tags:
+      - Seller category offers
+  /seller/categoryoffer/unblock:
+    patch:
+      consumes:
+      - application/json
+      description: Unblock or enable a previously blocked category offer by the seller.
+      parameters:
+      - description: ID of the category offer to be unblocked
+        in: query
+        name: categoryOfferID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Category offer unblocked successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Please provide a valid category offer ID.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Unblock Category Offer
+      tags:
+      - Seller category offers
   /seller/login:
     post:
       consumes:
@@ -1549,6 +1986,28 @@ paths:
       - BearerTokenAuth: []
       - Refreshtoken: []
       summary: Cancel Seller Order
+      tags:
+      - SellerOrders
+  /seller/order/cancelled:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of cancelled orders by the seller.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cancelled orders retrieved successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Unable to retrieve cancelled orders.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Get Cancelled Orders (Seller)
       tags:
       - SellerOrders
   /seller/order/delivered:
@@ -1824,34 +2283,6 @@ paths:
       summary: Update Seller Profile
       tags:
       - Seller Profile
-  /seller/report:
-    get:
-      consumes:
-      - application/json
-      description: Retrieve the seller sales report for the specified year.
-      parameters:
-      - description: Year for which the report is requested
-        in: query
-        name: year
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Seller sales report retrieved successfully
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Bad request. Please provide a valid year.
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - BearerTokenAuth: []
-      - Refreshtoken: []
-      summary: Get Seller Sales Report
-      tags:
-      - Seller Sales Report
   /seller/report/day:
     get:
       consumes:
@@ -1918,71 +2349,27 @@ paths:
       - Refreshtoken: []
       summary: Get Seller Sales Report for Custom Number of Days
       tags:
-      - SellerSalesReport
-  /seller/report/month:
-    get:
-      consumes:
-      - application/json
-      description: Retrieve the seller sales report for the specified year and month.
-      parameters:
-      - description: Year for which the report is requested
-        in: query
-        name: year
-        required: true
-        type: integer
-      - description: Month for which the report is requested (1-12)
-        in: query
-        name: month
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Seller sales report retrieved successfully
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Bad request. Please provide a valid year and month.
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - BearerTokenAuth: []
-      - Refreshtoken: []
-      summary: Get Seller Sales Report for a Specific Month
-      tags:
       - Seller Sales Report
-  /seller/report/week:
+  /seller/report/xlsx:
     get:
       consumes:
       - application/json
-      description: Retrieve the seller sales report for the specified year and week.
-      parameters:
-      - description: Year for which the report is requested
-        in: query
-        name: year
-        required: true
-        type: integer
-      - description: Week for which the report is requested
-        in: query
-        name: week
-        required: true
-        type: integer
+      description: Generate and download a seller report in XLSX format.
       produces:
       - application/json
       responses:
         "200":
-          description: Seller sales report retrieved successfully
+          description: Seller report generated successfully
           schema:
-            $ref: '#/definitions/response.Response'
+            type: file
         "400":
-          description: Bad request. Please provide a valid year and week.
+          description: Bad request. Unable to generate seller report.
           schema:
             $ref: '#/definitions/response.Response'
       security:
       - BearerTokenAuth: []
       - Refreshtoken: []
-      summary: Get Seller Sales Report for a Specific Week
+      summary: Generate Seller Report in XLSX Format
       tags:
       - Seller Sales Report
   /seller/signup:
@@ -2089,6 +2476,50 @@ paths:
       summary: User Otp verification
       tags:
       - User
+  /wallet:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve details of the user's wallet.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User wallet details retrieved successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Unable to retrieve user wallet details.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Get User Wallet
+      tags:
+      - User Wallet
+  /wallet/transaction:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the transactions history of the user's wallet.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User wallet transactions retrieved successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request. Unable to retrieve user wallet transactions.
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Get User Wallet Transactions
+      tags:
+      - User Wallet
 securityDefinitions:
   BearerTokenAuth:
     in: header
