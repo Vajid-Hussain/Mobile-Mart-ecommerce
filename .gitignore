@@ -7,3 +7,5 @@ cmd/api/tmp/api.exe
 
 invoice.pdf
 salesReport.xlxs
+
+build-errors.log
