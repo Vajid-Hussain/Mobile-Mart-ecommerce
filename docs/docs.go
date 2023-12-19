@@ -3383,6 +3383,11 @@ const docTemplate = `{
         },
         "/verifyOTP/": {
             "post": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
                 "description": "using this handler User can send otp",
                 "consumes": [
                     "application/json"

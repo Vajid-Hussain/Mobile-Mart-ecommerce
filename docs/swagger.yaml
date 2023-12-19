@@ -2473,6 +2473,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
       summary: User Otp verification
       tags:
       - User
