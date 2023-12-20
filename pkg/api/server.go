@@ -30,7 +30,7 @@ func NewServerHttp(user *handler.UserHandler,
 	engin.Use(gin.Logger())
 
 	// load htmlpages
-	engin.LoadHTMLGlob("./template/*.html")
+	engin.LoadHTMLGlob("/home/vajid/Brocamp/Mobile-mart/template/*.html")
 
 	// use ginSwagger middleware to serve the API docs
 	engin.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

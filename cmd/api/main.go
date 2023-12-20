@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/docs"
@@ -9,10 +10,13 @@ import (
 )
 
 func main() {
+
 	config, err := config.LoadConfig()
 	if err != nil {
+		fmt.Println("##", err)
 		log.Fatal("error at loading the env file using viper")
 	}
+	fmt.Println("**config done")
 
 	//	@title						Go + Gin Mobile-Mart
 	//	@description				Mobile Mart - Your Ultimate Mobile Phone Shopping API 📱🛒

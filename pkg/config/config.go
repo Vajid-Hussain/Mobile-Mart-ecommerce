@@ -56,9 +56,10 @@ func LoadConfig() (*Config, error) {
 		razopay Razopay
 	)
 
-	viper.SetConfigType("env")
-	viper.AddConfigPath("./")
-	viper.SetConfigFile(".env")
+	// viper.SetConfigType(".env")
+	// viper.SetConfigName(".env")
+	// viper.AddConfigPath("/home/vajid/Brocamp/Mobile-mart/")
+	viper.SetConfigFile("/home/vajid/Brocamp/Mobile-mart/.env")
 	viper.AutomaticEnv()
 
 	err := viper.ReadInConfig()
