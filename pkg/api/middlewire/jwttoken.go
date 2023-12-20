@@ -63,7 +63,7 @@ func SellerAuthorization(c *gin.Context) {
 			}
 		}
 	} else {
-		c.JSON(http.StatusOK, "all perfect, your access token is uptodate")
+		// c.JSON(http.StatusOK, "all perfect, your access token is uptodate")
 		c.Set("SellerID", id)
 		c.Next()
 	}
@@ -107,7 +107,7 @@ func UserAuthorization(c *gin.Context) {
 			}
 		}
 	} else {
-		c.JSON(http.StatusOK, "all perfect, your access token is uptodate")
+		// c.JSON(http.StatusOK, "all perfect, your access token is uptodate")
 		c.Set("UserID", id)
 	}
 	c.Set("UserID", id)

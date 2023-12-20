@@ -17,8 +17,8 @@ type InventoryReq struct {
 	Ram                uint                  `form:"ram" validate:"required,min=1"`
 	Screensize         float64               `form:"screensize" validate:"required,min=2"`
 	Batterycapacity    uint                  `form:"batterycapacity" validate:"required,min=500"`
-	Processor          string                `form:"processor" validate:"required"`
-	Image              *multipart.FileHeader `form:"image"`
+	Processor          string                `form:"processor" validate:"required" `
+	Image              *multipart.FileHeader `form:"image" swaggerignore:"true"`
 	ImageURL           string
 }
 

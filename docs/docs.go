@@ -50,10 +50,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully retrieved products",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/response.Response"
-                            }
+                            "$ref": "#/definitions/response.Response"
                         }
                     },
                     "400": {
@@ -247,9 +244,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/address/{id}": {
+            },
             "patch": {
                 "security": [
                     {
@@ -1401,7 +1396,7 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "User cart created successfully",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
@@ -1615,6 +1610,11 @@ const docTemplate = `{
         },
         "/forgotpassword": {
             "post": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
                 "description": "Initiate the process for resetting the password.",
                 "consumes": [
                     "application/json"
@@ -2785,10 +2785,148 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully retrieved seller products",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/response.Response"
-                            }
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
+                    }
+                ],
+                "description": "Add a new product from the seller.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Products"
+                ],
+                "summary": "Add Product",
+                "parameters": [
+                    {
+                        "minimum": 500,
+                        "type": "integer",
+                        "name": "batterycapacity",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "brandID",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "categoryID",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cellularTechnology",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "minLength": 5,
+                        "type": "string",
+                        "name": "description",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "maximum": 99,
+                        "minimum": 0,
+                        "type": "integer",
+                        "name": "discount",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "imageURL",
+                        "in": "formData"
+                    },
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "name": "mrp",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "os",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "processor",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "maxLength": 100,
+                        "minLength": 3,
+                        "type": "string",
+                        "name": "productname",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "ram",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "saleprice",
+                        "in": "formData"
+                    },
+                    {
+                        "minimum": 2,
+                        "type": "number",
+                        "name": "screensize",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "sellerID",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "name": "units",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added the product",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
                         }
                     },
                     "400": {
@@ -3641,25 +3779,24 @@ const docTemplate = `{
         "requestmodel.EditAddress": {
             "type": "object",
             "required": [
+                "addressID",
                 "city",
                 "firstName",
-                "id",
                 "landmark",
                 "lastName",
                 "phoneNumber",
                 "pincode",
                 "state",
-                "street",
-                "userid"
+                "street"
             ],
             "properties": {
+                "addressID": {
+                    "type": "string"
+                },
                 "city": {
                     "type": "string"
                 },
                 "firstName": {
-                    "type": "string"
-                },
-                "id": {
                     "type": "string"
                 },
                 "landmark": {
@@ -3679,9 +3816,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "street": {
-                    "type": "string"
-                },
-                "userid": {
                     "type": "string"
                 }
             }

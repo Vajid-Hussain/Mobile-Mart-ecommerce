@@ -34,8 +34,8 @@ type Address struct {
 }
 
 type EditAddress struct {
-	ID          string `json:"id" validate:"required"`
-	Userid      string `json:"userid" validate:"required"`
+	ID          string `json:"addressID" validate:"required"`
+	Userid      string `json:"userid" validate:"required" swaggerignore:"true"`
 	FirstName   string `json:"firstName" validate:"required"`
 	LastName    string `json:"lastName" validate:"required"`
 	Street      string `json:"street" validate:"required,alpha"`

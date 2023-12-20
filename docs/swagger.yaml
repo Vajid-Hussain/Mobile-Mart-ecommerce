@@ -96,11 +96,11 @@ definitions:
     type: object
   requestmodel.EditAddress:
     properties:
+      addressID:
+        type: string
       city:
         type: string
       firstName:
-        type: string
-      id:
         type: string
       landmark:
         type: string
@@ -115,19 +115,16 @@ definitions:
         type: string
       street:
         type: string
-      userid:
-        type: string
     required:
+    - addressID
     - city
     - firstName
-    - id
     - landmark
     - lastName
     - phoneNumber
     - pincode
     - state
     - street
-    - userid
     type: object
   requestmodel.EditCategoryOffer:
     properties:
@@ -375,9 +372,7 @@ paths:
         "200":
           description: Successfully retrieved products
           schema:
-            items:
-              $ref: '#/definitions/response.Response'
-            type: array
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad request
           schema:
@@ -472,35 +467,6 @@ paths:
       summary: Get Addresses
       tags:
       - User Addresses
-    post:
-      consumes:
-      - application/json
-      description: Add a new address.
-      parameters:
-      - description: Address object to be added
-        in: body
-        name: address
-        required: true
-        schema:
-          $ref: '#/definitions/requestmodel.Address'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Successfully added the address
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Bad request
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - BearerTokenAuth: []
-      - Refreshtoken: []
-      summary: Add Address
-      tags:
-      - User Addresses
-  /address/{id}:
     patch:
       consumes:
       - application/json
@@ -532,6 +498,34 @@ paths:
       - BearerTokenAuth: []
       - Refreshtoken: []
       summary: Update Address
+      tags:
+      - User Addresses
+    post:
+      consumes:
+      - application/json
+      description: Add a new address.
+      parameters:
+      - description: Address object to be added
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/requestmodel.Address'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully added the address
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Add Address
       tags:
       - User Addresses
   /admin:
@@ -1248,7 +1242,7 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
+        "200":
           description: User cart created successfully
           schema:
             $ref: '#/definitions/response.Response'
@@ -1382,6 +1376,8 @@ paths:
           description: Bad request
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
       summary: Forgot Password
       tags:
       - User
@@ -2076,9 +2072,7 @@ paths:
         "200":
           description: Successfully retrieved seller products
           schema:
-            items:
-              $ref: '#/definitions/response.Response'
-            type: array
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad request
           schema:
@@ -2120,6 +2114,100 @@ paths:
       - BearerTokenAuth: []
       - Refreshtoken: []
       summary: Edit Seller Product
+      tags:
+      - Seller Products
+    post:
+      consumes:
+      - multipart/form-data
+      description: Add a new product from the seller.
+      parameters:
+      - in: formData
+        minimum: 500
+        name: batterycapacity
+        required: true
+        type: integer
+      - in: formData
+        name: brandID
+        required: true
+        type: integer
+      - in: formData
+        name: categoryID
+        required: true
+        type: integer
+      - in: formData
+        name: cellularTechnology
+        required: true
+        type: string
+      - in: formData
+        minLength: 5
+        name: description
+        required: true
+        type: string
+      - in: formData
+        maximum: 99
+        minimum: 0
+        name: discount
+        required: true
+        type: integer
+      - in: formData
+        name: imageURL
+        type: string
+      - in: formData
+        minimum: 0
+        name: mrp
+        required: true
+        type: integer
+      - in: formData
+        name: os
+        required: true
+        type: string
+      - in: formData
+        name: processor
+        required: true
+        type: string
+      - in: formData
+        maxLength: 100
+        minLength: 3
+        name: productname
+        required: true
+        type: string
+      - in: formData
+        minimum: 1
+        name: ram
+        required: true
+        type: integer
+      - in: formData
+        name: saleprice
+        type: integer
+      - in: formData
+        minimum: 2
+        name: screensize
+        required: true
+        type: number
+      - in: formData
+        name: sellerID
+        required: true
+        type: integer
+      - in: formData
+        minimum: 0
+        name: units
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully added the product
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      - Refreshtoken: []
+      summary: Add Product
       tags:
       - Seller Products
   /seller/products/{id}:

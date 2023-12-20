@@ -190,7 +190,7 @@ func (d *userRepository) GetAddress(userID string, offset int, limit int) (*[]re
 		return nil, errors.New("face some issue while address fetch")
 	}
 	if result.RowsAffected == 0 {
-		return nil, resCustomError.ErrNoRowAffected
+		return nil, nil
 	}
 
 	return address, nil

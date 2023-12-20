@@ -339,7 +339,7 @@ func (u *UserHandler) GetAddress(c *gin.Context) {
 // @Param			address	body		requestmodel.EditAddress	true	"Updated address information"
 // @Success		200		{object}	response.Response			"Successfully updated the address"
 // @Failure		400		{object}	response.Response			"Bad request"
-// @Router			/address/{id} [patch]
+// @Router			/address [patch]
 func (u *UserHandler) EditAddress(c *gin.Context) {
 
 	var Address requestmodel.EditAddress
@@ -486,6 +486,7 @@ func (u *UserHandler) EditProfile(c *gin.Context) {
 // @Tags			User
 // @Accept			json
 // @Produce		json
+// @Security		BearerTokenAuth
 // @Param			forgotPassword	body		requestmodel.ForgotPassword	true	"Details for initiating password reset"
 // @Success		200				{object}	response.Response			"Password reset initiated successfully"
 // @Failure		400				{object}	response.Response			"Bad request"
