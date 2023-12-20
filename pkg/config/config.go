@@ -59,8 +59,8 @@ func LoadConfig() (*Config, error) {
 	// viper.SetConfigType(".env")
 	// viper.SetConfigName(".env")
 	// viper.AddConfigPath("/home/vajid/Brocamp/Mobile-mart/")
-	// viper.SetConfigFile("/home/vajid/Brocamp/Mobile-mart/.env")
-	viper.SetConfigFile("/home/ubuntu/Mobile-Mart/.env")
+	// viper.SetConfigFile("/home/ubuntu/Mobile-Mart/.env")
+	viper.SetConfigFile("./.env")
 	viper.AutomaticEnv()
 
 	err := viper.ReadInConfig()

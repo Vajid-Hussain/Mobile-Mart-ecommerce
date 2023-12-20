@@ -21,18 +21,17 @@ func NewInventoryHandler(usercase interfaceUseCase.IInventoryUseCase) *Inventoty
 	return &InventotyHandler{userCase: usercase}
 }
 
-//	@Summary	Add Product
-//
-// // @Description Add a new product from the seller.
-// // @Tags Seller Products
-// // @Accept json
-// // @Produce json
-// // @Security BearerTokenAuth
-// // @Security Refreshtoken
-// // @Param product formData AddProductRequest true "Product details for adding"
-// // @Success 201 {object} response.Response "Successfully added the product"
-// // @Failure 400 {object} response.Response "Bad request"
-// // @Router /seller/products [post]
+// @Summary	Add Product
+// @Description Add a new product from the seller.
+// @Tags Seller Products
+// @Accept multipart/form-data
+// @Produce json
+// @Security BearerTokenAuth
+// @Security Refreshtoken
+// @Param product formData requestmodel.InventoryReq true "Product details for adding"
+// @Success 200 {object} response.Response "Successfully added the product"
+// @Failure 400 {object} response.Response "Bad request"
+// @Router /seller/products [post]
 func (u *InventotyHandler) AddInventory(c *gin.Context) {
 
 	var inventoryDetails requestmodel.InventoryReq
@@ -167,7 +166,7 @@ func (u *InventotyHandler) DeleteInventory(c *gin.Context) {
 // @Produce		json
 // @Param			page	query		int					false	"Page number"				default(1)
 // @Param			limit	query		int					false	"Number of items per page"	default(5)
-// @Success		200		{object}	[]response.Response	"Successfully retrieved products"
+// @Success		200		{object}	response.Response	"Successfully retrieved products"
 // @Failure		400		{object}	response.Response	"Bad request"
 // @Router			/ [get]
 func (u *InventotyHandler) GetInventory(c *gin.Context) {
@@ -216,7 +215,7 @@ func (u *InventotyHandler) GetAInventory(c *gin.Context) {
 // @Security		Refreshtoken
 // @Param			page	query		int					false	"Page number"				default(1)
 // @Param			limit	query		int					false	"Number of items per page"	default(5)
-// @Success		200		{object}	[]response.Response	"Successfully retrieved seller products"
+// @Success		200		{object}	response.Response	"Successfully retrieved seller products"
 // @Failure		400		{object}	response.Response	"Bad request"
 // @Router			/seller/products [get]
 func (u *InventotyHandler) GetSellerInventory(c *gin.Context) {

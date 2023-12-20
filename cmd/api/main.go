@@ -7,17 +7,9 @@ import (
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/docs"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/di"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-
-	err := godotenv.Load("/home/vajid/Brocamp/Mobile-mart/.env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	fmt.Println("**workded **")
 
 	config, err := config.LoadConfig()
 	if err != nil {
