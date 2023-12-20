@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/spf13/viper"
 )
 
@@ -54,6 +56,7 @@ func LoadConfig() (*Config, error) {
 		razopay Razopay
 	)
 
+	viper.SetConfigType("env")
 	viper.AddConfigPath("./")
 	viper.SetConfigFile(".env")
 	viper.AutomaticEnv()
@@ -85,5 +88,6 @@ func LoadConfig() (*Config, error) {
 	}
 
 	config := Config{DB: db, Token: token, Otp: otp, S3aws: s3, Razopay: razopay}
+	fmt.Println("**", config)
 	return &config, nil
 }

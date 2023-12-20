@@ -26,12 +26,10 @@ func main() {
 	//	@host						localhost:8080
 	//	@BasePath					/
 	//	@query.collection.format	multi
+	// docs.SwaggerInfo.Version = "1.0"
 
 	docs.SwaggerInfo.Title = "Mobile_mart"
-	// docs.SwaggerInfo.Description = "This is a sample server Petstore server."
-	// docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = "mobilesmart.vajid.tech"
-	// docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	server, err := di.InitializeAPI(config)
 	if err != nil {
