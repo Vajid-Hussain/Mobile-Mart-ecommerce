@@ -86,11 +86,10 @@ func (u *CategoryHandler) FetchAllCatogry(c *gin.Context) {
 // @Accept			json
 // @Produce		json
 // @Security		BearerTokenAuth
-// @Param			id			path		int					true	"ID of the category to edit"
 // @Param			category		body	requestmodel.CategoryDetails				true	"Updated category"
 // @Success		200			{object}	response.Response{}	"Category edited successfully"
 // @Failure		400			{object}	response.Response{}	"Invalid input or validation error"
-// @Router			/admin/category/{id} [patch]
+// @Router			/admin/category [patch]
 func (u *CategoryHandler) UpdateCategory(c *gin.Context) {
 	var categoryData requestmodel.CategoryDetails
 
@@ -210,11 +209,10 @@ func (u *CategoryHandler) FetchAllBrand(c *gin.Context) {
 // @Accept			json
 // @Produce		json
 // @Security		BearerTokenAuth
-// @Param			id			path		int					true	"ID of the brand to edit"
 // @Param			name		body	requestmodel.BrandDetails				true	"Updated name of the brand"
 // @Success		200			{object}	response.Response{}	"Brand edited successfully"
 // @Failure		400			{object}	response.Response{}	"Invalid input or validation error"
-// @Router			/admin/brand/{id} [patch]
+// @Router			/admin/brand [patch]
 func (u *CategoryHandler) UpdateBrand(c *gin.Context) {
 	var brandData requestmodel.BrandDetails
 
@@ -230,8 +228,6 @@ func (u *CategoryHandler) UpdateBrand(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
-
-	brandData.ID = c.Query("id")
 
 	brandRes, err := u.categoryUseCase.EditBrand(&brandData)
 	if err != nil {
@@ -250,10 +246,10 @@ func (u *CategoryHandler) UpdateBrand(c *gin.Context) {
 // @Produce		json
 // @Security		BearerTokenAuth
 // @security		Refreshtoken
-// @Param			id	path	int	true	"ID of the brand to delete"
+// @Param			id	query	int	true	"ID of the brand to delete"
 // @Success		204	"Brand deleted successfully"
 // @Failure		400	{object}	response.Response{}	"Invalid input or validation error"
-// @Router			/admin/brand/{id} [delete]
+// @Router			/admin/brand [delete]
 func (u *CategoryHandler) DeleteBrand(c *gin.Context) {
 
 	id := c.Query("id")

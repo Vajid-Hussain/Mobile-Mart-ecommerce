@@ -410,9 +410,7 @@
                         }
                     }
                 }
-            }
-        },
-        "/admin/brand/{id}": {
+            },
             "delete": {
                 "security": [
                     {
@@ -438,7 +436,7 @@
                         "type": "integer",
                         "description": "ID of the brand to delete",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -473,13 +471,6 @@
                 "summary": "Edit a Brand by ID",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "ID of the brand to edit",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "Updated name of the brand",
                         "name": "name",
                         "in": "body",
@@ -498,12 +489,6 @@
                     },
                     "400": {
                         "description": "Invalid input or validation error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Brand not found",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -642,9 +627,7 @@
                         }
                     }
                 }
-            }
-        },
-        "/admin/category/{id}": {
+            },
             "patch": {
                 "security": [
                     {
@@ -663,13 +646,6 @@
                 ],
                 "summary": "Edit a Category by ID",
                 "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID of the category to edit",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "description": "Updated category",
                         "name": "category",
@@ -899,49 +875,6 @@
                 }
             }
         },
-        "/admin/seller/block": {
-            "patch": {
-                "security": [
-                    {
-                        "BearerTokenAuth": []
-                    }
-                ],
-                "description": "Using this handler, admin can block a seller",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admins"
-                ],
-                "summary": "Block Seller",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Seller ID in the URL path",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/admin/sellers/block": {
             "patch": {
                 "security": [
@@ -965,7 +898,7 @@
                         "type": "string",
                         "description": "Seller ID in the URL path",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1006,6 +939,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "default": 1,
                         "description": "Page number for pagination (default 1)",
                         "name": "page",
                         "in": "query",
@@ -1013,6 +947,7 @@
                     },
                     {
                         "type": "integer",
+                        "default": 5,
                         "description": "Number of items to return per page (default 5)",
                         "name": "limit",
                         "in": "query",
@@ -1056,6 +991,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "default": 1,
                         "description": "Page number for pagination (default 1)",
                         "name": "page",
                         "in": "query",
@@ -1063,6 +999,7 @@
                     },
                     {
                         "type": "integer",
+                        "default": 5,
                         "description": "Number of items to return per page (default 5)",
                         "name": "limit",
                         "in": "query",
@@ -1128,6 +1065,49 @@
                 }
             }
         },
+        "/admin/sellers/unblock": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Using this handler, admin can block a seller",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admins"
+                ],
+                "summary": "Block Seller",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Seller ID in the URL path",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/sellers/verify": {
             "patch": {
                 "security": [
@@ -1151,7 +1131,7 @@
                         "type": "string",
                         "description": "Seller ID in the URL path",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1194,7 +1174,7 @@
                         "type": "string",
                         "description": "User ID in the URL path",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1234,11 +1214,18 @@
                 "summary": "All User",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "User ID in the URL path",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 5,
+                        "description": "Number of items per page",
+                        "name": "limit",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1280,7 +1267,7 @@
                         "type": "string",
                         "description": "User ID in the URL path",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1498,7 +1485,7 @@
                     {
                         "type": "string",
                         "description": "Inventory ID of the product to increment in the cart",
-                        "name": "inventoryid",
+                        "name": "productID",
                         "in": "query",
                         "required": true
                     }
@@ -1935,6 +1922,9 @@
                 "security": [
                     {
                         "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
                     }
                 ],
                 "description": "Verify an online payment using the provided details.",
@@ -2106,7 +2096,7 @@
                         "Refreshtoken": []
                     }
                 ],
-                "description": "Retrieve details for the seller.",
+                "description": "Retrieve details for the seller sales.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2116,7 +2106,7 @@
                 "tags": [
                     "Seller"
                 ],
-                "summary": "Get Seller Details",
+                "summary": "Get Seller Dashbord",
                 "responses": {
                     "200": {
                         "description": "Details retrieved successfully",
@@ -2927,13 +2917,6 @@
                 ],
                 "summary": "Edit Seller Product",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Product ID in the query parameter",
-                        "name": "productid",
-                        "in": "query",
-                        "required": true
-                    },
                     {
                         "description": "Updated product details",
                         "name": "product",
@@ -3888,9 +3871,6 @@
                     "type": "integer",
                     "minimum": 0
                 },
-                "saleprice": {
-                    "type": "integer"
-                },
                 "units": {
                     "type": "integer",
                     "minimum": 0
@@ -3967,7 +3947,6 @@
                 "description",
                 "email",
                 "gstno",
-                "id",
                 "name",
                 "password"
             ],
@@ -3982,9 +3961,6 @@
                     "type": "string"
                 },
                 "gstno": {
-                    "type": "string"
-                },
-                "id": {
                     "type": "string"
                 },
                 "name": {
@@ -4026,9 +4002,6 @@
                 },
                 "gstno": {
                     "type": "string"
-                },
-                "id": {
-                    "type": "integer"
                 },
                 "name": {
                     "type": "string"

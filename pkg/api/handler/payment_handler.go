@@ -47,6 +47,7 @@ func (u *PaymentHandler) OnlinePayment(c *gin.Context) {
 // @Accept			json
 // @Produce		json
 // @Security		BearerTokenAuth
+// @Security Refreshtoken
 // @Param			verificationDetails	body		requestmodel.OnlinePaymentVerification	true	"Details for online payment verification"
 // @Success		200					{object}	response.Response						"Payment verification successful"
 // @Failure		400					{object}	response.Response						"Bad request. Please provide valid verification details."

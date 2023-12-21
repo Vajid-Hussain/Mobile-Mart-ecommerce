@@ -3,8 +3,8 @@ package domain
 import "time"
 
 type Category struct {
-	ID     uint   `gorm:"unique key"`
-	Name   string `gorm:"unique"`
+	ID     uint `gorm:"unique key"`
+	Name   string
 	Status status `gorm:"default:active"`
 }
 

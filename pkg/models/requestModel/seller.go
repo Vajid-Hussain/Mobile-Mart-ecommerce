@@ -1,7 +1,7 @@
 package requestmodel
 
 type SellerSignup struct {
-	ID              uint
+	ID              uint   `swaggerignore:"true"`
 	Name            string `json:"name"            validate:"required"`
 	Email           string `json:"email"           validate:"email"`
 	Password        string `json:"password"        validate:"min=4"`
@@ -16,7 +16,7 @@ type SellerLogin struct {
 }
 
 type SellerEditProfile struct {
-	ID              string `json:"id,omitempty"              validate:"required"`
+	ID              string `json:"id,omitempty" swaggerignore:"true"              validate:"required"`
 	Name            string `json:"name,omitempty"            validate:"required"`
 	Email           string `json:"email,omitempty"           validate:"required,email"`
 	Password        string `json:"password,omitempty"        validate:"required,min=4"`

@@ -41,6 +41,7 @@ func (d *categoryRepository) GetAllCategory(offSet int, limit int) (*[]responsem
 }
 
 func (d *categoryRepository) EditCategoryName(category *requestmodel.CategoryDetails) (*responsemodel.CategoryDetails, error) {
+
 	var updatedCategory responsemodel.CategoryDetails
 	query := "UPDATE categories SET name=? WHERE id=? RETURNING*"
 	result := d.DB.Raw(query, category.Name, category.ID).Scan(&updatedCategory)

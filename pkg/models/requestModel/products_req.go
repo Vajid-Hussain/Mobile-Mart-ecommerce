@@ -26,7 +26,7 @@ type EditInventory struct {
 	ID        string `json:"id" validate:"required"`
 	Mrp       uint   `json:"mrp" validate:"required,min=0"`
 	Discount  uint   `form:"discount" validate:"required,min=0,max=99,number"`
-	Saleprice uint   `form:"saleprice"`
+	Saleprice uint   `form:"saleprice" swaggerignore:"true"`
 	Units     uint64 `json:"units" validate:"required,min=0"`
 	SellerID  string `json:"-"`
 	// Productname        string  `json:"productname" validate:"required,min=3,max=100"`

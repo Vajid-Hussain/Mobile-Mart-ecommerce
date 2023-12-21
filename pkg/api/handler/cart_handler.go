@@ -106,7 +106,7 @@ func (u *CartHandler) DeleteInventoryFromCart(c *gin.Context) {
 // @Produce		json
 // @Security		BearerTokenAuth
 // @Security		Refreshtoken
-// @Param			inventoryid	query		string				true	"Inventory ID of the product to increment in the cart"
+// @Param			productID	query		string				true	"Inventory ID of the product to increment in the cart"
 // @Success		200			{object}	response.Response	"Product count incremented in the cart successfully"
 // @Failure		400			{object}	response.Response	"Bad request"
 // @Router			/cart/increment [patch]

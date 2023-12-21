@@ -167,7 +167,8 @@ func (u *UserHandler) UserLogin(c *gin.Context) {
 // @Accept			json
 // @Produce		json
 // @Security		BearerTokenAuth
-// @Param			id	path		string	true	"User ID in the URL path"
+// @Param			page	query		int						false	"Page number"				default(1)
+// @Param			limit	query		int						false	"Number of items per page"	default(5)
 // @Success		200	{object}	response.Response{}
 // @Failure		400	{object}	response.Response{}
 // @Router			/admin/users/getuser [get]
@@ -193,7 +194,7 @@ func (u *UserHandler) GetUser(c *gin.Context) {
 // @Accept			json
 // @Produce		json
 // @Security		BearerTokenAuth
-// @Param			id	path		string	true	"User ID in the URL path"
+// @Param			id	query		string	true	"User ID in the URL path"
 // @Success		200	{object}	response.Response{}
 // @Failure		400	{object}	response.Response{}
 // @Router			/admin/users/block [patch]
@@ -222,7 +223,7 @@ func (u *UserHandler) BlockUser(c *gin.Context) {
 // @Accept			json
 // @Produce		json
 // @Security		BearerTokenAuth
-// @Param			id	path		string	true	"User ID in the URL path"
+// @Param			id	query		string	true	"User ID in the URL path"
 // @Success		200	{object}	response.Response{}
 // @Failure		400	{object}	response.Response{}
 // @Router			/admin/users/unblock [patch]

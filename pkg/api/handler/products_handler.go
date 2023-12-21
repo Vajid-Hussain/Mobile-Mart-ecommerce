@@ -56,10 +56,10 @@ func (u *InventotyHandler) AddInventory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
-	fmt.Println("**", image)
+
 	inventoryDetails.Image = image
 
-	sellerID, _ := strconv.ParseUint(sellerid, 16, 16)
+	sellerID, _ := strconv.Atoi(sellerid)
 	inventoryDetails.SellerID = uint(sellerID)
 
 	data, err := helper.Validation(inventoryDetails)
@@ -250,7 +250,6 @@ func (u *InventotyHandler) GetSellerInventory(c *gin.Context) {
 // @Produce		json
 // @Security		BearerTokenAuth
 // @Security		Refreshtoken
-// @Param			productid	query		string						true	"Product ID in the query parameter"
 // @Param			product		body		requestmodel.EditInventory	true	"Updated product details"
 // @Success		200			{object}	response.Response			"Successfully edited the seller product"
 // @Failure		400			{object}	response.Response			"Bad request"
@@ -259,7 +258,6 @@ func (u *InventotyHandler) EditInventory(c *gin.Context) {
 
 	var edittedInventory requestmodel.EditInventory
 
-	edittedInventory.ID = c.Query("productid")
 	edittedInventory.SellerID = c.MustGet("SellerID").(string)
 
 	if err := c.BindJSON(&edittedInventory); err != nil {

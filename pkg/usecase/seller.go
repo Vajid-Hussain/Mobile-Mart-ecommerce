@@ -205,7 +205,6 @@ func (r *sellerUseCase) UpdateSellerProfile(editedProfile *requestmodel.SellerEd
 				}
 			}
 		}
-
 	}
 
 	sellerEdittedProfile, err := r.repo.UpdateSellerProfile(editedProfile)

@@ -419,9 +419,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/admin/brand/{id}": {
+            },
             "delete": {
                 "security": [
                     {
@@ -447,7 +445,7 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "ID of the brand to delete",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -482,13 +480,6 @@ const docTemplate = `{
                 "summary": "Edit a Brand by ID",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "ID of the brand to edit",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "Updated name of the brand",
                         "name": "name",
                         "in": "body",
@@ -507,12 +498,6 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Invalid input or validation error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Brand not found",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -651,9 +636,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/admin/category/{id}": {
+            },
             "patch": {
                 "security": [
                     {
@@ -672,13 +655,6 @@ const docTemplate = `{
                 ],
                 "summary": "Edit a Category by ID",
                 "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID of the category to edit",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "description": "Updated category",
                         "name": "category",
@@ -908,49 +884,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/seller/block": {
-            "patch": {
-                "security": [
-                    {
-                        "BearerTokenAuth": []
-                    }
-                ],
-                "description": "Using this handler, admin can block a seller",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admins"
-                ],
-                "summary": "Block Seller",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Seller ID in the URL path",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/admin/sellers/block": {
             "patch": {
                 "security": [
@@ -974,7 +907,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Seller ID in the URL path",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1015,6 +948,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "default": 1,
                         "description": "Page number for pagination (default 1)",
                         "name": "page",
                         "in": "query",
@@ -1022,6 +956,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "default": 5,
                         "description": "Number of items to return per page (default 5)",
                         "name": "limit",
                         "in": "query",
@@ -1065,6 +1000,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "default": 1,
                         "description": "Page number for pagination (default 1)",
                         "name": "page",
                         "in": "query",
@@ -1072,6 +1008,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "default": 5,
                         "description": "Number of items to return per page (default 5)",
                         "name": "limit",
                         "in": "query",
@@ -1137,6 +1074,49 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/sellers/unblock": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Using this handler, admin can block a seller",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admins"
+                ],
+                "summary": "Block Seller",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Seller ID in the URL path",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/sellers/verify": {
             "patch": {
                 "security": [
@@ -1160,7 +1140,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Seller ID in the URL path",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1203,7 +1183,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User ID in the URL path",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1243,11 +1223,18 @@ const docTemplate = `{
                 "summary": "All User",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "User ID in the URL path",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 5,
+                        "description": "Number of items per page",
+                        "name": "limit",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1289,7 +1276,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User ID in the URL path",
                         "name": "id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1507,7 +1494,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Inventory ID of the product to increment in the cart",
-                        "name": "inventoryid",
+                        "name": "productID",
                         "in": "query",
                         "required": true
                     }
@@ -1944,6 +1931,9 @@ const docTemplate = `{
                 "security": [
                     {
                         "BearerTokenAuth": []
+                    },
+                    {
+                        "Refreshtoken": []
                     }
                 ],
                 "description": "Verify an online payment using the provided details.",
@@ -2115,7 +2105,7 @@ const docTemplate = `{
                         "Refreshtoken": []
                     }
                 ],
-                "description": "Retrieve details for the seller.",
+                "description": "Retrieve details for the seller sales.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2125,7 +2115,7 @@ const docTemplate = `{
                 "tags": [
                     "Seller"
                 ],
-                "summary": "Get Seller Details",
+                "summary": "Get Seller Dashbord",
                 "responses": {
                     "200": {
                         "description": "Details retrieved successfully",
@@ -2936,13 +2926,6 @@ const docTemplate = `{
                 ],
                 "summary": "Edit Seller Product",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Product ID in the query parameter",
-                        "name": "productid",
-                        "in": "query",
-                        "required": true
-                    },
                     {
                         "description": "Updated product details",
                         "name": "product",
@@ -3897,9 +3880,6 @@ const docTemplate = `{
                     "type": "integer",
                     "minimum": 0
                 },
-                "saleprice": {
-                    "type": "integer"
-                },
                 "units": {
                     "type": "integer",
                     "minimum": 0
@@ -3976,7 +3956,6 @@ const docTemplate = `{
                 "description",
                 "email",
                 "gstno",
-                "id",
                 "name",
                 "password"
             ],
@@ -3991,9 +3970,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "gstno": {
-                    "type": "string"
-                },
-                "id": {
                     "type": "string"
                 },
                 "name": {
@@ -4035,9 +4011,6 @@ const docTemplate = `{
                 },
                 "gstno": {
                     "type": "string"
-                },
-                "id": {
-                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
