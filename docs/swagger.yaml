@@ -38,6 +38,23 @@ definitions:
         minLength: 4
         type: string
     type: object
+  requestmodel.Brand:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  requestmodel.BrandDetails:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    required:
+    - id
+    - name
+    type: object
   requestmodel.Cart:
     properties:
       cartid userid:
@@ -50,6 +67,23 @@ definitions:
         type: integer
     required:
     - inventoryid
+    type: object
+  requestmodel.Category:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  requestmodel.CategoryDetails:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    required:
+    - id
+    - name
     type: object
   requestmodel.CategoryOffer:
     properties:
@@ -472,11 +506,6 @@ paths:
       - application/json
       description: Update an existing address.
       parameters:
-      - description: Address ID in the URL path
-        in: path
-        name: id
-        required: true
-        type: string
       - description: Updated address information
         in: body
         name: address
@@ -546,7 +575,7 @@ paths:
             $ref: '#/definitions/response.Response'
       security:
       - BearerTokenAuth: []
-      summary: Get Admin Details
+      summary: Get Dashbord Details
       tags:
       - Admins
   /admin/brand:
@@ -555,12 +584,14 @@ paths:
       - application/json
       description: Get a paginated list of brands using this handler.
       parameters:
-      - description: Page number for pagination (default 1)
+      - default: 1
+        description: Page number for pagination (default 1)
         in: query
         name: page
         required: true
         type: integer
-      - description: Number of items to return per page (default 5)
+      - default: 5
+        description: Number of items to return per page (default 5)
         in: query
         name: limit
         required: true
@@ -587,14 +618,11 @@ paths:
       description: Create a new brand using this handler.
       parameters:
       - description: Name of the brand
-        in: formData
-        name: name
+        in: body
+        name: Brand
         required: true
-        type: string
-      - description: Description of the brand
-        in: formData
-        name: description
-        type: string
+        schema:
+          $ref: '#/definitions/requestmodel.Brand'
       produces:
       - application/json
       responses:
@@ -648,14 +676,11 @@ paths:
         required: true
         type: integer
       - description: Updated name of the brand
-        in: formData
+        in: body
         name: name
         required: true
-        type: string
-      - description: Updated description of the brand
-        in: formData
-        name: description
-        type: string
+        schema:
+          $ref: '#/definitions/requestmodel.BrandDetails'
       produces:
       - application/json
       responses:
@@ -706,12 +731,14 @@ paths:
       - application/json
       description: Using this handler, admin can get a list of all categories
       parameters:
-      - description: Page number for pagination (default 1)
+      - default: 1
+        description: Page number for pagination (default 1)
         in: query
         name: page
         required: true
         type: integer
-      - description: Number of items to return per page (default 5)
+      - default: 5
+        description: Number of items to return per page (default 5)
         in: query
         name: limit
         required: true
@@ -737,11 +764,12 @@ paths:
       - application/json
       description: Using this handler, admin can add a new category
       parameters:
-      - description: Name of the category
-        in: query
-        name: name
+      - description: Details of the category
+        in: body
+        name: Details
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/requestmodel.Category'
       produces:
       - application/json
       responses:
@@ -769,15 +797,12 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Updated name of the category
-        in: formData
-        name: name
+      - description: Updated category
+        in: body
+        name: category
         required: true
-        type: string
-      - description: Updated description of the category
-        in: formData
-        name: description
-        type: string
+        schema:
+          $ref: '#/definitions/requestmodel.CategoryDetails'
       produces:
       - application/json
       responses:
@@ -787,10 +812,6 @@ paths:
             $ref: '#/definitions/response.Response'
         "400":
           description: Invalid input or validation error
-          schema:
-            $ref: '#/definitions/response.Response'
-        "404":
-          description: Category not found
           schema:
             $ref: '#/definitions/response.Response'
       security:
@@ -1098,7 +1119,7 @@ paths:
       summary: Verify Seller
       tags:
       - Admins
-  /admin/user/block:
+  /admin/users/block:
     patch:
       consumes:
       - application/json
@@ -1125,7 +1146,7 @@ paths:
       summary: Block User
       tags:
       - Admins
-  /admin/user/getuser:
+  /admin/users/getuser:
     get:
       consumes:
       - application/json
@@ -1152,7 +1173,7 @@ paths:
       summary: All User
       tags:
       - Admins
-  /admin/user/unblock:
+  /admin/users/unblock:
     patch:
       consumes:
       - application/json
@@ -2121,6 +2142,11 @@ paths:
       - multipart/form-data
       description: Add a new product from the seller.
       parameters:
+      - description: Product image for adding
+        in: formData
+        name: productImage
+        required: true
+        type: file
       - in: formData
         minimum: 500
         name: batterycapacity
@@ -2150,9 +2176,6 @@ paths:
         required: true
         type: integer
       - in: formData
-        name: imageURL
-        type: string
-      - in: formData
         minimum: 0
         name: mrp
         required: true
@@ -2175,9 +2198,6 @@ paths:
         minimum: 1
         name: ram
         required: true
-        type: integer
-      - in: formData
-        name: saleprice
         type: integer
       - in: formData
         minimum: 2

@@ -28,6 +28,7 @@ func NewInventoryHandler(usercase interfaceUseCase.IInventoryUseCase) *Inventoty
 // @Produce json
 // @Security BearerTokenAuth
 // @Security Refreshtoken
+// @Param productImage formData file true "Product image for adding"
 // @Param product formData requestmodel.InventoryReq true "Product details for adding"
 // @Success 200 {object} response.Response "Successfully added the product"
 // @Failure 400 {object} response.Response "Bad request"
@@ -48,6 +49,15 @@ func (u *InventotyHandler) AddInventory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, finalReslt)
 		return
 	}
+
+	image, err := c.FormFile("productImage")
+	if err != nil {
+		finalReslt := response.Responses(http.StatusBadRequest, resCustomError.BindingConflict, nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+	fmt.Println("**", image)
+	inventoryDetails.Image = image
 
 	sellerID, _ := strconv.ParseUint(sellerid, 16, 16)
 	inventoryDetails.SellerID = uint(sellerID)

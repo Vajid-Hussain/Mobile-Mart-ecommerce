@@ -54,7 +54,7 @@ func (u *AdminHandler) AdminLogin(c *gin.Context) {
 	}
 }
 
-// @Summary		Get Admin Details
+// @Summary		Get Dashbord Details
 // @Description	Retrieve details for the admin.
 // @Tags			Admins
 // @Accept			json

@@ -267,13 +267,6 @@ const docTemplate = `{
                 "summary": "Update Address",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Address ID in the URL path",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "Updated address information",
                         "name": "address",
                         "in": "body",
@@ -316,7 +309,7 @@ const docTemplate = `{
                 "tags": [
                     "Admins"
                 ],
-                "summary": "Get Admin Details",
+                "summary": "Get Dashbord Details",
                 "responses": {
                     "200": {
                         "description": "Admin details retrieved successfully",
@@ -354,6 +347,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "default": 1,
                         "description": "Page number for pagination (default 1)",
                         "name": "page",
                         "in": "query",
@@ -361,6 +355,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "default": 5,
                         "description": "Number of items to return per page (default 5)",
                         "name": "limit",
                         "in": "query",
@@ -401,17 +396,13 @@ const docTemplate = `{
                 "summary": "Create a Brand",
                 "parameters": [
                     {
-                        "type": "string",
                         "description": "Name of the brand",
-                        "name": "name",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Description of the brand",
-                        "name": "description",
-                        "in": "formData"
+                        "name": "Brand",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.Brand"
+                        }
                     }
                 ],
                 "responses": {
@@ -498,17 +489,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
                         "description": "Updated name of the brand",
                         "name": "name",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Updated description of the brand",
-                        "name": "description",
-                        "in": "formData"
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.BrandDetails"
+                        }
                     }
                 ],
                 "responses": {
@@ -554,6 +541,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "default": 1,
                         "description": "Page number for pagination (default 1)",
                         "name": "page",
                         "in": "query",
@@ -561,6 +549,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "default": 5,
                         "description": "Number of items to return per page (default 5)",
                         "name": "limit",
                         "in": "query",
@@ -601,11 +590,13 @@ const docTemplate = `{
                 "summary": "Add Category",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Name of the category",
-                        "name": "name",
-                        "in": "query",
-                        "required": true
+                        "description": "Details of the category",
+                        "name": "Details",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.Category"
+                        }
                     }
                 ],
                 "responses": {
@@ -689,17 +680,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Updated name of the category",
-                        "name": "name",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Updated description of the category",
-                        "name": "description",
-                        "in": "formData"
+                        "description": "Updated category",
+                        "name": "category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requestmodel.CategoryDetails"
+                        }
                     }
                 ],
                 "responses": {
@@ -711,12 +698,6 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Invalid input or validation error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Category not found",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -1199,7 +1180,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/user/block": {
+        "/admin/users/block": {
             "patch": {
                 "security": [
                     {
@@ -1242,7 +1223,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/user/getuser": {
+        "/admin/users/getuser": {
             "get": {
                 "security": [
                     {
@@ -1285,7 +1266,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/user/unblock": {
+        "/admin/users/unblock": {
             "patch": {
                 "security": [
                     {
@@ -2818,6 +2799,13 @@ const docTemplate = `{
                 "summary": "Add Product",
                 "parameters": [
                     {
+                        "type": "file",
+                        "description": "Product image for adding",
+                        "name": "productImage",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
                         "minimum": 500,
                         "type": "integer",
                         "name": "batterycapacity",
@@ -2858,11 +2846,6 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "name": "imageURL",
-                        "in": "formData"
-                    },
-                    {
                         "minimum": 0,
                         "type": "integer",
                         "name": "mrp",
@@ -2895,11 +2878,6 @@ const docTemplate = `{
                         "name": "ram",
                         "in": "formData",
                         "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "name": "saleprice",
-                        "in": "formData"
                     },
                     {
                         "minimum": 2,
@@ -3696,6 +3674,32 @@ const docTemplate = `{
                 }
             }
         },
+        "requestmodel.Brand": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "requestmodel.BrandDetails": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "requestmodel.Cart": {
             "type": "object",
             "required": [
@@ -3713,6 +3717,32 @@ const docTemplate = `{
                 },
                 "quantity": {
                     "type": "integer"
+                }
+            }
+        },
+        "requestmodel.Category": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "requestmodel.CategoryDetails": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },

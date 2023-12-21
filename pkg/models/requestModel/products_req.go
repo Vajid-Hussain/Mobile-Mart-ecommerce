@@ -10,7 +10,7 @@ type InventoryReq struct {
 	SellerID           uint                  `form:"sellerID" validate:"required,number"`
 	Mrp                uint                  `form:"mrp" validate:"required,min=0,number"`
 	Discount           uint                  `form:"discount" validate:"required,min=0,max=99,number"`
-	Saleprice          uint                  `form:"saleprice"`
+	Saleprice          uint                  `form:"saleprice" swaggerignore:"true"`
 	Units              uint64                `form:"units" validate:"required,min=0,number"`
 	Os                 string                `form:"os" validate:"required"`
 	CellularTechnology string                `form:"cellularTechnology" validate:"required"`
@@ -19,7 +19,7 @@ type InventoryReq struct {
 	Batterycapacity    uint                  `form:"batterycapacity" validate:"required,min=500"`
 	Processor          string                `form:"processor" validate:"required" `
 	Image              *multipart.FileHeader `form:"image" swaggerignore:"true"`
-	ImageURL           string
+	ImageURL           string                `swaggerignore:"true"`
 }
 
 type EditInventory struct {

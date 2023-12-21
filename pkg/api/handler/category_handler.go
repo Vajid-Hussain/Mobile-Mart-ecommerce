@@ -25,7 +25,7 @@ func NewCategoryHandler(useCase interfaceUseCase.ICategoryUseCase) *CategoryHand
 // @Accept			json
 // @Produce		json
 // @Security		BearerTokenAuth
-// @Param			name	query		string	true	"Name of the category"
+// @Param			Category Details	body		requestmodel.Category	true	"Details of the category"
 // @Success		200		{object}	response.Response{}
 // @Failure		400		{object}	response.Response{}
 // @Router			/admin/category [post]
@@ -61,8 +61,8 @@ func (u *CategoryHandler) NewCategory(c *gin.Context) {
 // @Accept			json
 // @Produce		json
 // @Security		BearerTokenAuth
-// @Param			page	query		int	true	"Page number for pagination (default 1)"
-// @Param			limit	query		int	true	"Number of items to return per page (default 5)"
+// @Param			page	query		int	true	"Page number for pagination (default 1)" default(1)
+// @Param			limit	query		int	true	"Number of items to return per page (default 5)" default(5)
 // @Success		200		{object}	response.Response{}
 // @Failure		400		{object}	response.Response{}
 // @Router			/admin/category [get]
@@ -87,11 +87,9 @@ func (u *CategoryHandler) FetchAllCatogry(c *gin.Context) {
 // @Produce		json
 // @Security		BearerTokenAuth
 // @Param			id			path		int					true	"ID of the category to edit"
-// @Param			name		formData	string				true	"Updated name of the category"
-// @Param			description	formData	string				false	"Updated description of the category"
+// @Param			category		body	requestmodel.CategoryDetails				true	"Updated category"
 // @Success		200			{object}	response.Response{}	"Category edited successfully"
 // @Failure		400			{object}	response.Response{}	"Invalid input or validation error"
-// @Failure		404			{object}	response.Response{}	"Category not found"
 // @Router			/admin/category/{id} [patch]
 func (u *CategoryHandler) UpdateCategory(c *gin.Context) {
 	var categoryData requestmodel.CategoryDetails
@@ -151,8 +149,7 @@ func (u *CategoryHandler) DeleteCategory(c *gin.Context) {
 // @Accept			json
 // @Produce		json
 // @Security		BearerTokenAuth
-// @Param			name		formData	string				true	"Name of the brand"
-// @Param			description	formData	string				false	"Description of the brand"
+// @Param			Brand	body	requestmodel.Brand				true	"Name of the brand"
 // @Success		201			{object}	response.Response{}	"Brand created successfully"
 // @Failure		400			{object}	response.Response{}	"Invalid input or validation error"
 // @Router			/admin/brand [post]
@@ -188,8 +185,8 @@ func (u *CategoryHandler) CreateBrand(c *gin.Context) {
 // @Accept			json
 // @Produce		json
 // @Security		BearerTokenAuth
-// @Param			page	query		int					true	"Page number for pagination (default 1)"
-// @Param			limit	query		int					true	"Number of items to return per page (default 5)"
+// @Param			page	query		int					true	"Page number for pagination (default 1)" default(1)
+// @Param			limit	query		int					true	"Number of items to return per page (default 5)" default(5)
 // @Success		200		{object}	response.Response{}	"Paginated list of brands"
 // @Failure		400		{object}	response.Response{}	"Invalid input or validation error"
 // @Router			/admin/brand [get]
@@ -214,11 +211,9 @@ func (u *CategoryHandler) FetchAllBrand(c *gin.Context) {
 // @Produce		json
 // @Security		BearerTokenAuth
 // @Param			id			path		int					true	"ID of the brand to edit"
-// @Param			name		formData	string				true	"Updated name of the brand"
-// @Param			description	formData	string				false	"Updated description of the brand"
+// @Param			name		body	requestmodel.BrandDetails				true	"Updated name of the brand"
 // @Success		200			{object}	response.Response{}	"Brand edited successfully"
 // @Failure		400			{object}	response.Response{}	"Invalid input or validation error"
-// @Failure		404			{object}	response.Response{}	"Brand not found"
 // @Router			/admin/brand/{id} [patch]
 func (u *CategoryHandler) UpdateBrand(c *gin.Context) {
 	var brandData requestmodel.BrandDetails

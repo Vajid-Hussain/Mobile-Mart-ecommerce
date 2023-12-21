@@ -170,7 +170,7 @@ func (u *UserHandler) UserLogin(c *gin.Context) {
 // @Param			id	path		string	true	"User ID in the URL path"
 // @Success		200	{object}	response.Response{}
 // @Failure		400	{object}	response.Response{}
-// @Router			/admin/user/getuser [get]
+// @Router			/admin/users/getuser [get]
 func (u *UserHandler) GetUser(c *gin.Context) {
 	page := c.DefaultQuery("page", "1")
 	limit := c.DefaultQuery("limit", "1")
@@ -196,7 +196,7 @@ func (u *UserHandler) GetUser(c *gin.Context) {
 // @Param			id	path		string	true	"User ID in the URL path"
 // @Success		200	{object}	response.Response{}
 // @Failure		400	{object}	response.Response{}
-// @Router			/admin/user/block [patch]
+// @Router			/admin/users/block [patch]
 func (u *UserHandler) BlockUser(c *gin.Context) {
 	userID := c.Query("id")
 	id := strings.TrimSpace(userID)
@@ -225,7 +225,7 @@ func (u *UserHandler) BlockUser(c *gin.Context) {
 // @Param			id	path		string	true	"User ID in the URL path"
 // @Success		200	{object}	response.Response{}
 // @Failure		400	{object}	response.Response{}
-// @Router			/admin/user/unblock [patch]
+// @Router			/admin/users/unblock [patch]
 func (u *UserHandler) UnblockUser(c *gin.Context) {
 	userID := c.Query("id")
 	id := strings.TrimSpace(userID)
@@ -335,7 +335,6 @@ func (u *UserHandler) GetAddress(c *gin.Context) {
 // @Produce		json
 // @Security		BearerTokenAuth
 // @Security		Refreshtoken
-// @Param			id		path		string						true	"Address ID in the URL path"
 // @Param			address	body		requestmodel.EditAddress	true	"Updated address information"
 // @Success		200		{object}	response.Response			"Successfully updated the address"
 // @Failure		400		{object}	response.Response			"Bad request"
