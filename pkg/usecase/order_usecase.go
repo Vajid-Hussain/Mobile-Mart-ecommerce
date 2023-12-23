@@ -163,12 +163,12 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 		return nil, err
 	}
 
-	// for _, data := range order.Cart {
-	// 	err = r.cartrepo.DeleteInventoryFromCart(data.InventoryID, order.UserID)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// }
+	for _, data := range order.Cart {
+		err = r.cartrepo.DeleteInventoryFromCart(data.InventoryID, order.UserID)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	orderResponse.TotalPrice = order.FinalPrice
 	return OrderSuccessDetails, nil

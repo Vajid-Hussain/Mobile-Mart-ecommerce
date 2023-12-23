@@ -55,3 +55,27 @@ func UploadImageToS3(file *multipart.FileHeader, sess *session.Session) (string,
 	}
 	return upload.Location, nil
 }
+
+func UploadFilesToS3(file *multipart.FileHeader, sess *session.Session) (string, error) {
+
+	image, err := file.Open()
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+	defer image.Close()
+
+	fileName := uuid.New().String()
+
+	uploader := s3manager.NewUploader(sess)
+	upload, err := uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String("mobile-mart"),
+		Key:    aws.String("product images/" + fileName),
+		Body:   image,
+		ACL:    aws.String("public-read"),
+	})
+	if err != nil {
+		return "", err
+	}
+	return upload.Location, nil
+}
