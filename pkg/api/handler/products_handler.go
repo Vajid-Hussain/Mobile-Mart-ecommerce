@@ -204,7 +204,7 @@ func (u *InventotyHandler) GetInventory(c *gin.Context) {
 // @Failure		400	{object}	response.Response	"Bad request"
 // @Router			/seller/products/{id} [get]
 func (u *InventotyHandler) GetAInventory(c *gin.Context) {
-	id := c.Param("productid")
+	id := c.Param("productid ")
 
 	inverntory, err := u.userCase.GetAInventory(id)
 	if err != nil {
