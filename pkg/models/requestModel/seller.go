@@ -21,6 +21,6 @@ type SellerEditProfile struct {
 	Email           string `json:"email,omitempty"           validate:"required,email"`
 	Password        string `json:"password,omitempty"        validate:"required,min=4"`
 	ConfirmPassword string `json:"confirmpassword,omitempty" validate:"required,eqfield=Password"`
-	GST_NO          string `json:"gstno,omitempty"           validate:"required,len=15"`
-	Description     string `json:"description,omitempty"     validate:"required"`
+	// GST_NO          string `json:"gstno,omitempty"           validate:"required,len=15"`
+	Description string `json:"description,omitempty"     validate:"required"`
 }

@@ -192,8 +192,8 @@ func (r *sellerUseCase) UpdateSellerProfile(editedProfile *requestmodel.SellerEd
 			for _, e := range ve {
 				fieldName := e.Field()
 				switch fieldName {
-				case "ID":
-					editedProfile.ID = SellerProfile.ID
+				// case "ID":
+				// 	editedProfile.ID = SellerProfile.ID
 				case "Name":
 					editedProfile.Name = SellerProfile.Name
 				case "Email":
