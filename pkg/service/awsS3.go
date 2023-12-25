@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bytes"
 	"fmt"
 	"mime/multipart"
 
@@ -56,22 +57,21 @@ func UploadImageToS3(file *multipart.FileHeader, sess *session.Session) (string,
 	return upload.Location, nil
 }
 
-func UploadFilesToS3(file *multipart.FileHeader, sess *session.Session) (string, error) {
+func UploadFilesToS3(file bytes.Buffer, sess *session.Session) (string, error) {
 
-	image, err := file.Open()
-	if err != nil {
-		fmt.Println(err)
-		return "", err
-	}
-	defer image.Close()
-
+	// files, err := os.Open(file.String())
+	// if err != nil {
+	// 	return "", err
+	// }
+	// defer files.Close()
+	fmt.Println("##", bytes.Buffer(file))
 	fileName := uuid.New().String()
 
 	uploader := s3manager.NewUploader(sess)
 	upload, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String("mobile-mart"),
-		Key:    aws.String("product images/" + fileName),
-		Body:   image,
+		Key:    aws.String("files/" + fileName),
+		Body:   bytes.NewReader(file.Bytes()),
 		ACL:    aws.String("public-read"),
 	})
 	if err != nil {

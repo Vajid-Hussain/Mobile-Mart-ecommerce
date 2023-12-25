@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"time"
@@ -23,10 +24,11 @@ type orderUseCase struct {
 	paymentRepo      interfaces.IPaymentRepository
 	couponrepo       interfaces.ICouponRepository
 	razopay          *config.Razopay
+	s3               *config.S3Bucket
 }
 
-func NewOrderUseCase(repository interfaces.IOrderRepository, cartrepository interfaces.ICartRepository, sellerRepository interfaces.ISellerRepo, paymentRepository interfaces.IPaymentRepository, coupon interfaces.ICouponRepository, razopay *config.Razopay) interfaceUseCase.IOrderUseCase {
-	return &orderUseCase{repo: repository, cartrepo: cartrepository, sellerRepository: sellerRepository, paymentRepo: paymentRepository, couponrepo: coupon, razopay: razopay}
+func NewOrderUseCase(repository interfaces.IOrderRepository, cartrepository interfaces.ICartRepository, sellerRepository interfaces.ISellerRepo, paymentRepository interfaces.IPaymentRepository, coupon interfaces.ICouponRepository, razopay *config.Razopay, s3 *config.S3Bucket) interfaceUseCase.IOrderUseCase {
+	return &orderUseCase{repo: repository, cartrepo: cartrepository, sellerRepository: sellerRepository, paymentRepo: paymentRepository, couponrepo: coupon, razopay: razopay, s3: s3}
 }
 
 func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order, error) {
@@ -394,7 +396,7 @@ func (r *orderUseCase) GetSalesReportByDays(sellerID string, days string) (*resp
 
 // ------------------------------------------Order Invoice------------------------------------\\
 
-func (r *orderUseCase) OrderInvoiceCreation(orderItemID string) (*gofpdf.Fpdf, error) {
+func (r *orderUseCase) OrderInvoiceCreation(orderItemID string) (*string, error) {
 	orderDetails, err := r.repo.GetOrderFullDetails(orderItemID)
 	if err != nil {
 		return nil, err
@@ -483,12 +485,22 @@ func (r *orderUseCase) OrderInvoiceCreation(orderItemID string) (*gofpdf.Fpdf, e
 
 	pdf.Cell(40, 10, "Mobile-mart: Thanks for shopping!")
 
+	sess := service.CreateSession(r.s3)
+
 	err = pdf.OutputFileAndClose("invoice.pdf")
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
 
-	return pdf, nil
+	var pdfBuffer bytes.Buffer
+	pdf.Output(&pdfBuffer)
+
+	path, err := service.UploadFilesToS3(pdfBuffer, sess)
+	if err != nil {
+		return nil, err
+	}
+
+	return &path, nil
 }
 
 // ------------------------------------------Sales Report in xl------------------------------------\\

@@ -480,8 +480,8 @@ func (u *OrderHandler) SalesReportXlSX(c *gin.Context) {
 func (u *OrderHandler) GetInvoice(c *gin.Context) {
 
 	orderItemID := c.Query("orderItemID")
-	_, err := u.useCase.OrderInvoiceCreation(orderItemID)
-	pdfLink := "file:///home/vajid/Brocamp/Mobile-mart/invoice.pdf"
+	pdfLink, err := u.useCase.OrderInvoiceCreation(orderItemID)
+	// pdfLink := "file:///home/vajid/Brocamp/Mobile-mart/invoice.pdf"
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)

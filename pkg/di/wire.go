@@ -57,7 +57,7 @@ func InitializeAPI(config *config.Config) (*server.ServerHttp, error) {
 	couponHandler := handler.NewCouponHandler(couponUseCase)
 
 	orderRepository := repository.NewOrderRepository(DB)
-	orderUseCase := usecase.NewOrderUseCase(orderRepository, cartRepository, sellerRepository, paymentRepository, couponRepository, &config.Razopay)
+	orderUseCase := usecase.NewOrderUseCase(orderRepository, cartRepository, sellerRepository, paymentRepository, couponRepository, &config.Razopay, &config.S3aws)
 	orderHandler := handler.NewOrderHandler(orderUseCase)
 
 	serverHttp := server.NewServerHttp(userHandler,
