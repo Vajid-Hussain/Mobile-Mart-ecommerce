@@ -254,7 +254,7 @@ func (r *orderUseCase) ReturnUserOrder(orderItemID, userID string) (*responsemod
 		return nil, err
 	}
 
-	orderDetails.WalletBalance, err = r.paymentRepo.CreateOrUpdateWallet(userID, orderDetails.Price)
+	orderDetails.WalletBalance, err = r.paymentRepo.CreateOrUpdateWallet(userID, orderDetails.Saleprice)
 	if err != nil {
 		return nil, err
 	}
@@ -271,7 +271,7 @@ func (r *orderUseCase) ReturnUserOrder(orderItemID, userID string) (*responsemod
 	var walletTransactions requestmodel.WalletTransaction
 
 	walletTransactions.UserID = userID
-	walletTransactions.Credit = orderDetails.Price
+	walletTransactions.Credit = orderDetails.Saleprice
 	walletTransactions.TotalAmount = *currentBalance
 
 	err = r.paymentRepo.WalletTransaction(walletTransactions)
