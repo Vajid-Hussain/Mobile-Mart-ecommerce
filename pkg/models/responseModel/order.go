@@ -10,7 +10,7 @@ type OrderShowcase struct {
 	SellerID      string `json:"seller id" gorm:"column:seller_id"`
 	InventoryID   string `gorm:"column:inventory_id" json:"productid"`
 	Price         uint   `json:"total-amout"`
-	Saleprice     uint   `json:"singleUnitCost"`
+	Saleprice     uint   `json:"userPayableAmount" gorm:"column:payable_amount" `
 	OrderStatus   string `json:"orderstatus,omitempty"`
 	PaymentStatus string `json:"paymentStatus,omitempty"`
 	Quantity      uint   `json:"quantity"`
@@ -27,6 +27,7 @@ type OrderDetails struct {
 	InventoryID   string `gorm:"column:inventory_id" json:"productid"`
 	Quantity      uint   `json:"quantity"`
 	Price         uint   `json:"price"`
+	Saleprice     uint   `json:"userPayableAmount" gorm:"column:payable_amount" `
 	OrderStatus   string `json:"orderstatus,omitempty"`
 	PaymentStatus string `json:"paymentStatus,omitempty"`
 	WalletBalance uint   `json:"walletBelance,omitempty"`

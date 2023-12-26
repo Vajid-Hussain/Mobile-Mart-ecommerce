@@ -168,7 +168,7 @@ func (u *OrderHandler) CancelUserOrder(c *gin.Context) {
 // @Param orderID query int true "ID of the order for which return is requested"
 // @Success 200 {object} response.Response "Return request initiated successfully"
 // @Failure 400 {object} response.Response "Bad request. Please provide a valid order ID."
-// @Router /order/return [get]
+// @Router /order/return [patch]
 func (u *OrderHandler) ReturnUserOrder(c *gin.Context) {
 
 	userID, exist := c.MustGet("UserID").(string)

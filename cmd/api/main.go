@@ -30,8 +30,8 @@ func main() {
 	// docs.SwaggerInfo.Version = "1.0"
 
 	docs.SwaggerInfo.Title = "Mobile_mart"
-	docs.SwaggerInfo.Host = "mobilesmart.vajid.tech"
-	// docs.SwaggerInfo.Host = "localhost:7000"
+	// docs.SwaggerInfo.Host = "mobilesmart.vajid.tech"
+	docs.SwaggerInfo.Host = "localhost:7000"
 
 	server, err := di.InitializeAPI(config)
 	if err != nil {

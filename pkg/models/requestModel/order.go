@@ -6,7 +6,7 @@ import (
 
 type Order struct {
 	ID             uint                          `json:"-"`
-	UserID         string                        `json:"userid"`
+	UserID         string                        `json:"userid" swaggerignore:"true"`
 	Address        string                        `json:"address" validate:"required,numeric"`
 	Payment        string                        `json:"payment" validate:"required,alpha,uppercase"`
 	Coupon         string                        `json:"coupon"`

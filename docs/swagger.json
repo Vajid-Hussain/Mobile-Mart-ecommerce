@@ -1826,7 +1826,7 @@
             }
         },
         "/order/return": {
-            "get": {
+            "patch": {
                 "security": [
                     {
                         "BearerTokenAuth": []
@@ -2868,12 +2868,6 @@
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "name": "sellerID",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
                         "minimum": 0,
                         "type": "integer",
                         "name": "units",
@@ -3680,17 +3674,8 @@
                 "inventoryid"
             ],
             "properties": {
-                "cartid userid": {
-                    "type": "string"
-                },
                 "inventoryid": {
                     "type": "string"
-                },
-                "price": {
-                    "type": "integer"
-                },
-                "quantity": {
-                    "type": "integer"
                 }
             }
         },
@@ -3926,9 +3911,6 @@
                 },
                 "payment": {
                     "type": "string"
-                },
-                "userid": {
-                    "type": "string"
                 }
             }
         },
@@ -3946,7 +3928,6 @@
                 "confirmpassword",
                 "description",
                 "email",
-                "gstno",
                 "name",
                 "password"
             ],
@@ -3955,12 +3936,10 @@
                     "type": "string"
                 },
                 "description": {
+                    "description": "GST_NO          string `json:\"gstno,omitempty\"           validate:\"required,len=15\"`",
                     "type": "string"
                 },
                 "email": {
-                    "type": "string"
-                },
-                "gstno": {
                     "type": "string"
                 },
                 "name": {

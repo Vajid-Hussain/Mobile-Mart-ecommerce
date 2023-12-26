@@ -1835,7 +1835,7 @@ const docTemplate = `{
             }
         },
         "/order/return": {
-            "get": {
+            "patch": {
                 "security": [
                     {
                         "BearerTokenAuth": []
@@ -2877,12 +2877,6 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "name": "sellerID",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
                         "minimum": 0,
                         "type": "integer",
                         "name": "units",
@@ -3689,17 +3683,8 @@ const docTemplate = `{
                 "inventoryid"
             ],
             "properties": {
-                "cartid userid": {
-                    "type": "string"
-                },
                 "inventoryid": {
                     "type": "string"
-                },
-                "price": {
-                    "type": "integer"
-                },
-                "quantity": {
-                    "type": "integer"
                 }
             }
         },
@@ -3935,9 +3920,6 @@ const docTemplate = `{
                 },
                 "payment": {
                     "type": "string"
-                },
-                "userid": {
-                    "type": "string"
                 }
             }
         },
@@ -3955,7 +3937,6 @@ const docTemplate = `{
                 "confirmpassword",
                 "description",
                 "email",
-                "gstno",
                 "name",
                 "password"
             ],
@@ -3964,12 +3945,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description": {
+                    "description": "GST_NO          string ` + "`" + `json:\"gstno,omitempty\"           validate:\"required,len=15\"` + "`" + `",
                     "type": "string"
                 },
                 "email": {
-                    "type": "string"
-                },
-                "gstno": {
                     "type": "string"
                 },
                 "name": {

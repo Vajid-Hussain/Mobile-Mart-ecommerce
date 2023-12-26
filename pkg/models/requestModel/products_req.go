@@ -7,7 +7,7 @@ type InventoryReq struct {
 	Description        string                `form:"description" validate:"required,min=5"`
 	BrandID            uint                  `form:"brandID" validate:"required,number"`
 	CategoryID         uint                  `form:"categoryID" validate:"required,number"`
-	SellerID           uint                  `form:"sellerID" validate:"required,number"`
+	SellerID           uint                  `form:"sellerID" validate:"number" swaggerignore:"true"`
 	Mrp                uint                  `form:"mrp" validate:"required,min=0,number"`
 	Discount           uint                  `form:"discount" validate:"required,min=0,max=99,number"`
 	Saleprice          uint                  `form:"saleprice" swaggerignore:"true"`

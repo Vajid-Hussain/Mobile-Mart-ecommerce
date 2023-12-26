@@ -111,9 +111,9 @@ func (r *orderUseCase) NewOrder(order *requestmodel.Order) (*responsemodel.Order
 	// find total amount
 	order.FinalPrice = 0
 	for i, product := range order.Cart {
-		order.Cart[i].Price = helper.FindDiscount(float64(product.Price), float64(product.CategoryDiscount+product.Discount))
+		order.Cart[i].Price = helper.FindDiscount(float64(product.Price), float64(product.CategoryDiscount+product.Discount)) * product.Quantity
 		order.Cart[i].Discount = product.Discount + product.CategoryDiscount
-		order.Cart[i].FinalPrice = helper.FindDiscount(float64(product.Price), float64(product.Discount+product.CategoryDiscount+order.CouponDiscount))
+		order.Cart[i].FinalPrice = helper.FindDiscount(float64(product.Price), float64(product.Discount+product.CategoryDiscount+order.CouponDiscount)) * product.Quantity
 		order.FinalPrice += order.Cart[i].FinalPrice
 	}
 
