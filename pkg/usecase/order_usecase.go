@@ -211,7 +211,7 @@ func (r *orderUseCase) CancelUserOrder(orderItemID string, userID string) (*resp
 
 	if paymentType == "ONLINE" || paymentType == "WALLET" {
 
-		orderDetails.WalletBalance, err = r.paymentRepo.CreateOrUpdateWallet(userID, orderDetails.Price)
+		orderDetails.WalletBalance, err = r.paymentRepo.CreateOrUpdateWallet(userID, orderDetails.Saleprice)
 		if err != nil {
 			return nil, err
 		}
@@ -224,9 +224,9 @@ func (r *orderUseCase) CancelUserOrder(orderItemID string, userID string) (*resp
 		var walletTransactions requestmodel.WalletTransaction
 
 		walletTransactions.UserID = userID
-		walletTransactions.Credit = orderDetails.Price
+		walletTransactions.Credit = orderDetails.Saleprice
 		walletTransactions.TotalAmount = *currentBalance
-		fmt.Println("****", walletTransactions, *currentBalance, orderDetails.Price)
+		fmt.Println("****", walletTransactions, *currentBalance, orderDetails.Saleprice)
 		err = r.paymentRepo.WalletTransaction(walletTransactions)
 		if err != nil {
 			return nil, err

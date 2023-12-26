@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 
 	requestmodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/requestModel"
 	responsemodel "github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/models/responseModel"
@@ -105,7 +106,8 @@ func (r *cartUseCase) ShowCart(userID string) (*responsemodel.UserCart, error) {
 		// if err != nil {
 		// 	return nil, err
 		// }
-		(*cartInventories)[i].FinalPrice = helper.FindDiscount(float64(inventory.Price), float64(inventory.Discount+inventory.CategoryDiscount))
+		(*cartInventories)[i].FinalPrice = helper.FindDiscount(float64(inventory.Price), float64(inventory.Discount+inventory.CategoryDiscount)) * inventory.Quantity
+		fmt.Println("**", (*cartInventories)[i].FinalPrice)
 		cart.TotalPrice += (*cartInventories)[i].FinalPrice * inventory.Quantity
 	}
 
