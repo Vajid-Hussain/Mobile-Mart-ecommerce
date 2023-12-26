@@ -307,7 +307,7 @@ func (u *OrderHandler) GetSellerOrdersCancelled(c *gin.Context) {
 	}
 }
 
-// @Summary		Confirm Seller Order
+// @Summary		Confirm Seller Order deliverd
 // @Description	Confirm an order for the seller.
 // @Tags			SellerOrders
 // @Accept			json

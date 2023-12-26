@@ -2532,7 +2532,7 @@ const docTemplate = `{
                 "tags": [
                     "SellerOrders"
                 ],
-                "summary": "Confirm Seller Order",
+                "summary": "Confirm Seller Order deliverd",
                 "parameters": [
                     {
                         "type": "string",

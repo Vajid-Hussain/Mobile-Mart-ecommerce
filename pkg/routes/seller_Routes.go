@@ -52,6 +52,7 @@ func SellerRoutes(engin *gin.RouterGroup, seller *handler.SellerHandler, invento
 
 		categorymanagement := engin.Group("/categoryoffer")
 		{
+			categorymanagement.GET("/brand", category.FetchAllBrand)
 			categorymanagement.GET("/category", category.FetchAllCatogry)
 			categorymanagement.GET("/", category.GetAllCategoryOffer)
 			categorymanagement.POST("/", category.CreateCategoryOffer)

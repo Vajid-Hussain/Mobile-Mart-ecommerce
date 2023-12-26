@@ -1951,7 +1951,7 @@ paths:
       security:
       - BearerTokenAuth: []
       - Refreshtoken: []
-      summary: Confirm Seller Order
+      summary: Confirm Seller Order deliverd
       tags:
       - SellerOrders
   /seller/order/{orderID}/cancel:
