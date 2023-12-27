@@ -3228,22 +3228,19 @@
                         "type": "integer",
                         "description": "Year for which the report is requested",
                         "name": "year",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "Month for which the report is requested (1-12)",
                         "name": "month",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "Day for which the report is requested (1-31)",
                         "name": "day",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {

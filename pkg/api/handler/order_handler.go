@@ -377,9 +377,9 @@ func (u *OrderHandler) CancelOrder(c *gin.Context) {
 // @Produce		json
 // @Security		BearerTokenAuth
 // @Security		Refreshtoken
-// @Param			year	query		int					true	"Year for which the report is requested"
-// @Param			month	query		int					true	"Month for which the report is requested (1-12)"
-// @Param			day		query		int					true	"Day for which the report is requested (1-31)"
+// @Param			year	query		int					false	"Year for which the report is requested"
+// @Param			month	query		int					false	"Month for which the report is requested (1-12)"
+// @Param			day		query		int					false	"Day for which the report is requested (1-31)"
 // @Success		200		{object}	response.Response	"Seller sales report retrieved successfully"
 // @Failure		400		{object}	response.Response	"Bad request. Please provide a valid year, month, and day."
 // @Router			/seller/report/day [get]
@@ -454,12 +454,11 @@ func (u *OrderHandler) SalesReportXlSX(c *gin.Context) {
 	}
 
 	result, err := u.useCase.GenerateXlOfSalesReport(sellerID)
-	xllink := "file:///home/vajid/Brocamp/Mobile-mart/salesReport.xlsx"
 	if err != nil {
 		finalReslt := response.Responses(http.StatusBadRequest, "", nil, err.Error())
 		c.JSON(http.StatusBadRequest, finalReslt)
 	} else {
-		finalReslt := response.Responses(http.StatusOK, result, xllink, nil)
+		finalReslt := response.Responses(http.StatusOK, "sales report create succesfully", result, nil)
 		c.JSON(http.StatusOK, finalReslt)
 	}
 }

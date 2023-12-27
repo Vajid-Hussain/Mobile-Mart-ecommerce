@@ -108,7 +108,7 @@ func (r *cartUseCase) ShowCart(userID string) (*responsemodel.UserCart, error) {
 		// }
 		(*cartInventories)[i].FinalPrice = helper.FindDiscount(float64(inventory.Price), float64(inventory.Discount+inventory.CategoryDiscount)) * inventory.Quantity
 		fmt.Println("**", (*cartInventories)[i].FinalPrice)
-		cart.TotalPrice += (*cartInventories)[i].FinalPrice * inventory.Quantity
+		cart.TotalPrice += (*cartInventories)[i].FinalPrice
 	}
 
 	cart.Cart = *cartInventories

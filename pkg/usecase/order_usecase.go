@@ -507,7 +507,7 @@ func (r *orderUseCase) OrderInvoiceCreation(orderItemID string) (*string, error)
 
 func (r *orderUseCase) GenerateXlOfSalesReport(sellerID string) (string, error) {
 
-	orders, err := r.repo.GetOrderXlSalesReport(sellerID)
+	orders, _ := r.repo.GetOrderXlSalesReport(sellerID)
 	if orders == nil {
 		return "", errors.New("seller have no sales for creating a sales report")
 	}
@@ -542,9 +542,16 @@ func (r *orderUseCase) GenerateXlOfSalesReport(sellerID string) (string, error) 
 	}
 
 	// Save the Excel file
-	err = f.SaveAs("salesReport.xlsx")
+	// err = f.SaveAs("salesReport.xlsx")
+	// if err != nil {
+	// 	fmt.Println("er", err)
+	// }
+
+	sess := service.CreateSession(r.s3)
+
+	url, err := service.UploadExcelToS3(f, sess)
 	if err != nil {
-		fmt.Println("er", err)
+		return "", err
 	}
-	return "succesfully created", nil
+	return url, nil
 }

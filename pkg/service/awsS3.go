@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mime/multipart"
 
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/Vajid-Hussain/Mobile-Mart-ecommerce/pkg/config"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -59,11 +60,6 @@ func UploadImageToS3(file *multipart.FileHeader, sess *session.Session) (string,
 
 func UploadFilesToS3(file bytes.Buffer, sess *session.Session) (string, error) {
 
-	// files, err := os.Open(file.String())
-	// if err != nil {
-	// 	return "", err
-	// }
-	// defer files.Close()
 	fmt.Println("##", bytes.Buffer(file))
 	fileName := uuid.New().String()
 
@@ -72,6 +68,30 @@ func UploadFilesToS3(file bytes.Buffer, sess *session.Session) (string, error) {
 		Bucket: aws.String("mobile-mart"),
 		Key:    aws.String("files/" + fileName),
 		Body:   bytes.NewReader(file.Bytes()),
+		ACL:    aws.String("public-read"),
+	})
+	if err != nil {
+		return "", err
+	}
+	return upload.Location, nil
+}
+
+func UploadExcelToS3(file *excelize.File, sess *session.Session) (string, error) {
+
+	var excelBuffer bytes.Buffer
+
+	err := file.Write(&excelBuffer)
+	if err != nil {
+		return "", err
+	}
+
+	fileName := uuid.New().String()
+
+	uploader := s3manager.NewUploader(sess)
+	upload, err := uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String("mobile-mart"),
+		Key:    aws.String("files/" + fileName),
+		Body:   bytes.NewReader(excelBuffer.Bytes()),
 		ACL:    aws.String("public-read"),
 	})
 	if err != nil {
