@@ -3,6 +3,7 @@ module github.com/Vajid-Hussain/Mobile-Mart-ecommerce
 go 1.21.3
 
 require (
+	github.com/360EntSecGroup-Skylar/excelize v1.4.1
 	github.com/aws/aws-sdk-go v1.47.12
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/validator/v10 v10.16.0
@@ -22,7 +23,6 @@ require (
 )
 
 require (
-	github.com/360EntSecGroup-Skylar/excelize v1.4.1 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/bytedance/sonic v1.10.2 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
@@ -49,7 +49,6 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.6 // indirect
