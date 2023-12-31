@@ -1,0 +1,13 @@
+# .gitignore
+.env
+
+cmd/api/tmp/api.exe
+ 
+#  api.exe
+
+invoice.pdf
+salesReport.xlxs
+
+build-errors.log
+
+razopay.html
