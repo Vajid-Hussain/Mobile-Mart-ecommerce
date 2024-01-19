@@ -5,9 +5,9 @@ pipeline {
         stage ('Diployment'){
             steps {
                 script {
-                    sh 'echo "Deploying..."'
+                    echo 'echo "Deploying..."'
                     sh 'sudo systemctl restart mobilemart.service'
-                    sh 'echo "Deployment complete."'
+                    echo 'echo "Deployment complete."'
                 }
             }
         }
