@@ -394,7 +394,7 @@ paths:
           description: Bad request
           schema:
             $ref: '#/definitions/response.Response'
-      summary: Get Available Products
+      summary: Get Available Mobiles
       tags:
       - User
   /accesstoken:
