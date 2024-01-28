@@ -13,7 +13,6 @@ pipeline {
                     sh 'env'
                     sh 'pwd'
                     sh 'which go'
-                    sh 'where go'
                     echo 'building...'
                     sh 'make buildDeployment'
                     echo 'build completed'
