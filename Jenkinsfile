@@ -6,6 +6,7 @@ pipeline {
         stage ('build'){
             steps {
                 script{
+                    sh 'pwd'
                     echo 'building...'
                     sh 'make buildDeployment'
                     echo 'build completed'
@@ -16,6 +17,7 @@ pipeline {
         stage ('Diployment'){
             steps {
                 script {
+                    sh 'pwd'
                     echo 'echo "Deploying..."'
                     sh 'sudo systemctl restart mobilemart.service'
                     echo 'echo "Deployment complete."'
