@@ -1,15 +1,19 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = '/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin'
+    }
+
     stages {
 
         stage ('build'){
             steps {
                 script{
+                    sh 'env'
                     sh 'pwd'
                     sh 'which go'
                     sh 'where go'
-                    sh 'go run cmd/api/main.go'
                     echo 'building...'
                     sh 'make buildDeployment'
                     echo 'build completed'
