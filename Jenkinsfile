@@ -7,6 +7,9 @@ pipeline {
             steps {
                 script{
                     sh 'pwd'
+                    sh 'which go'
+                    sh 'where go'
+                    sh 'go run cmd/api/main.go'
                     echo 'building...'
                     sh 'make buildDeployment'
                     echo 'build completed'
