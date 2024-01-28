@@ -7,7 +7,7 @@ pipeline {
             steps {
                 script{
                     echo 'building...'
-                    sh 'go build -o ./cmd/api/tmp/deploy ./cmd/api/main.go'
+                    sh 'make buildDeployment'
                     echo 'build completed'
                 }
             }
