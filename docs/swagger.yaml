@@ -394,7 +394,7 @@ paths:
           description: Bad request
           schema:
             $ref: '#/definitions/response.Response'
-      summary: Get Seller Products
+      summary: Get Available Products
       tags:
       - User
   /accesstoken:

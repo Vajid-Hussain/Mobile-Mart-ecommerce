@@ -29,7 +29,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Get Seller Products",
+                "summary": "Get Available Products",
                 "parameters": [
                     {
                         "type": "integer",
