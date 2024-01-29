@@ -11,6 +11,9 @@ run:
 air:
 	air
 
+buildDeployment: 
+	${GO} build -o ./cmd/api/tmp/deploy ./cmd/api/main.go
+
 build:
 	${GO} build -o ./cmd/api/tmp/api.exe ./cmd/api/main.go 
 

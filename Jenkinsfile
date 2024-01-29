@@ -2,6 +2,18 @@ pipeline {
     agent any
 
     stages {
+        stage ('build'){
+            steps {
+                script{
+                    echo 'building...'
+                    sh 'go build -o ./cmd/api/tmp/deploy ./cmd/api/main.go'
+                    echo 'build completed'
+                }
+            }
+        }
+    }
+
+    stages {
         stage ('Diployment'){
             steps {
                 script {
