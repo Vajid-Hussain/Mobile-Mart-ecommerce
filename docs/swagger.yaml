@@ -2494,7 +2494,7 @@ paths:
           description: Bad request
           schema:
             $ref: '#/definitions/response.Response'
-      summary: Send OTP
+      summary: Send OTP To Mobile
       tags:
       - User
   /signup/:

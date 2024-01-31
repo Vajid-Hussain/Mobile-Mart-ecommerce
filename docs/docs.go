@@ -3403,7 +3403,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Send OTP",
+                "summary": "Send OTP To Mobile",
                 "parameters": [
                     {
                         "description": "OTP details for sending",
