@@ -10,7 +10,6 @@ pipeline {
         stage ('build'){
             steps {
                 script{
-                    sh 'env'
                     sh 'pwd'
                     sh 'which go'
                     echo 'building...'
