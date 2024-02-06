@@ -911,7 +911,7 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
-      summary: Admin login
+      summary: Admin Login
       tags:
       - Admins
   /admin/sellers/block:

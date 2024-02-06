@@ -856,7 +856,7 @@ const docTemplate = `{
                 "tags": [
                     "Admins"
                 ],
-                "summary": "Admin login",
+                "summary": "Admin Login",
                 "parameters": [
                     {
                         "description": "Admin login details",

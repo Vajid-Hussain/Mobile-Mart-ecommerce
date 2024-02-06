@@ -18,7 +18,7 @@ func NewAdminHandler(useCase interfaceUseCase.IAdminUseCase) *AdminHandler {
 	return &AdminHandler{AdminUseCase: useCase}
 }
 
-// @Summary		Admin login
+// @Summary		Admin Login
 // @Description	using this handler admins can login
 // @Tags			Admins
 // @Accept			json
