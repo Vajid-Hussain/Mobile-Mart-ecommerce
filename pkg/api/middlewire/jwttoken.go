@@ -73,44 +73,44 @@ func SellerAuthorization(c *gin.Context) {
 
 func UserAuthorization(c *gin.Context) {
 
-	accessToken := c.Request.Header.Get("authorization")
-	refreshToken := c.Request.Header.Get("refreshtoken")
+	// accessToken := c.Request.Header.Get("authorization")
+	// refreshToken := c.Request.Header.Get("refreshtoken")
 
-	if accessToken == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{"err": "there is no access token"})
-		c.Abort()
-		return
-	}
+	// if accessToken == "" {
+	// 	c.JSON(http.StatusUnauthorized, gin.H{"err": "there is no access token"})
+	// 	c.Abort()
+	// 	return
+	// }
 
-	id, err := service.VerifyAcessToken(accessToken, token.securityKeys.UserSecurityKey)
-	if err != nil {
-		err := service.VerifyRefreshToken(refreshToken, token.securityKeys.UserSecurityKey)
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"err": err.Error()})
-			c.Abort()
-		} else {
-			_, err := token.JwtTokenUseCase.GetStatusOfUser(id)
-			if err != nil {
-				c.JSON(http.StatusUnauthorized, err.Error())
-				c.Abort()
-			} else {
-				token, err := service.GenerateAcessToken(token.securityKeys.UserSecurityKey, id)
-				if err != nil {
-					c.JSON(http.StatusUnauthorized, err.Error())
-					c.Abort()
-				} else {
-					// c.JSON(http.StatusOK, gin.H{"token": token})
-					fmt.Println("accessToken", token)
-					c.Set("UserID", id)
-					c.Next()
-				}
-			}
-		}
-	} else {
-		// c.JSON(http.StatusOK, "all perfect, your access token is uptodate")
-		c.Set("UserID", id)
-	}
-	c.Set("UserID", id)
+	// id, err := service.VerifyAcessToken(accessToken, token.securityKeys.UserSecurityKey)
+	// if err != nil {
+	// 	err := service.VerifyRefreshToken(refreshToken, token.securityKeys.UserSecurityKey)
+	// 	if err != nil {
+	// 		c.JSON(http.StatusUnauthorized, gin.H{"err": err.Error()})
+	// 		c.Abort()
+	// 	} else {
+	// 		_, err := token.JwtTokenUseCase.GetStatusOfUser(id)
+	// 		if err != nil {
+	// 			c.JSON(http.StatusUnauthorized, err.Error())
+	// 			c.Abort()
+	// 		} else {
+	// 			token, err := service.GenerateAcessToken(token.securityKeys.UserSecurityKey, id)
+	// 			if err != nil {
+	// 				c.JSON(http.StatusUnauthorized, err.Error())
+	// 				c.Abort()
+	// 			} else {
+	// 				// c.JSON(http.StatusOK, gin.H{"token": token})
+	// 				fmt.Println("accessToken", token)
+	// 				c.Set("UserID", id)
+	// 				c.Next()
+	// 			}
+	// 		}
+	// 	}
+	// } else {
+	// 	// c.JSON(http.StatusOK, "all perfect, your access token is uptodate")
+	// 	c.Set("UserID", id)
+	// }
+	// c.Set("UserID", id)
 	c.Next()
 }
 
