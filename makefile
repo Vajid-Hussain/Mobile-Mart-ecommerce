@@ -25,3 +25,12 @@ swaggo:
 
 swaggoformat:
 	swag fmt
+
+test:
+	${GO} test ./...
+
+testall:
+	${GO} test -v ./...
+
+mock:
+	mockgen -source=pkg/usecase/interface/user.go -destination=pkg/mock/mockUseCase/user_mock.go -package=mockusecase
