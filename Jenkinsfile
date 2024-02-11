@@ -7,12 +7,22 @@ pipeline {
 
     stages {
 
+        stage('testing'){
+            steps{
+                script{
+                    echo 'start testing....'
+                    sh 'make test'
+                    echo 'test complite succesfully.. '
+                }
+            }
+        }
+
         stage ('build'){
             steps {
                 script{
                     sh 'pwd'
                     sh 'which go'
-                    echo 'building...'
+                    echo 'take build...'
                     sh 'make buildDeployment'
                     echo 'build completed'
                 }
