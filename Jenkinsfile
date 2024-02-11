@@ -7,7 +7,7 @@ pipeline {
 
     stages {
 
-        stage('testing'){
+        stage ('testing'){
             steps{
                 script{
                     echo 'start testing....'
