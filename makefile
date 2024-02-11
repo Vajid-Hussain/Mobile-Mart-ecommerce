@@ -34,3 +34,4 @@ testall:
 
 mock:
 	mockgen -source=pkg/usecase/interface/user.go -destination=pkg/mock/mockUseCase/user_mock.go -package=mockusecase
+	mockgen -source=pkg/repository/interface/user.go -destination=pkg/mock/mockRepository/user_mock.go -package=mockRepository
