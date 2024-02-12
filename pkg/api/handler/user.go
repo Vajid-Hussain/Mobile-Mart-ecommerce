@@ -56,7 +56,7 @@ func (u *UserHandler) UserSignup(c *gin.Context) {
 	}
 }
 
-// @Summary		User Otp verification
+// @Summary		User Otp Verification
 // @Description	using this handler User can send otp
 // @Tags			User
 // @Accept			json

@@ -3488,7 +3488,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "User Otp verification",
+                "summary": "User Otp Verification",
                 "parameters": [
                     {
                         "description": "User otp details",

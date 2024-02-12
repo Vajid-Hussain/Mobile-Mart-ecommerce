@@ -2548,7 +2548,7 @@ paths:
             $ref: '#/definitions/response.Response'
       security:
       - BearerTokenAuth: []
-      summary: User Otp verification
+      summary: User Otp Verification
       tags:
       - User
   /wallet:
