@@ -1341,7 +1341,7 @@ const docTemplate = `{
                         "Refreshtoken": []
                     }
                 ],
-                "description": "Create a user's cart.",
+                "description": "Create a user cart.",
                 "consumes": [
                     "application/json"
                 ],

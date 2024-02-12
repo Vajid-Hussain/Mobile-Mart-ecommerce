@@ -1228,7 +1228,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a user's cart.
+      description: Create a user cart.
       parameters:
       - description: Cart details for creating
         in: body

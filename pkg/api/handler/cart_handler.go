@@ -20,7 +20,7 @@ func NewCartHandler(carUseCase interfaceUseCase.ICartUseCase) *CartHandler {
 }
 
 // @Summary		Create User Cart
-// @Description	Create a user's cart.
+// @Description	Create a user cart.
 // @Tags			UserCart
 // @Accept			json
 // @Produce		json
