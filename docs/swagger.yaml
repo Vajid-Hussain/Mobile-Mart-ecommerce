@@ -2520,7 +2520,7 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
-      summary: User Signup
+      summary: User review
       tags:
       - User
   /verifyOTP/:

@@ -3443,7 +3443,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "User Signup",
+                "summary": "User review",
                 "parameters": [
                     {
                         "description": "User Signup details",

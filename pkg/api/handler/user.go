@@ -21,7 +21,7 @@ func NewUserHandler(userUseCase interfaceUseCase.IuserUseCase) *UserHandler {
 	return &UserHandler{userUseCase: userUseCase}
 }
 
-// @Summary		User Signup
+// @Summary		User review
 // @Description	using this handler User can SIgnup
 // @Tags			User
 // @Accept			json
