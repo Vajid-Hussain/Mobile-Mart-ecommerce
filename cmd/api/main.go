@@ -12,7 +12,7 @@ func main() {
 
 	config, err := config.LoadConfig()
 	if err != nil {
-		log.Fatal("error at loading the env file using viper")
+		log.Fatal("error at loading the env file using viper ", err)
 	}
 
 	//	@title						Go + Gin Mobile-Mart
@@ -34,7 +34,7 @@ func main() {
 
 	server, err := di.InitializeAPI(config)
 	if err != nil {
-		log.Fatal("error for server creation")
+		log.Fatal("error for server creation ", err)
 	}
 
 	server.Start()
