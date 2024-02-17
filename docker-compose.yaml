@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    container_name: mobile-mart-postgres-container
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - project-net
+    volumes:
+      - project-volume:/var/lib/postgresql/data
+    hostname: postgresDB
+    
+
+  mobile-mart:
+    image: vajidhussain/mobile-mart
+    build: .
+    restart: on-failure
+    container_name: mobile-mart-container
+    depends_on:
+      - postgres
+    networks:
+      - project-net
+    ports:
+      - "7000:7000"
+    
+
+volumes:
+  project-volume:
+
+networks:
+  project-net:
+    driver : bridge
