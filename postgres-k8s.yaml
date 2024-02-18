@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  labels:
+    db: postgres
+    app: mobile-mart
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      database: postgres
+  template:
+    metadata:
+      name: postgres-pod
+      labels:
+        database: postgres
+    spec:
+      containers:
+        - name: database
+          image: postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              value: postgres                                                          
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+spec:
+  type: NodePort
+  selector:
+    database: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+      nodePort: 30001
