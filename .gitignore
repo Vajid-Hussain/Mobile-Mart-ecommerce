@@ -3,8 +3,6 @@
 
 cmd/api/tmp/api.exe
  
-#  api.exe
-
 invoice.pdf
 salesReport.xlxs
 
@@ -12,3 +10,4 @@ build-errors.log
 
 .air.toml
 
+mobile-mart-k8s-secret.yaml

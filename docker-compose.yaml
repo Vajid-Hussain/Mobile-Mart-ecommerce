@@ -11,7 +11,7 @@ services:
       - project-net
     volumes:
       - project-volume:/var/lib/postgresql/data
-    hostname: postgresDB
+    hostname: postgresdb
     
 
   mobile-mart:

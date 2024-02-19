@@ -4,7 +4,6 @@ metadata:
   name: postgres-deployment
   labels:
     db: postgres
-    app: mobile-mart
 spec:
   replicas: 1
   selector:
@@ -23,19 +22,21 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_PASSWORD
-              value: postgres                                                          
+              valueFrom:
+                secretKeyRef:
+                  name: secretcollection
+                  key: dbpassword                                                        
 
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-service
+  name: postgresdb
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     database: postgres
   ports:
     - port: 5432
       targetPort: 5432
-      nodePort: 30001

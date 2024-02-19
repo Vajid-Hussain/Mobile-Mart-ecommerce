@@ -32,3 +32,5 @@ spec:
     - targetPort: 7000
       port: 7000
       nodePort: 30007
+  selector:
+    process: program
