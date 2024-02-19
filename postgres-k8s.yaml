@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgres-deployment
   labels:
@@ -25,7 +25,18 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: secretcollection
-                  key: dbpassword                                                        
+                  key: dbpassword  
+          volumeMounts:
+          - name: storagespace
+            mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: storagespace
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Mi                                                                    
 
 ---
 
