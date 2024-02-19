@@ -1,13 +1,17 @@
 # .gitignore
+
+#contain credential
 .env
 
+#build file
 cmd/api/tmp/api.exe
  
 invoice.pdf
 salesReport.xlxs
 
+#form auto server air
 build-errors.log
-
 .air.toml
 
+#secret for kubernities
 mobile-mart-k8s-secret.yaml
