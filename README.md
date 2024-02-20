@@ -48,7 +48,15 @@ git clone https://github.com/Vajid-Hussain/Mobile-Mart-ecommerce.git
 cd Mobile-Mart-ecommerce
 ```
 
-To run unit tests locally, execute the following command:
+
+
+To run the project, execute the following command in your terminal:
+
+```bash
+make run 
+```
+
+To run unit tests, execute the following command:
 
 ```bash
 make test ./...
