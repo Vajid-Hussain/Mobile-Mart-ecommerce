@@ -18,8 +18,8 @@ Mobile-Mart is a robust RESTful API built using Go and the Gin framework. It ser
 
 ## User Roles
 
-- **Admin**: Manage users and products.
-- **Seller**: List products and manage orders.
+- **Admin**: Manage users and seller .
+- **Seller**: List products and manage orders and products.
 - **User**: Browse products, add to cart, and make purchases.
 
 ## Technologies Used
@@ -37,6 +37,8 @@ Mobile-Mart is a robust RESTful API built using Go and the Gin framework. It ser
 ## Unit Testing
 
 Mobile-Mart is thoroughly tested to ensure code reliability and maintainability. Unit tests cover all critical components and functionalities, providing confidence in the stability of the application.
+
+---
 
 
 To clone the repository, run the following commands in your terminal:
