@@ -3,7 +3,6 @@ WORKDIR /MobileMart
 COPY . /MobileMart/
 RUN go mod download
 RUN go build -o ./cmd/api/binary ./cmd/api/main.go
-# CMD [ "./cmd/api/binary" ]
 
 FROM scratch
 COPY --from=firstStage /MobileMart/cmd/api/binary /MobileMart/
