@@ -169,7 +169,7 @@ func (u *InventotyHandler) DeleteInventory(c *gin.Context) {
 	}
 }
 
-//	@Summary		Get Available Mobiles
+//	@Summary		Get Available Mobiles updated
 //	@Description	Retrieve a list of products.
 //	@Tags			User
 //	@Accept			json

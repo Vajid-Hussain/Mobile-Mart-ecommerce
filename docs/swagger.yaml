@@ -394,7 +394,7 @@ paths:
           description: Bad request
           schema:
             $ref: '#/definitions/response.Response'
-      summary: Get Available Mobiles
+      summary: Get Available Mobiles updated
       tags:
       - User
   /accesstoken:
@@ -2520,7 +2520,7 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
-      summary: User review
+      summary: User Signup
       tags:
       - User
   /verifyOTP/:

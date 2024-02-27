@@ -29,7 +29,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Get Available Mobiles",
+                "summary": "Get Available Mobiles updated",
                 "parameters": [
                     {
                         "type": "integer",
@@ -3443,7 +3443,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "User review",
+                "summary": "User Signup",
                 "parameters": [
                     {
                         "description": "User Signup details",
