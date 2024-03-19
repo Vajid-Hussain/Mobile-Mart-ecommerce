@@ -73,7 +73,6 @@ func (d *inventoryRepository) DeleteInventoryBySeller(SellerID string, productID
 func (d *inventoryRepository) GetInventory(offSet int, limit int) (*[]responsemodel.InventoryShowcase, error) {
 	var inventory []responsemodel.InventoryShowcase
 
-	// query := "SELECT * FROM inventories LEFT JOIN category_offers ON category_offers.category_id=inventories.category_id AND category_offers.seller_id=inventories.seller_id WHERE inventories.status='active' AND category_offers.status = 'active' AND category_offers.end_date>=now() ORDER BY inventories.id OFFSET ? LIMIT ?"
 	query := "SELECT * FROM category_offers RIGHT JOIN inventories ON category_offers.category_id= inventories.category_id AND inventories.seller_id=category_offers.seller_id AND category_offers.status='active' AND category_offers.end_date>=now() WHERE inventories.status='active' ORDER BY inventories.id OFFSET ? LIMIT ?"
 	err := d.DB.Raw(query, offSet, limit).Scan(&inventory).Error
 	if err != nil {
